@@ -34,11 +34,9 @@ jobs:
 
     - name: Build and Push Docker image
       run: |
-        # getuser-handler
         docker build -t ${{ secrets.DOCKER_USERNAME }}/getuser-handler .
         docker tag ${{ secrets.DOCKER_USERNAME }}/getuser-handler
         docker push ${{ secrets.DOCKER_USERNAME }}/getuser-handler
-
     - name: Deploy functions to Supabase
       run:
         # getUser-Handler
