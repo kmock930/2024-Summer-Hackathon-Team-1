@@ -32,7 +32,7 @@ jobs:
 
     - name: Build and Push Docker image; Deploy Supabase Function
       run:  |
-        for function_dir in supabase/functions/*; do
+        for function_dir in ../backend/supabase/functions/*; do
           if [ -d "$function_dir" ]; then
             function_name=$(basename "$function_dir")
             function_name_lowercase=${function_name,,}
@@ -49,7 +49,7 @@ jobs:
         done
     - name: Deploy functions to Supabase
       run: |
-        for function_dir in supabase/functions/*; do
+        for function_dir in ../backend/supabase/functions/*; do
           if [ -d "$function_dir" ]; then
             function_name=$(basename "$function_dir")
             function_name_lowercase=${function_name,,}
