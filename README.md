@@ -25,7 +25,9 @@ Scoop command - `scoop install deno`
 * All-in-one command to tag + build a docker image: `docker build -t kmock930/your-function:tag supabase/functions/function1`
 3. Run `docker run -p 3000:3000 cics-backend` to run the docker build on port 3000.
 4. Navigate to localhost:3000 on a browser or Postman to see responses from API endpoints. 
-5. 
+5. Push the Docker image to remote Hub with this command `docker push kmock930/image-name`
+- Note: Docker image name can only be lowercase and may not be exact same name as Supabase edge functions. 
+- Note: Docker images cannot be deployed to Supabase via CI/CD pipelines. Such process must be done manually. 
 # Working with Docker Image as a normal workflow
 1. On the docker git repository that you just cloned as mentioned above, pull the latest image with this command: `docker compose pull`.
 2. At the same directory, start the services (in detached mode) with this command `docker compose up -d`.
