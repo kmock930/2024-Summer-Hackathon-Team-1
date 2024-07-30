@@ -20,8 +20,9 @@ jobs:
       with:
         deno-version: 'latest'
 
-    - name: Install Supabase CLI
-      run: deno install -f -n supabase https://cdn.supabase.com/cli/v1.0.0/supabase.ts
+    - name: Install Supabase via NPM
+      run: 
+        npm install supabase
 
     - name: Login to Docker Hub
       uses: docker/login-action@v2
@@ -47,7 +48,7 @@ jobs:
             docker tag ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
             docker push ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
 
-            supabase functions deploy "$function_name" --use-container --project-id ${{ secrets.SUPABASE_PROJECT_ID }}
+            npx supabase functions deploy "$function_name" --use-container --project-id ${{ secrets.SUPABASE_PROJECT_ID }}
 
             cd -
           fi
