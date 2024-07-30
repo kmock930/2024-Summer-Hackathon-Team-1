@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@formiz/core':
+        specifier: ^2.3.0
+        version: 2.3.0(react@18.3.1)
       '@pigment-css/react':
         specifier: ^0.0.18
         version: 0.0.18(@types/react@18.3.3)(react@18.3.1)(typescript@5.5.4)
@@ -214,6 +217,11 @@ packages:
   '@eslint/js@8.57.0':
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@formiz/core@2.3.0':
+    resolution: {integrity: sha512-9QQDIHhQ4uEfVNb8FG2g+38D5mwdMaCWGcJyRaezb0ALihVIPATcXGUWbEpGZK7OgS8ReC3WXBAc1nP5oa9m2w==}
+    peerDependencies:
+      react: '>=18'
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -2110,6 +2118,10 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.0': {}
+
+  '@formiz/core@2.3.0(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
