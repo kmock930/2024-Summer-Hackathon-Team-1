@@ -20,9 +20,11 @@ jobs:
       with:
         deno-version: 'latest'
 
-    - name: Install Supabase via NPM
-      run: 
-        npm install supabase
+    - name: Install Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+
 
     - name: Login to Docker Hub
       uses: docker/login-action@v2
@@ -30,35 +32,17 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and Push Docker image; Deploy Supabase Function
-      run:  |
-        for function_dir in ../backend/supabase/functions/*; do
-          if [ -d "$function_dir" ]; then
-            function_name=$(basename "$function_dir")
-            function_name_lowercase=${function_name,,}
-            echo "Processing $function_name_lowercase"
+    - name: Build and Push Docker image
+      run:  
+        # getuser-handler
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/getuser-handler .
+        docker tag ${{ secrets.DOCKER_USERNAME }}/getuser-handler
+        docker push ${{ secrets.DOCKER_USERNAME }}/getuser-handler
 
-            cd "$function_dir"
-        
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase .
-            docker tag ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase:latest
-            docker push ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase:latest
-
-            cd -
-          fi
-        done
     - name: Deploy functions to Supabase
-      run: |
-        for function_dir in ../backend/supabase/functions/*; do
-          if [ -d "$function_dir" ]; then
-            function_name=$(basename "$function_dir")
-            function_name_lowercase=${function_name,,}
-            echo "Deploying $function_name"
-
-            # Deploy the function using Supabase CLI
-            npx supabase functions deploy "$function_name" --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
-          fi
-        done
+      run:
+        # getUser-Handler
+        supabase functions deploy getUser-Handler --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --image ${{ secrets.DOCKER_USERNAME }}/getuser-handler
       env:
         SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
