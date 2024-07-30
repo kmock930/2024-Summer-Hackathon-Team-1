@@ -1,95 +1,46 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import CourseRegistrationForm from '@/components/CourseRegistrationForm';
+import { styled } from '@pigment-css/react';
+
+const Wrapper = styled.div`
+  height: 100vh;
+  background-image: linear-gradient(
+    50deg,
+    hsl(209deg 87% 51%) 0%,
+    hsl(209deg 88% 55%) 4%,
+    hsl(210deg 88% 60%) 8%,
+    hsl(210deg 88% 64%) 12%,
+    hsl(211deg 89% 68%) 16%,
+    hsl(211deg 90% 72%) 20%,
+    hsl(211deg 90% 76%) 25%,
+    hsl(213deg 93% 78%) 30%,
+    hsl(215deg 94% 81%) 34%,
+    hsl(216deg 95% 84%) 39%,
+    hsl(218deg 97% 86%) 44%,
+    hsl(219deg 100% 89%) 49%,
+    hsl(221deg 100% 91%) 53%,
+    hsl(219deg 100% 89%) 58%,
+    hsl(218deg 97% 86%) 63%,
+    hsl(216deg 95% 84%) 67%,
+    hsl(215deg 94% 81%) 71%,
+    hsl(213deg 93% 78%) 76%,
+    hsl(211deg 90% 76%) 80%,
+    hsl(211deg 90% 72%) 83%,
+    hsl(211deg 89% 68%) 87%,
+    hsl(210deg 88% 64%) 90%,
+    hsl(210deg 88% 60%) 94%,
+    hsl(209deg 88% 55%) 97%,
+    hsl(209deg 87% 51%) 100%
+  );
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <Wrapper>
+      <CourseRegistrationForm />
+    </Wrapper>
   );
 }
