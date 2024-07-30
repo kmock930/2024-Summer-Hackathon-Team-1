@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
-    name: Push a Docker Build, and Deploy Supabase functions one-by-one. 
+  build_docker:
+    name: Push a Docker Build
     runs-on: ubuntu-latest
 
     steps:
@@ -37,13 +37,18 @@ jobs:
         cd backend/supabase/functions/getUser-handler
 
         docker build -t ${{ secrets.DOCKER_USERNAME }}/getuser-handler .
-        docker tag ${{ secrets.DOCKER_USERNAME }}/getuser-handler
         docker push ${{ secrets.DOCKER_USERNAME }}/getuser-handler
-    - name: Deploy functions to Supabase
-      run:
-        # getUser-Handler
-        supabase functions deploy getUser-Handler --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --image ${{ secrets.DOCKER_USERNAME }}/getuser-handler
-      env:
-        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  
+  deploy_supabase:  
+    name: Deploy functions to Supabase one-by-one. 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: deploy to supabase
+        run:
+          # getUser-Handler
+          supabase functions deploy getUser-Handler --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --image ${{ secrets.DOCKER_USERNAME }}/getuser-handler
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
