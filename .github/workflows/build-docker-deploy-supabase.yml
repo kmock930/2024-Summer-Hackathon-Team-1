@@ -1,0 +1,58 @@
+name: Deploy Docker Build for Supabase functions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    name: Push a Docker Build, and Deploy Supabase functions one-by-one. 
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Set up Deno
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: 'latest'
+
+    - name: Install Supabase CLI
+      run: deno install -f -n supabase https://cdn.supabase.com/cli/v1.0.0/supabase.ts
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker image; Deploy Supabase Function
+      #uses: docker/build-push-action@v2
+      #with:
+      #  context: .  
+      #  push: true
+      #  tags: kmock930/getuser-handler:tag
+      run:  |
+        for function_dir in supabase/functions/*; do
+          if [ -d "$function_dir" ]; then
+            function_name=$(basename "$function_dir")
+            echo "Processing $function_name"
+
+            cd "$function_dir"
+        
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/$function_name .
+            docker tag ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
+
+            supabase functions deploy "$function_name" --use-container --project-id ${{ secrets.SUPABASE_PROJECT_ID }}
+
+            cd -
+          fi
+        done
+      env:
+        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
