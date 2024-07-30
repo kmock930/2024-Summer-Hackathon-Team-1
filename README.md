@@ -14,6 +14,7 @@ Scoop command - `scoop install deno`
 2. Compile and Start server with `npm start`. 
 3. Develop using command `npm run dev`.
 4. Run a Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port. 
+* Note: To disable Deno errors, disable "typescript.validate.enable" and "javascript.validate.enable" flags at settings.json under .vscode directory.
 # Build a Docker image
 1. Tag an image on docker with command ` docker tag cics-backend kmock930/cics-backend`
 2. Run `docker build -t cics-backend .` to build a docker image at backend directory, using port 3000.
