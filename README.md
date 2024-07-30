@@ -22,8 +22,10 @@ Scoop command - `scoop install deno`
 # Build a Docker image
 1. Tag an image on docker with command `docker tag cics-backend kmock930/cics-backend`
 2. Run `docker build -t cics-backend .` to build a docker image at backend directory, using port 3000.
+* All-in-one command to tag + build a docker image: `docker build -t kmock930/your-function:tag supabase/functions/function1`
 3. Run `docker run -p 3000:3000 cics-backend` to run the docker build on port 3000.
 4. Navigate to localhost:3000 on a browser or Postman to see responses from API endpoints. 
+5. 
 # Working with Docker Image as a normal workflow
 1. On the docker git repository that you just cloned as mentioned above, pull the latest image with this command: `docker compose pull`.
 2. At the same directory, start the services (in detached mode) with this command `docker compose up -d`.
@@ -36,4 +38,4 @@ Scoop command - `scoop install deno`
 * Note: To stop Supabase, run command `npx supabase stop`. 
 # Creating a new Supabase Edge Function (Serverless Function)
 1. Create a new function with command `npx supabase functions new function-name`.
-2. Deploy the function with command `npx supabase functions deploy function-name --project-ref ibhwsqyqdziekcjyakog`.
+2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
