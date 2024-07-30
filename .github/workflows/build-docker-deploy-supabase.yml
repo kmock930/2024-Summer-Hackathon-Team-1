@@ -34,6 +34,8 @@ jobs:
 
     - name: Build and Push Docker image
       run: |
+        cd ../backend/supabase/functions/getUser-handler
+
         docker build -t ${{ secrets.DOCKER_USERNAME }}/getuser-handler .
         docker tag ${{ secrets.DOCKER_USERNAME }}/getuser-handler
         docker push ${{ secrets.DOCKER_USERNAME }}/getuser-handler
