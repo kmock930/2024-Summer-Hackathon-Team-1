@@ -31,26 +31,32 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and Push Docker image; Deploy Supabase Function
-      #uses: docker/build-push-action@v2
-      #with:
-      #  context: .  
-      #  push: true
-      #  tags: kmock930/getuser-handler:tag
       run:  |
         for function_dir in supabase/functions/*; do
           if [ -d "$function_dir" ]; then
             function_name=$(basename "$function_dir")
-            echo "Processing $function_name"
+            function_name_lowercase=${function_name,,}
+            echo "Processing $function_name_lowercase"
 
             cd "$function_dir"
         
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/$function_name .
-            docker tag ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
-            docker push ${{ secrets.DOCKER_USERNAME }}/$function_name:latest
-
-            npx supabase functions deploy "$function_name" --use-container --project-id ${{ secrets.SUPABASE_PROJECT_ID }}
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase .
+            docker tag ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase:latest
 
             cd -
+          fi
+        done
+    - name: Deploy functions to Supabase
+      run: |
+        for function_dir in supabase/functions/*; do
+          if [ -d "$function_dir" ]; then
+            function_name=$(basename "$function_dir")
+            function_name_lowercase=${function_name,,}
+            echo "Deploying $function_name"
+
+            # Deploy the function using Supabase CLI
+            npx supabase functions deploy "$function_name" --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --image ${{ secrets.DOCKER_USERNAME }}/$function_name_lowercase:latest
           fi
         done
       env:
