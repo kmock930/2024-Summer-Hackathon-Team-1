@@ -46,7 +46,7 @@ function CourseRegistrationForm() {
     <Wrapper>
       <h1>{JSON.stringify(formTitle?.name)}</h1>
       <Formiz connect={form}>
-        <FormStepper steps={form.steps?.map((step) => step.label)} />
+        <FormStepper />
 
         <FormizStep name='course-information' label='Course Information'>
           {JSON.stringify(courseData)}
