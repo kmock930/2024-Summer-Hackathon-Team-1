@@ -6,7 +6,7 @@ export const fetcher = async <JSON = any>(
   return res.json();
 };
 
-export const range = (start: number, end: number, step = 1) => {
+export const range = (start: number, end?: number, step: number = 1) => {
   let output = [];
   if (typeof end === 'undefined') {
     end = start;

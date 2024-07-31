@@ -52,6 +52,10 @@ p, h1, h2, h3, h4, h5, h6 {
 #root, #__next {
   isolation: isolate;
 } 
+
+:root {
+  --color-text: hsl(0deg, 0%, 100%);
+}
 `;
 
 export const metadata: Metadata = {
