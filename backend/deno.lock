@@ -227,21 +227,7 @@
   },
   "workspace": {
     "packageJson": {
-      "dependencies": [
-        "npm:@supabase/supabase-js@^2.45.0",
-        "npm:@t3-oss/env-core@^0.11.0",
-        "npm:@types/express@^4.17.21",
-        "npm:@types/node@^22.0.0",
-        "npm:deno@^0.1.1",
-        "npm:dotenv@^16.4.5",
-        "npm:express@^4.19.2",
-        "npm:path@^0.12.7",
-        "npm:serve@^14.2.3",
-        "npm:serverless-http@^3.2.0",
-        "npm:supabase@^1.187.8",
-        "npm:typescript@^5.5.4",
-        "npm:zod@^3.23.8"
-      ]
+      "dependencies": []
     }
   }
 }
