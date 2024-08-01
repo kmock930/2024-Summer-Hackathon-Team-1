@@ -4,14 +4,9 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
-import { config } from "https://deno.land/x/dotenv/mod.ts";
-
-// Load the .env file
-const env = config();
+import { API_URL } from "../../../config.ts"
 
 Deno.serve(async (req: Request) => {
-  const API_URL:string = env.API_URL as string;
-
   return new Response(`${API_URL}`)
 })
 
