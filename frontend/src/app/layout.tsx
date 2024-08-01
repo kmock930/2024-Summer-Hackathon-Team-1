@@ -55,6 +55,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 :root {
   --color-text: hsl(0deg, 0%, 100%);
+  --color-blue: hsla(210deg, 63%, 45%, 1);
 }
 `;
 
