@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as RadixSelect from '@radix-ui/react-select';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { css } from '@pigment-css/react';
+import { css, styled } from '@pigment-css/react';
 
 interface SelectOptionProps {
   value: string;
@@ -11,55 +11,60 @@ interface SelectOptionProps {
 function Select({
   options,
   placeholder,
+  className,
+  defaultValue,
 }: {
   options: SelectOptionProps[];
   placeholder: string;
+  className?: string;
+  defaultValue?: string;
 }) {
   return (
-    <RadixSelect.Root>
-      <RadixSelect.Trigger
-        className={css({
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '4px',
-          padding: '0 15px',
-          fontSize: '13px',
-          lineHeight: 1,
-          height: '35px',
-          gap: '5px',
-          backgroundColor: 'white',
-        })}
-      >
-        <RadixSelect.Value placeholder={placeholder} />
-        <RadixSelect.Icon />
-      </RadixSelect.Trigger>
-
-      <RadixSelect.Portal>
-        <RadixSelect.Content
+    <Wrapper className={className}>
+      <RadixSelect.Root defaultValue={defaultValue}>
+        <RadixSelect.Trigger
           className={css({
-            overflow: 'hidden',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '4px',
+            padding: '0 15px',
+            fontSize: '13px',
+            lineHeight: 1,
+            height: '35px',
+            gap: '5px',
             backgroundColor: 'white',
-            borderRadius: '6px',
-            boxShadow:
-              '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
           })}
         >
-          <RadixSelect.ScrollUpButton />
-          <RadixSelect.Viewport>
-            {options.map((option) => {
-              return (
-                <SelectItem value={option.value} key={option.value}>
-                  {option.text}
-                </SelectItem>
-              );
+          <RadixSelect.Value placeholder={placeholder} />
+          <RadixSelect.Icon />
+        </RadixSelect.Trigger>
+        <RadixSelect.Portal>
+          <RadixSelect.Content
+            className={css({
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              borderRadius: '6px',
+              boxShadow:
+                '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
             })}
-          </RadixSelect.Viewport>
-          <RadixSelect.ScrollDownButton />
-          <RadixSelect.Arrow />
-        </RadixSelect.Content>
-      </RadixSelect.Portal>
-    </RadixSelect.Root>
+          >
+            <RadixSelect.ScrollUpButton />
+            <RadixSelect.Viewport>
+              {options.map((option) => {
+                return (
+                  <SelectItem value={option.value} key={option.value}>
+                    {option.text}
+                  </SelectItem>
+                );
+              })}
+            </RadixSelect.Viewport>
+            <RadixSelect.ScrollDownButton />
+            <RadixSelect.Arrow />
+          </RadixSelect.Content>
+        </RadixSelect.Portal>
+      </RadixSelect.Root>
+    </Wrapper>
   );
 }
 
@@ -102,5 +107,7 @@ const SelectItem = React.forwardRef<
 });
 
 SelectItem.displayName = 'SelectItem';
+
+const Wrapper = styled.div``;
 
 export default Select;
