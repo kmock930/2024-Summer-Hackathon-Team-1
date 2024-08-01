@@ -1,10 +1,6 @@
 import * as React from 'react';
 import * as RadixSelect from '@radix-ui/react-select';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@radix-ui/react-icons';
+import { CheckIcon } from '@radix-ui/react-icons';
 import { css } from '@pigment-css/react';
 
 interface SelectOptionProps {
@@ -12,7 +8,13 @@ interface SelectOptionProps {
   text: string;
 }
 
-function Select({ options }: { options: SelectOptionProps[] }) {
+function Select({
+  options,
+  placeholder,
+}: {
+  options: SelectOptionProps[];
+  placeholder: string;
+}) {
   return (
     <RadixSelect.Root>
       <RadixSelect.Trigger
@@ -27,11 +29,9 @@ function Select({ options }: { options: SelectOptionProps[] }) {
           height: '35px',
           gap: '5px',
           backgroundColor: 'white',
-          color: 'var(--violet-11)',
-          boxShadow: '0 2px 10px var(--black-a7)',
         })}
       >
-        <RadixSelect.Value placeholder='Select a Before and/or After Camp Option' />
+        <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon />
       </RadixSelect.Trigger>
 
