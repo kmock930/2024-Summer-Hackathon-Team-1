@@ -15,6 +15,7 @@ Scoop command - `scoop install deno`
 3. Develop using command `npm run dev`.
 4. Run a Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port. 
 * Note: To disable Deno errors, disable "typescript.validate.enable" and "javascript.validate.enable" flags at settings.json under .vscode directory.
+* General command for Deno run: `deno run --allow-net --allow-read --allow-env file`.
 # Setting up for Docker
 1. On your hard drive at a permanent location, clone this project by executing command: `git clone --depth 1 https://github.com/supabase/supabase`.
 2. Go into the directory.
