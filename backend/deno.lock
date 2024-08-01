@@ -227,7 +227,9 @@
   },
   "workspace": {
     "packageJson": {
-      "dependencies": []
+      "dependencies": [
+        "npm:supabase@^1.187.8"
+      ]
     }
   }
 }
