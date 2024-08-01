@@ -10,7 +10,9 @@ import { config } from "https://deno.land/x/dotenv/mod.ts";
 const env = config();
 
 Deno.serve(async (req: Request) => {
-  return new Response(`port: ${env.PORT}`)
+  const API_URL:string = env.API_URL as string;
+
+  return new Response(`${API_URL}`)
 })
 
 /* To invoke locally:
