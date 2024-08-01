@@ -35,6 +35,7 @@ const Wrapper = styled.div`
   justify-content: center;
   height: 144px;
   width: 100%;
+  padding: 36px;
 `;
 
 const FormStepConnector = styled.div`
