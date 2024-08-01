@@ -4,11 +4,12 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+// import { config } from 'dotenv'
+
+// config({ path: '.env' })
 
 Deno.serve(async (req: Request) => {
-  console.log(req)
-
-  return new Response('testing')
+  return new Response(`port: ${process.env.PORT}`)
 })
 
 /* To invoke locally:
