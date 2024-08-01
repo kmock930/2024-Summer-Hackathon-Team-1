@@ -13,8 +13,9 @@ Scoop command - `scoop install deno`
 1. Make a build with command `npm run build`.
 2. Compile and Start server with `npm start`. 
 3. Develop using command `npm run dev`.
-4. Run a Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port. 
+4. Run a Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net --allow-read --allow-env backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port. 
 * Note: To disable Deno errors, disable "typescript.validate.enable" and "javascript.validate.enable" flags at settings.json under .vscode directory.
+* General command for Deno run: `deno run --allow-net --allow-read --allow-env file`.
 # Setting up for Docker
 1. On your hard drive at a permanent location, clone this project by executing command: `git clone --depth 1 https://github.com/supabase/supabase`.
 2. Go into the directory.
@@ -41,3 +42,11 @@ Scoop command - `scoop install deno`
 # Creating a new Supabase Edge Function (Serverless Function)
 1. Create a new function with command `npx supabase functions new function-name`.
 2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
+# Continuous Integration / Continuous Development (CICD) pipelines
+1. When you decide to deploy a new function, you can modify the workflow file `build-docker-deploy-supabase.yml` and include modifications in your commit: 
+- Add new docker commands; and
+- Add new supabase commands to deploy the corresponding function.
+2. Merge your changes to the main branch. 
+3. Execute the GitHub Action workflow: "Deploy Docker Build for Supabase functions". 
+# Creating a Database model in code from Supabase
+- Run the following command in the directory where you would like Supabase CLI to auto-generate you a database model file in TypeScript: `supabase gen types typescript --project-id ibhwsqyqdziekcjyakog > database.types.ts`
