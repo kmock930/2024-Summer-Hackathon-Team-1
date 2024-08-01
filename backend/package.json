@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {},
   "devDependencies": {
     "supabase": "^1.187.8"
   }
