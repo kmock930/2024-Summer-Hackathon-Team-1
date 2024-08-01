@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "start": "node",
+    "dev": "ts-node"
   },
   "keywords": [],
   "author": "",
@@ -14,15 +14,17 @@
   "description": "",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
+    "@t3-oss/env-core": "^0.11.0",
     "@types/express": "^4.17.21",
     "@types/node": "^22.0.0",
-    "aws-sdk": "^2.1664.0",
     "deno": "^0.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "path": "^0.12.7",
     "serve": "^14.2.3",
     "serverless-http": "^3.2.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "supabase": "^1.187.8"
