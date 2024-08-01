@@ -41,3 +41,9 @@ Scoop command - `scoop install deno`
 # Creating a new Supabase Edge Function (Serverless Function)
 1. Create a new function with command `npx supabase functions new function-name`.
 2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
+# Continuous Integration / Continuous Development (CICD) pipelines
+1. When you decide to deploy a new function, you can modify the workflow file `build-docker-deploy-supabase.yml` and include modifications in your commit: 
+- Add new docker commands; and
+- Add new supabase commands to deploy the corresponding function.
+2. Merge your changes to the main branch. 
+3. Execute the GitHub Action workflow: "Deploy Docker Build for Supabase functions". 
