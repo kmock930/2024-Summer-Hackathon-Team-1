@@ -102,6 +102,9 @@
       }
     }
   },
+  "redirects": {
+    "https://deno.land/x/dotenv/mod.ts": "https://deno.land/x/dotenv@v3.2.2/mod.ts"
+  },
   "remote": {
     "https://deno.land/std@0.188.0/_util/asserts.ts": "178dfc49a464aee693a7e285567b3d0b555dc805ff490505a8aae34f9cfb1462",
     "https://deno.land/std@0.188.0/_util/os.ts": "d932f56d41e4f6a6093d56044e29ce637f8dcc43c5a90af43504a889cf1775e3",
@@ -192,6 +195,8 @@
     "https://deno.land/std@0.188.0/streams/write_all.ts": "aec90152978581ea62d56bb53a5cbf487e6a89c902f87c5969681ffbdf32b998",
     "https://deno.land/std@0.188.0/streams/writer_from_stream_writer.ts": "07c7ee025151a190f37fc42cbb01ff93afc949119ebddc6e0d0df14df1bf6950",
     "https://deno.land/std@0.188.0/streams/zip_readable_streams.ts": "a9d81aa451240f79230add674809dbee038d93aabe286e2d9671e66591fc86ca",
+    "https://deno.land/x/dotenv@v3.2.2/mod.ts": "077b48773de9205266a0b44c3c3a3c3083449ed64bb0b6cc461b95720678d38e",
+    "https://deno.land/x/dotenv@v3.2.2/util.ts": "693730877b13f8ead2b79b2aa31e2a0652862f7dc0c5f6d2f313f4d39c7b7670",
     "https://deno.land/x/oak@v12.5.0/application.ts": "3028d3f6fa5ee743de013881550d054372c11d83c45099c2d794033786d27008",
     "https://deno.land/x/oak@v12.5.0/body.ts": "1899761b97fc9d776f3710b2637fb047ba29b968609afc6c0e5219b1108e703c",
     "https://deno.land/x/oak@v12.5.0/buf_reader.ts": "26640736541598dbd9f2b84a9d0595756afff03c9ca55b66eef1911f7798b56d",
@@ -223,15 +228,19 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@supabase/supabase-js@^2.45.0",
+        "npm:@t3-oss/env-core@^0.11.0",
         "npm:@types/express@^4.17.21",
         "npm:@types/node@^22.0.0",
-        "npm:aws-sdk@^2.1664.0",
         "npm:deno@^0.1.1",
+        "npm:dotenv@^16.4.5",
         "npm:express@^4.19.2",
+        "npm:path@^0.12.7",
         "npm:serve@^14.2.3",
         "npm:serverless-http@^3.2.0",
         "npm:supabase@^1.187.8",
-        "npm:typescript@^5.5.4"
+        "npm:typescript@^5.5.4",
+        "npm:zod@^3.23.8"
       ]
     }
   }
