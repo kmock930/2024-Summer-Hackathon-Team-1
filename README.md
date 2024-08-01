@@ -41,9 +41,6 @@ Scoop command - `scoop install deno`
 * Note: To stop Supabase, run command `npx supabase stop`. 
 # Creating a new Supabase Edge Function (Serverless Function)
 1. Create a new function with command `npx supabase functions new function-name`.
-<<<<<<< Updated upstream
-2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
-=======
 2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
 # Continuous Integration / Continuous Development (CICD) pipelines
 1. When you decide to deploy a new function, you can modify the workflow file `build-docker-deploy-supabase.yml` and include modifications in your commit: 
@@ -53,4 +50,3 @@ Scoop command - `scoop install deno`
 3. Execute the GitHub Action workflow: "Deploy Docker Build for Supabase functions". 
 # Creating a Database model in code from Supabase
 - Run the following command in the directory where you would like Supabase CLI to auto-generate you a database model file in TypeScript: `supabase gen types typescript --project-id ibhwsqyqdziekcjyakog > database.types.ts`
->>>>>>> Stashed changes
