@@ -4,38 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_docker:
-    name: Build and Push a Docker image.
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Set up Deno
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: 'latest'
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and Push Docker image
-      run: |
-        cd backend/supabase/functions/getUser-handler
-
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/getuser-handler .
-        docker push ${{ secrets.DOCKER_USERNAME }}/getuser-handler
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
   deploy_supabase:
     name: Deploy Edge Functions to Supabase one-by-one.
     needs: build_docker
@@ -44,11 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: 'latest'
 
       - name: Install Supabase CLI
         uses: supabase/setup-cli@v1
