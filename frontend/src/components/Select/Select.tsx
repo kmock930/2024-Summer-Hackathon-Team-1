@@ -108,6 +108,10 @@ const SelectItem = React.forwardRef<
 
 SelectItem.displayName = 'SelectItem';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  & *:hover {
+    cursor: pointer;
+  }
+`;
 
 export default Select;
