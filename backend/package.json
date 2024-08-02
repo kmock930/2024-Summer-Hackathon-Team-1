@@ -19,7 +19,9 @@
     "@types/node": "^22.0.0",
     "deno": "^0.1.1",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.32.1",
     "express": "^4.19.2",
+    "postgres": "^3.4.4",
     "path": "^0.12.7",
     "serve": "^14.2.3",
     "serverless-http": "^3.2.0",
@@ -27,6 +29,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.23.1",
     "supabase": "^1.187.8"
   }
 }
