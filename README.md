@@ -5,23 +5,21 @@
 # Prerequisites
 
 - Install Scoop for installations with this command on PowerShell: `iwr -useb get.scoop.sh | iex`.
-- Then install Supabase with these 2 commands:
-  `scoop bucket add supabase https://github.com/supabase/scoop-bucket.git`,
-  `scoop install supabase`.
+- Then install Supabase CLI with these 2 commands:
+`scoop bucket add supabase https://github.com/supabase/scoop-bucket.git`,
+`scoop install supabase`.
 - Update Supabase with this command: `scoop update supabase`.
 - Install Deno:
-  Powershell command - `irm https://deno.land/install.ps1 | iex`;
-  Scoop command - `scoop install deno`
-
-# Run the Project locally
-
-1. Make a build with command `npm run build`.
-2. Compile and Start server with `npm start`.
-3. Develop using command `npm run dev`.
-4. Run a Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net --allow-read --allow-env backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port.
-
-- Note: To disable Deno errors, disable "typescript.validate.enable" and "javascript.validate.enable" flags at settings.json under .vscode directory.
-- General command for Deno run: `deno run --allow-net --allow-read --allow-env file`.
+Powershell command - `irm https://deno.land/install.ps1 | iex`;
+Scoop command - `scoop install deno`.
+- To disable Deno errors, disable "typescript.validate.enable" and "javascript.validate.enable" flags at settings.json under .vscode directory.
+# Run and Debug the Project locally
+1. Invoke our function locally, by serving it with our new .env.local file, with this command:
+`supabase functions serve --env-file ./supabase/.env.local`
+- It will run all the functions in the "supabase" directory.
+2. Launch the corresponding function according to guidance in your terminal, on either Postman or your browser. 
+3. Alternatively, you can run an individual Supabase function with Deno runtime, with this command: `deno run --watch --unstable --allow-net --allow-read --allow-env backend\supabase\functions\<function name>\index.ts`, and then make an HTTP request to the corresponding port. 
+* General command for Deno run: `deno run --allow-net --allow-read --allow-env file`.
 
 # Setting up for Docker
 
@@ -29,19 +27,8 @@
 2. Go into the directory.
 3. Copy environment variable file with this command: `cp .env.example .env`.
 
-# Build a Docker image
-
-1. Tag an image on docker with command `docker tag cics-backend kmock930/cics-backend`
-2. Run `docker build -t cics-backend .` to build a docker image at backend directory, using port 3000.
-
-- All-in-one command to tag + build a docker image: `docker build -t kmock930/your-function:tag supabase/functions/function1`
-
-3. Run `docker run -p 3000:3000 cics-backend` to run the docker build on port 3000.
-4. Navigate to localhost:3000 on a browser or Postman to see responses from API endpoints.
-5. Push the Docker image to remote Hub with this command `docker push kmock930/image-name`
-
-- Note: Docker image name can only be lowercase and may not be exact same name as Supabase edge functions.
-- Note: Docker images cannot be deployed to Supabase via CI/CD pipelines. Such process must be done manually.
+# Ensure Docker Desktop is remained open while developing/debugging. 
+- This is because Supabase will tag, build and push a Docker image to its services. The process is handled by them automatically. 
 
 # Working with Docker Image as a normal workflow
 
@@ -59,9 +46,25 @@
 - Note: To stop Supabase, run command `npx supabase stop`.
 
 # Creating a new Supabase Edge Function (Serverless Function)
+- Create a new function with command `supabase functions new function-name` with Supabase CLI.
 
-1. Create a new function with command `npx supabase functions new function-name`.
-2. Deploy the function based on Docker container with command `npx supabase functions deploy function-name --use-container --project-ref ibhwsqyqdziekcjyakog`.
+# Continuous Integration / Continuous Development (CICD) pipelines
+1. When you decide to deploy a new function, you can modify the workflow file `build-docker-deploy-supabase.yml` and include modifications in your commit: 
+- Add new docker commands; and
+- Add new supabase commands to deploy the corresponding function.
+2. Merge your changes to the main branch. 
+3. Execute the GitHub Action workflow: "Deploy Docker Build for Supabase functions". 
+# Creating a Database model in code from Supabase
+- Run the following command in the directory where you would like Supabase CLI to auto-generate you a database model file in TypeScript: `supabase gen types typescript --project-id ibhwsqyqdziekcjyakog > database.types.ts`
+# Change your environment variables in .env or .env.local using command:
+- `supabase secrets set MY_NAME=Chewbacca`
+- To see all the secrets stored in a .env file, use this command: `supabase secrets list`.
+# Deploying your function codes to Supabase
+- Prerequisite: Please ensure that you deploy the .env to remote (not the .env.local).
+- Prerequisite: Please ensure Supabase CLI is properly installed. 
+1. Run the folliowing command to deploy your .env file to Supabase: `supabase secrets set --env-file ./supabase/.env`.
+2. Deploy the function with command `npx supabase functions deploy function-name --project-ref ibhwsqyqdziekcjyakog` (with npm); or `supabase functions deploy function-name --project-ref ibhwsqyqdziekcjyakog` (wtih supabase CLI).
+- Note: You may deploy your codes with the CI/CD pipeline. However, it might not deploy the .env file for you, as it is stored locally (not on GitHub).
 
 # Continuous Integration / Continuous Development (CICD) pipelines
 
@@ -72,10 +75,6 @@
 
 2. Merge your changes to the main branch.
 3. Execute the GitHub Action workflow: "Deploy Docker Build for Supabase functions".
-
-# Creating a Database model in code from Supabase
-
-- Run the following command in the directory where you would like Supabase CLI to auto-generate you a database model file in TypeScript: `supabase gen types typescript --project-id ibhwsqyqdziekcjyakog > database.types.ts`
 
 ## Supabase Usage
 
