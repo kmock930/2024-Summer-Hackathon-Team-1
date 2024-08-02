@@ -3,6 +3,7 @@
   "packages": {
     "specifiers": {
       "jsr:@std/dotenv": "jsr:@std/dotenv@0.225.0",
+      "jsr:@supabase/functions-js": "jsr:@supabase/functions-js@2.4.3",
       "jsr:@supabase/supabase-js@2": "jsr:@supabase/supabase-js@2.45.0",
       "npm:@supabase/auth-js@2.64.4": "npm:@supabase/auth-js@2.64.4",
       "npm:@supabase/functions-js@2.4.1": "npm:@supabase/functions-js@2.4.1",
@@ -14,6 +15,9 @@
     "jsr": {
       "@std/dotenv@0.225.0": {
         "integrity": "44db32932c67df82790a3e6847d7007befb6cc22d71f2f3ee7b7d00e1f0d6c94"
+      },
+      "@supabase/functions-js@2.4.3": {
+        "integrity": "010834c9e7d2996b4be8e4004a15ed8f42b326490e4b354683f9c191353b76cc"
       },
       "@supabase/supabase-js@2.45.0": {
         "integrity": "f6a0f1cbd18e36a52b5185c56f7afd6014124554fff2885fb8de0dd3cd3904b3",
