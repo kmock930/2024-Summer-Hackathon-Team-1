@@ -7,6 +7,8 @@ import FormStepper from '../FormStepper';
 import { fetcher } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
+import Input from '../Input';
+import OTPInput from '../OTPInput';
 
 interface Title {
   name: string;
@@ -52,6 +54,10 @@ const FormStepContent = styled.div`
   color: black;
   margin: calc((var(--padding) * -1) + 4px);
   padding: var(--padding);
+  height: 660px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -160,11 +166,20 @@ function CourseRegistrationForm() {
             <FormizStep
               name='personal-information'
               label='Personal Information'
-            ></FormizStep>
-            <FormizStep
-              name='one-time-password'
-              label='One-time Password'
-            ></FormizStep>
+            >
+              <h3>Login / Register</h3>
+              <Input label='Email' type='email' name='email' />
+              <Input label='Phone Number' type='text' name='phoneNo' />
+            </FormizStep>
+            <FormizStep name='one-time-password' label='One-time Password'>
+              <h3>One-time Password</h3>
+              <div>We’ve sent an OTP(One-Time Password) to your email.</div>
+              <div>
+                Please enter the 6 digits OTP value to complete the
+                verification.
+              </div>
+              <OTPInput length={6} />
+            </FormizStep>
             <FormizStep
               name='account-setting'
               label='Account Setting'

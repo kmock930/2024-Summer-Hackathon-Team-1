@@ -13,6 +13,7 @@ function Input({
   description,
   type,
   name,
+  ...delegated
 }: {
   label: string;
   description?: string;
@@ -20,17 +21,21 @@ function Input({
   name: string;
 }) {
   return (
-    <div
-      className={css({
-        [`${CourseRegistrationForm} &`]: {
-          display: 'flex',
-        },
-      })}
-    >
+    <div>
       <Field>
         <Label>{label}</Label>
         <Description>{description}</Description>
-        <HeadlessInput name={name} type={type} />
+        <HeadlessInput
+          className={css({
+            [`${CourseRegistrationForm} &`]: {
+              width: '100%',
+              border: 'solid 2px hsla(0, 0%, 24%, 1)',
+            },
+          })}
+          name={name}
+          type={type}
+          {...delegated}
+        />
       </Field>
     </div>
   );
