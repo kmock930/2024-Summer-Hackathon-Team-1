@@ -23,6 +23,60 @@ interface Course {
   weeks: string;
 }
 
+const Wrapper = styled.div`
+  --padding: 24px;
+  max-width: 1100px;
+  width: 1100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: linear-gradient(
+    276.54deg,
+    #135395 -9.35%,
+    #688db4 27.11%,
+    #2b72bc 77.45%
+  );
+  border-radius: 16px;
+  border: 4px;
+  padding: var(--padding);
+  color: var(--color-text);
+`;
+
+const FormWrapper = styled.div`
+  width: 100%;
+`;
+
+const FormStepContent = styled.div`
+  background-color: hsla(210, 100%, 95%, 1);
+  border-radius: 0 0 16px 16px;
+  color: black;
+  margin: calc((var(--padding) * -1) + 4px);
+  padding: var(--padding);
+`;
+
+const CheckboxWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+`;
+
+const Button = styled.button`
+  background-color: var(--color-blue);
+  color: var(--color-text);
+  border: 0;
+  border-radius: 8px;
+  width: 272px;
+  height: 48px;
+  margin: auto;
+  margin-top: 20px;
+  display: block;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+`;
+
 function CourseRegistrationForm() {
   const form = useForm();
 
@@ -31,7 +85,6 @@ function CourseRegistrationForm() {
     error,
     isLoading,
   } = useSWR<Course[]>('http://localhost:3001/courses', fetcher);
-  console.log(courseData);
 
   const { data: formTitle } = useSWR<Title>(
     'http://localhost:3001/title',
@@ -125,69 +178,30 @@ function CourseRegistrationForm() {
               name='application-confirm'
               label='Application Confirm'
             ></FormizStep>
-            <Button type='submit'>
-              {form.steps && form.currentStep?.index === form.steps?.length - 1
-                ? 'Submit'
-                : 'Next'}
-            </Button>
+            <div className={css({ display: 'flex', gap: '8px' })}>
+              <Button type='submit'>
+                {form.steps &&
+                form.currentStep?.index === form.steps?.length - 1
+                  ? 'Submit'
+                  : 'Next Step'}
+              </Button>
+              {form.steps &&
+                form.currentStep?.index !== 0 &&
+                form.currentStep?.index !== form.steps?.length - 1 && (
+                  <Button
+                    type='button'
+                    onClick={() => form.goToPreviousStep()}
+                    style={{ backgroundColor: 'grey' }}
+                  >
+                    Back
+                  </Button>
+                )}
+            </div>
           </FormStepContent>
         </Formiz>
       </FormWrapper>
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  --padding: 24px;
-  max-width: 1100px;
-  width: 1100px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: linear-gradient(
-    276.54deg,
-    #135395 -9.35%,
-    #688db4 27.11%,
-    #2b72bc 77.45%
-  );
-  border-radius: 16px;
-  border: 4px;
-  padding: var(--padding);
-  color: var(--color-text);
-`;
-
-const FormWrapper = styled.div`
-  width: 100%;
-`;
-
-const FormStepContent = styled.div`
-  background-color: hsla(210, 100%, 95%, 1);
-  border-radius: 0 0 16px 16px;
-  color: black;
-  margin: calc((var(--padding) * -1) + 4px);
-  padding: var(--padding);
-`;
-
-const CheckboxWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-`;
-
-const Button = styled.button`
-  background-color: var(--color-blue);
-  color: var(--color-text);
-  border: 0;
-  border-radius: 8px;
-  width: 272px;
-  height: 48px;
-  margin: auto;
-  margin-top: 20px;
-  display: block;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 export default CourseRegistrationForm;
