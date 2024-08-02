@@ -23,7 +23,14 @@ function Checkbox({
           />
         </RadixCheckbox.Indicator>
       </RadixCheckboxRoot>
-      <label htmlFor={id}>
+      <label
+        className={css({
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        })}
+        htmlFor={id}
+      >
         {label}
         {children}
       </label>
@@ -46,6 +53,10 @@ const RadixCheckboxRoot = styled(RadixCheckbox.Root)`
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 10px var(--black-a7);
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default Checkbox;
