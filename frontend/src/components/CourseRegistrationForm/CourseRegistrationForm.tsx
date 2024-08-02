@@ -4,11 +4,13 @@ import { Formiz, FormizStep, useForm } from '@formiz/core';
 import useSWR from 'swr';
 import { css, styled } from '@pigment-css/react';
 import FormStepper from '../FormStepper';
-import { fetcher } from '@/utils';
+import { fetcher, range } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
 import Input from '../Input';
 import OTPInput from '../OTPInput';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { randomUUID } from 'crypto';
 
 interface Title {
   name: string;
@@ -85,6 +87,12 @@ const Button = styled.button`
 
 function CourseRegistrationForm() {
   const form = useForm();
+  const newChildrenForm = useForm();
+  const [isDisplayNewChildrenForm, setIsDisplayNewChildrenForm] =
+    React.useState(false);
+
+  const toggleNewChildrenForm = () =>
+    setIsDisplayNewChildrenForm(!isDisplayNewChildrenForm);
 
   const {
     data: courseData,
@@ -130,9 +138,7 @@ function CourseRegistrationForm() {
           <FormStepContent>
             <FormizStep name='course-information' label='Course Information'>
               <h2>Course Selection</h2>
-              <h3>
-                1. Please choose the camp(s) for which you are registering:
-              </h3>
+              <h3>Please choose the camp(s) for which you are registering:</h3>
               <CheckboxWrapper>
                 {courseData?.map((course) => {
                   return (
@@ -154,8 +160,8 @@ function CourseRegistrationForm() {
                   );
                 })}
               </CheckboxWrapper>
-              <h3>2. Before and/or After Camp Option.</h3>
               <Select
+                label='Before and/or After Camp Option'
                 placeholder='Select a Before and/or After Camp Option'
                 options={[
                   { value: 'dummy1', text: 'Before Care (7:30am to 9:00am)' },
@@ -167,12 +173,12 @@ function CourseRegistrationForm() {
               name='personal-information'
               label='Personal Information'
             >
-              <h3>Login / Register</h3>
+              <h2>Login / Register</h2>
               <Input label='Email' type='email' name='email' />
               <Input label='Phone Number' type='text' name='phoneNo' />
             </FormizStep>
             <FormizStep name='one-time-password' label='One-time Password'>
-              <h3>One-time Password</h3>
+              <h2>One-time Password</h2>
               <div>We’ve sent an OTP(One-Time Password) to your email.</div>
               <div>
                 Please enter the 6 digits OTP value to complete the
@@ -180,10 +186,111 @@ function CourseRegistrationForm() {
               </div>
               <OTPInput length={6} />
             </FormizStep>
-            <FormizStep
-              name='account-setting'
-              label='Account Setting'
-            ></FormizStep>
+            <FormizStep name='account-setting' label='Account Setting'>
+              <h2>Account Setting</h2>
+              {!isDisplayNewChildrenForm && (
+                <>
+                  <div>
+                    Please select the children who are going to apply the course
+                  </div>
+
+                  <CheckboxWrapper>
+                    {range(5).map((index) => {
+                      return (
+                        <Checkbox id='dummy' key={index} label='Dummy'>
+                          <div>Chan Siu Ming</div>
+                          <div>Birth date: 18Jul 2016</div>
+                        </Checkbox>
+                      );
+                    })}
+                  </CheckboxWrapper>
+                  <hr />
+                  <button
+                    type='button'
+                    className={css({
+                      display: 'flex',
+                      gap: '8px',
+                      background: 'transparent',
+                      color: 'var(--color-blue)',
+                      width: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      border: 0,
+                      fontSize: '1.25rem',
+
+                      [`&:hover`]: {
+                        cursor: 'pointer',
+                      },
+                    })}
+                    onClick={toggleNewChildrenForm}
+                  >
+                    <PlusCircledIcon
+                      className={css({
+                        transform: 'scale(2)',
+                      })}
+                    />
+                    Add A New Children
+                  </button>
+                </>
+              )}
+              {isDisplayNewChildrenForm && (
+                <div>
+                  <button
+                    type='button'
+                    className={css({
+                      display: 'flex',
+                      gap: '8px',
+                      background: 'transparent',
+                      color: 'var(--color-blue)',
+                      width: '100%',
+                      alignItems: 'center',
+                      border: 0,
+                      fontSize: '1.25rem',
+
+                      [`&:hover`]: {
+                        cursor: 'pointer',
+                      },
+                    })}
+                    onClick={toggleNewChildrenForm}
+                  >
+                    {'< Back to select'}
+                  </button>
+                  <Formiz connect={newChildrenForm}>
+                    <Input
+                      label="Student's Legal Name"
+                      type='text'
+                      name='student-name'
+                    />
+                    <Select
+                      label="Student's Gender"
+                      placeholder='Please select your answer'
+                      options={[
+                        { value: 'dummy1', text: 'Dummy1' },
+                        { value: 'dummy2', text: 'Dummy2' },
+                      ]}
+                    />
+                    <Input
+                      label="Student's Date of Birth"
+                      type='date'
+                      name='student-dob'
+                    />
+                    <Input
+                      label="Student's Home Address"
+                      type='text'
+                      name='student-address'
+                    />
+                    <Select
+                      label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
+                      placeholder='Please select your answer'
+                      options={[
+                        { value: 'dummy1', text: 'Dummy1' },
+                        { value: 'dummy2', text: 'Dummy2' },
+                      ]}
+                    />
+                  </Formiz>
+                </div>
+              )}
+            </FormizStep>
             <FormizStep
               name='emergency-contact'
               label='Emergency Contact'
