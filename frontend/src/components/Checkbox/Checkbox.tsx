@@ -53,9 +53,14 @@ const RadixCheckboxRoot = styled(RadixCheckbox.Root)`
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 10px var(--black-a7);
+  padding: 0;
 
   &:hover {
     cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: lightgreen solid 3px;
   }
 `;
 
