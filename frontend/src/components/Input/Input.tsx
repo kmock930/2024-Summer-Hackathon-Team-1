@@ -3,6 +3,7 @@ import {
   Description,
   Field,
   Label,
+  InputProps,
 } from '@headlessui/react';
 import * as React from 'react';
 import CourseRegistrationForm from '../CourseRegistrationForm';
@@ -19,7 +20,7 @@ function Input({
   description?: string;
   type: string;
   name: string;
-}) {
+} & InputProps) {
   return (
     <div>
       <Field>
@@ -30,6 +31,7 @@ function Input({
             [`${CourseRegistrationForm} &`]: {
               width: '100%',
               border: 'solid 2px hsla(0, 0%, 24%, 1)',
+              borderRadius: '4px',
             },
           })}
           name={name}
