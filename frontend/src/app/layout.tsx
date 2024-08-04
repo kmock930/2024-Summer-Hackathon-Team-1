@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@pigment-css/react/styles.css';
 import { globalCss, styled } from '@pigment-css/react';
+import RetoolProvider from '@/components/RetoolProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -105,7 +106,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <BackgroundWrapper>{children}</BackgroundWrapper>
+        <RetoolProvider>
+          <BackgroundWrapper>{children}</BackgroundWrapper>
+        </RetoolProvider>
       </body>
     </html>
   );

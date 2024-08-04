@@ -9,3 +9,5 @@ export const QUERIES = {
   tabletAndDown: `(max-width: ${BREAKPOINTS.tabletMax}px)`,
   mobileAndDown: `(max-width: ${BREAKPOINTS.mobileMax}px)`,
 };
+
+export const API_URL = 'http://localhost:3001';

@@ -12,6 +12,7 @@ import OTPInput from '../OTPInput';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
 import * as RadixCheckbox from '@radix-ui/react-checkbox';
+import { useList, useOne, useShow } from '@refinedev/core';
 
 interface Title {
   name: string;
@@ -77,16 +78,11 @@ function CourseRegistrationForm() {
   const toggleNewChildrenForm = () =>
     setIsDisplayNewChildrenForm(!isDisplayNewChildrenForm);
 
-  const {
-    data: courseData,
-    error,
-    isLoading,
-  } = useSWR<Course[]>('http://localhost:3001/courses', fetcher);
+  const { data: courseData } = useList({ resource: 'courses' });
+  console.log(courseData?.data);
 
-  const { data: formTitle } = useSWR<Title>(
-    'http://localhost:3001/title',
-    fetcher
-  );
+  const { data: formTitle } = useList<Title>({ resource: 'title' });
+  console.log(formTitle);
 
   const courseFields = useFormFields({
     connect: form,
@@ -114,11 +110,11 @@ function CourseRegistrationForm() {
                   Please choose the camp(s) for which you are registering:
                 </h3>
                 <CheckboxWrapper>
-                  {courseData?.map((course) => {
+                  {courseData?.data.map((course) => {
                     return (
                       <React.Fragment key={course.id}>
                         <Checkbox
-                          id={course.id}
+                          id={`${course.id}`}
                           key={course.id}
                           label={course.name}
                           name={`course.${course.id}`}
