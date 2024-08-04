@@ -12,21 +12,10 @@ import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
 import { useList } from '@refinedev/core';
 import { CheckboxGroup, Label } from 'react-aria-components';
+import FormContent from '../FormContent';
 
 const FormWrapper = styled.div`
   width: 100%;
-`;
-
-const FormStepContent = styled.div`
-  background-color: hsla(210, 100%, 95%, 1);
-  border-radius: 0 0 16px 16px;
-  color: black;
-  margin: calc((var(--padding) * -1) + 4px);
-  padding: var(--padding);
-  height: 660px; /*  */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -85,7 +74,7 @@ function CourseRegistrationForm() {
     <FormWrapper>
       <Formiz connect={form} autoForm='step'>
         <FormStepper />
-        <FormStepContent>
+        <FormContent>
           {!isSubmited && (
             <>
               <FormizStep name='course-information' label='Course Information'>
@@ -379,7 +368,7 @@ function CourseRegistrationForm() {
               </Button>
             </div>
           )}
-        </FormStepContent>
+        </FormContent>
       </Formiz>
     </FormWrapper>
   );
