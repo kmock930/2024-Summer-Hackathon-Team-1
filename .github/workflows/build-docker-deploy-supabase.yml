@@ -6,7 +6,6 @@ on:
 jobs:
   deploy_supabase:
     name: Deploy Edge Functions to Supabase one-by-one.
-    needs: build_docker
     runs-on: ubuntu-latest
 
     steps:
