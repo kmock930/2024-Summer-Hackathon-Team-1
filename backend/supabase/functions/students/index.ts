@@ -15,7 +15,7 @@ const supabase = createClient(
 );
 
 Deno.serve(async (req: Request) => {
-  const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json", status: 200}};
+  const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json"}, status: 200};
   let errorResponse: object;
   // Parse parameters from URL
   const url:URL = new URL(req.url);
@@ -64,6 +64,18 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'POST':
+      // Add
+      break;
+    case 'PATCH':
+      // Update
+      break;
+    case 'OPTIONS':
+      // To handle preflight response from browser
+      return new Response(
+        'ok',
+        responseHeader
+      );
+    case 'DELETE':
       break;
     default:
       //other operations
