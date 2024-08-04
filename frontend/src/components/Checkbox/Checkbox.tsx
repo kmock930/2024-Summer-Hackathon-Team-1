@@ -1,75 +1,88 @@
-import { css, styled } from '@pigment-css/react';
+import { styled } from '@pigment-css/react';
 import * as React from 'react';
-import * as RadixCheckbox from '@radix-ui/react-checkbox';
-import { CheckIcon } from '@radix-ui/react-icons';
-import { FieldProps, useField } from '@formiz/core';
+import { Label, Checkbox as ReactAriaCheckbox } from 'react-aria-components';
 import { CheckboxProps } from '@/types';
 
-function Checkbox({ id, label, children, ...delegated }: CheckboxProps) {
-  const { value, setValue, errorMessage, isValid, isSubmitted } = useField({
-    defaultValue: false,
-    ...delegated,
-  });
+const AriaCheckbox = styled(ReactAriaCheckbox)({
+  '--selected-color': '#6f46ed',
+  '--selected-color-pressed': '#522acd',
+  '--checkmark-color': 'white',
+  '--border-color': 'black',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.571rem',
+  color: 'var(--text-color)',
+  forcedColorAdjust: 'none',
+} as React.CSSProperties);
+
+const CheckboxIndicator = styled('div')({
+  width: '1.143rem',
+  height: '1.143rem',
+  border: '2px solid var(--border-color)',
+  borderRadius: '4px',
+  transition: 'all 200ms',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  [`${AriaCheckbox}[data-pressed] &`]: {
+    borderColor: 'var(--border-color-pressed)',
+  },
+
+  [`${AriaCheckbox}[data-focus-visible] &`]: {
+    outline: '2px solid var(--focus-ring-color)',
+    outlineOffset: '2px',
+  },
+  [`${AriaCheckbox}[data-selected] &`]: {
+    borderColor: 'var(--selected-color)',
+    background: 'var(--selected-color)',
+  },
+  [`${AriaCheckbox}[data-indeterminate] &`]: {
+    borderColor: 'var(--selected-color)',
+    background: 'var(--selected-color)',
+  },
+  [`${AriaCheckbox}[data-selected] ${AriaCheckbox}[data-pressed] &`]: {
+    borderColor: 'var(--selected-color-pressed)',
+    background: 'var(--selected-color-pressed)',
+  },
+});
+
+const CheckedIcon = styled('svg')({
+  width: '1rem',
+  height: '1rem',
+  fill: 'none',
+  stroke: 'var(--checkmark-color)',
+  strokeWidth: '3px',
+  strokeDasharray: '22px',
+  strokeDashoffset: 66,
+  transition: 'all 200ms',
+  [`${AriaCheckbox}[data-indeterminate] &`]: {
+    strokeDashoffset: 44,
+  },
+
+  [`${AriaCheckbox}[data-selected] &`]: {
+    strokeDashoffset: 44,
+  },
+
+  [`${AriaCheckbox}[data-indeterminate] ${AriaCheckbox} &`]: {
+    stroke: 'none',
+    fill: 'var(--checkmark-color)',
+  },
+});
+
+function Checkbox({ value, label, children }: CheckboxProps) {
   return (
-    <Wrapper>
-      <RadixCheckboxRoot
-        id={id}
-        style={
-          {
-            '--border-color': !isValid && isSubmitted && 'red',
-          } as React.CSSProperties
-        }
-        checked={value ?? undefined}
-        onCheckedChange={setValue}
-      >
-        <RadixCheckbox.Indicator>
-          <CheckIcon
-            className={css({
-              transform: 'scale(2)',
-            })}
-          />
-        </RadixCheckbox.Indicator>
-      </RadixCheckboxRoot>
-      <label
-        className={css({
-          '&:hover': {
-            cursor: 'pointer',
-          },
-        })}
-        htmlFor={id}
-      >
-        {label}
+    <AriaCheckbox value={value}>
+      <CheckboxIndicator>
+        <CheckedIcon viewBox='0 0 18 18' aria-hidden='true'>
+          <polyline points='1 9 7 14 15 4' />
+        </CheckedIcon>
+      </CheckboxIndicator>
+      <div>
+        <Label>{label}</Label>
         {children}
-      </label>
-    </Wrapper>
+      </div>
+    </AriaCheckbox>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
-
-const RadixCheckboxRoot = styled(RadixCheckbox.Root)`
-  background-color: white;
-  border-color: var(--border-color);
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 10px var(--black-a7);
-  padding: 0;
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &:focus-visible {
-    outline: lightgreen solid 3px;
-  }
-`;
 
 export default Checkbox;

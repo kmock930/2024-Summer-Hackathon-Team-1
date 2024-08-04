@@ -1,33 +1,17 @@
 'use client';
 import * as React from 'react';
 import { Formiz, FormizStep, useForm, useFormFields } from '@formiz/core';
-import useSWR from 'swr';
 import { css, styled } from '@pigment-css/react';
 import FormStepper from '../FormStepper';
-import { fetcher, range } from '@/utils';
+import { range } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
 import Input from '../Input';
 import OTPInput from '../OTPInput';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
-import * as RadixCheckbox from '@radix-ui/react-checkbox';
-import { useList, useOne, useShow } from '@refinedev/core';
-
-interface Title {
-  name: string;
-}
-
-interface Course {
-  id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  daysOfWeek: string;
-  startTime: string;
-  endTime: string;
-  weeks: string;
-}
+import { useList } from '@refinedev/core';
+import { CheckboxGroup, Label } from 'react-aria-components';
 
 const FormWrapper = styled.div`
   width: 100%;
@@ -81,7 +65,7 @@ function CourseRegistrationForm() {
   const { data: courseData } = useList({ resource: 'courses' });
   console.log(courseData?.data);
 
-  const { data: formTitle } = useList<Title>({ resource: 'title' });
+  const { data: formTitle } = useList({ resource: 'title' });
   console.log(formTitle);
 
   const courseFields = useFormFields({
@@ -106,26 +90,20 @@ function CourseRegistrationForm() {
             <>
               <FormizStep name='course-information' label='Course Information'>
                 <h2>Course Selection</h2>
-                <h3>
-                  Please choose the camp(s) for which you are registering:
-                </h3>
-                <CheckboxWrapper>
+                <CheckboxGroup
+                  className={css({
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '16px',
+                  })}
+                >
                   {courseData?.data.map((course) => {
                     return (
                       <React.Fragment key={course.id}>
                         <Checkbox
-                          id={`${course.id}`}
-                          key={course.id}
                           label={course.name}
-                          name={`course.${course.id}`}
-                          validations={[
-                            {
-                              handler: () => isCourseFieldsChecked,
-                              deps: [isCourseFieldsChecked],
-                              message: 'You need to select 1 course',
-                              checkFalsy: true,
-                            },
-                          ]}
+                          value={`${course.id}`}
+                          key={course.id}
                         >
                           <div>
                             {course.startDate} to {course.endDate} (
@@ -138,7 +116,7 @@ function CourseRegistrationForm() {
                       </React.Fragment>
                     );
                   })}
-                </CheckboxWrapper>
+                </CheckboxGroup>
                 <Select
                   label='Before and/or After Camp Option'
                   placeholder='Select a Before and/or After Camp Option'
@@ -191,10 +169,9 @@ function CourseRegistrationForm() {
                       {range(5).map((index) => {
                         return (
                           <Checkbox
-                            id='dummy'
+                            value={`${index}`}
                             key={index}
                             label='Dummy'
-                            name='dummy'
                           >
                             <div>Chan Siu Ming</div>
                             <div>Birth date: 18Jul 2016</div>
@@ -279,7 +256,7 @@ function CourseRegistrationForm() {
                         name='student-address'
                       />
                       <Select
-                        label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
+                        label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
                         placeholder='Please select your answer'
                         options={[
                           { value: 'dummy1', text: 'Dummy1' },
@@ -291,7 +268,7 @@ function CourseRegistrationForm() {
                 )}
               </FormizStep>
               <FormizStep name='emergency-contact' label='Emergency Contact'>
-                <h2>Parent/Guardian and Emergency Contact Information</h2>
+                <h2>Parent/Guardian and Emergency Contact Information</h2>
                 <Input
                   label="Parent/Guardian's Legal Full Name"
                   type='text'
@@ -305,7 +282,7 @@ function CourseRegistrationForm() {
                   placeholder='Please enter your answer'
                 />
                 <Input
-                  label='Emergency Contact Name'
+                  label='Emergency Contact Name'
                   type='text'
                   name='student-address'
                   placeholder='Please enter your answer'
@@ -318,7 +295,7 @@ function CourseRegistrationForm() {
                 />
                 <Input
                   label={'Pick Up Arrangements'}
-                  description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
+                  description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
                   type='text'
                   name='student-address'
                   placeholder='Please enter your answer'
@@ -327,18 +304,16 @@ function CourseRegistrationForm() {
               <FormizStep name='consent' label='Consent'>
                 <h2>Consent</h2>
                 <Checkbox
-                  name='dummy'
-                  id='agree-photo'
+                  value={'dummy'}
                   label='Photographs, films, slides, videoI give my permission for the use of photographs, films, slides, video taken during the program for the promotional purposes of the Centre for Immigrant and Community Services (CICS). I understand that there will not be any compensation for photographs or videos taken of the participant in the program.'
                 />
                 <Checkbox
-                  name='dummy'
-                  id='agree-permission'
+                  value={'dummy'}
                   label='Content InformationI give permission to CICS to deliver agency information to my email address and understand I can withdraw my consent at any time.'
                 />
                 <Input
                   label='Please read the Consent : https://bit.ly/CICSCentreforLearningConsentForm'
-                  description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility. By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
+                  description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility. By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
                   type='text'
                   name='student-address'
                   placeholder='Please enter your answer'
@@ -357,8 +332,8 @@ function CourseRegistrationForm() {
                 </div>
                 <div>
                   Course fees are non-refundable. However, if the minimum number
-                  of participants are not reached, the course will be
-                  cancelled and the fee will be refund.
+                  of participants are not reached, the course will be cancelled
+                  and the fee will be refund.
                 </div>
               </FormizStep>
               <div className={css({ display: 'flex', gap: '8px' })}>
