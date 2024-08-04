@@ -5,8 +5,8 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from 'npm:@supabase/supabase-js@2.39.3'
-import {errorMessages} from './constants.ts';
-import {parseQueryCondition} from './common.ts';
+import {errorMessages} from '../_shared/constants.ts';
+import {parseQueryCondition} from '../_shared/common.ts';
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
 
 const supabase = createClient(
