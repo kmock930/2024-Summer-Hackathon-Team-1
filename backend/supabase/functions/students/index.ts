@@ -5,29 +5,91 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from 'npm:@supabase/supabase-js@2.39.3'
+import {errorMessages} from '../_shared/constants.ts';
+import {parseQueryCondition} from '../_shared/common.ts';
+import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
 
 const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-)
+  Deno.env.get("API_URL"),
+  Deno.env.get("API_ANON")!
+);
 
 Deno.serve(async (req: Request) => {
-  const {data , error} = await supabase
-    .from("students")
-    .select()
-  console.log(req)
-  console.log(data)
-  if (error) console.log(error)
-
-  const res = {
-    "students": data
+  const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json"}, status: 200};
+  let errorResponse: object;
+  // Parse parameters from URL
+  const url:URL = new URL(req.url);
+  const queryParams = parseQueryCondition(url);
+  
+  switch (req.method) {
+    case 'GET':
+      // Construct the query first
+      let query = supabase
+        .from('students')
+        .select();
+      // Conditional chaining (for filtering)
+      if (queryParams.param_student_id) {
+        query.eq('id', queryParams.param_student_id);
+      }
+      if (queryParams.param_firstname) {
+        query.eq('firstname', queryParams.param_firstname);
+      }
+      if (queryParams.param_lastname) {
+        query.eq('lastname', queryParams.param_lastname);
+      }
+      if (queryParams.param_gender) {
+        query.eq('gender', queryParams.param_gender)
+      }
+      if (queryParams.param_dob) {
+        query.eq('dob', queryParams.param_dob);
+      }
+      // Execute the query
+      const { data, error } = await query;
+      // Error handling
+      if (error) {
+        console.error(error);
+        errorResponse = {
+          message: `ERROR: ${error}`,
+          reason: errorMessages.dbError
+        };
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
+    case 'POST':
+      // Add
+      break;
+    case 'PATCH':
+      // Update
+      break;
+    case 'OPTIONS':
+      // To handle preflight response from browser
+      return new Response(
+        'ok',
+        responseHeader
+      );
+    case 'DELETE':
+      break;
+    default:
+      //other operations
+      errorResponse = {
+        message: errorMessages.invalidOp,
+        reason: errorMessages.invalidOp_reason
+      };
+      responseHeader.status = 404;
+      return new Response(
+        JSON.stringify(errorResponse),
+        responseHeader
+      );
   }
-
-  return new Response(
-    JSON.stringify(res),
-    {headers: {"Content-Type": "application/json"}}
-  )
-})
+});
 
 /* To invoke locally:
 
