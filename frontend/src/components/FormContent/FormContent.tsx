@@ -13,15 +13,17 @@ const FormContentWrapper = styled.div`
   margin-top: var(--padding);
   padding: var(--padding);
   height: 660px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
 
-function FormContent({ children }: { children?: React.ReactNode }) {
+function FormContent({
+  children,
+  ...delegated
+}: {
+  children?: React.ReactNode;
+} & React.ComponentProps<'div'>) {
   return (
     <Wrapper>
-      <FormContentWrapper>{children}</FormContentWrapper>
+      <FormContentWrapper {...delegated}>{children}</FormContentWrapper>
     </Wrapper>
   );
 }
