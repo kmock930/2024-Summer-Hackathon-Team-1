@@ -145,13 +145,6 @@ function CourseRegistrationForm() {
                 />
               </FormizStep>
               <FormizStep name='one-time-password' label='One-time Password'>
-                {/* <h2>One-time Password</h2>
-                <div>We’ve sent an OTP(One-Time Password) to your email.</div>
-                <div>
-                  Please enter the 6 digits OTP value to complete the
-                  verification.
-                </div>
-                <OTPInput length={6} /> */}
                 <OTPForm />
               </FormizStep>
               <FormizStep name='account-setting' label='Account Setting'>
