@@ -42,6 +42,10 @@ function Select({
             height: '35px',
             gap: '5px',
             backgroundColor: 'white',
+
+            [`&:focus-visible`]: {
+              outline: '2px solid lightgreen',
+            },
           })}
         >
           <RadixSelect.Value placeholder={placeholder} />

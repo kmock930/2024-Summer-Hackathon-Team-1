@@ -2,19 +2,26 @@ import { css, styled } from '@pigment-css/react';
 import * as React from 'react';
 import * as RadixCheckbox from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
+import { FieldProps, useField } from '@formiz/core';
+import { CheckboxProps } from '@/types';
 
-function Checkbox({
-  id,
-  label,
-  children,
-}: {
-  id: string;
-  label: string;
-  children?: React.ReactNode;
-}) {
+function Checkbox({ id, label, children, ...delegated }: CheckboxProps) {
+  const { value, setValue, errorMessage, isValid, isSubmitted } = useField({
+    defaultValue: false,
+    ...delegated,
+  });
   return (
     <Wrapper>
-      <RadixCheckboxRoot id={id}>
+      <RadixCheckboxRoot
+        id={id}
+        style={
+          {
+            '--border-color': !isValid && isSubmitted && 'red',
+          } as React.CSSProperties
+        }
+        checked={value ?? undefined}
+        onCheckedChange={setValue}
+      >
         <RadixCheckbox.Indicator>
           <CheckIcon
             className={css({
@@ -46,6 +53,7 @@ const Wrapper = styled.div`
 
 const RadixCheckboxRoot = styled(RadixCheckbox.Root)`
   background-color: white;
+  border-color: var(--border-color);
   width: 25px;
   height: 25px;
   border-radius: 4px;

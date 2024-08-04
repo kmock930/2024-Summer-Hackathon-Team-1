@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { Formiz, FormizStep, useForm } from '@formiz/core';
+import { Formiz, FormizStep, useForm, useFormFields } from '@formiz/core';
 import useSWR from 'swr';
 import { css, styled } from '@pigment-css/react';
 import FormStepper from '../FormStepper';
@@ -11,6 +11,7 @@ import Input from '../Input';
 import OTPInput from '../OTPInput';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
+import * as RadixCheckbox from '@radix-ui/react-checkbox';
 
 interface Title {
   name: string;
@@ -87,6 +88,19 @@ function CourseRegistrationForm() {
     fetcher
   );
 
+  const courseFields = useFormFields({
+    connect: form,
+    fields: ['course'],
+    selector: (field) => field.value,
+  }) as { [key: string]: boolean };
+
+  const isCourseFieldsChecked = React.useMemo(() => {
+    if (courseFields && courseFields.course) {
+      return Object.values(courseFields.course).some((value) => value === true);
+    }
+    return false;
+  }, [courseFields]);
+
   return (
     <FormWrapper>
       <Formiz connect={form} autoForm='step'>
@@ -107,6 +121,15 @@ function CourseRegistrationForm() {
                           id={course.id}
                           key={course.id}
                           label={course.name}
+                          name={`course.${course.id}`}
+                          validations={[
+                            {
+                              handler: () => isCourseFieldsChecked,
+                              deps: [isCourseFieldsChecked],
+                              message: 'You need to select 1 course',
+                              checkFalsy: true,
+                            },
+                          ]}
                         >
                           <div>
                             {course.startDate} to {course.endDate} (
@@ -171,7 +194,12 @@ function CourseRegistrationForm() {
                     <CheckboxWrapper>
                       {range(5).map((index) => {
                         return (
-                          <Checkbox id='dummy' key={index} label='Dummy'>
+                          <Checkbox
+                            id='dummy'
+                            key={index}
+                            label='Dummy'
+                            name='dummy'
+                          >
                             <div>Chan Siu Ming</div>
                             <div>Birth date: 18Jul 2016</div>
                           </Checkbox>
@@ -303,16 +331,18 @@ function CourseRegistrationForm() {
               <FormizStep name='consent' label='Consent'>
                 <h2>Consent</h2>
                 <Checkbox
+                  name='dummy'
                   id='agree-photo'
-                  label='Photographs, films, slides, video I give my permission for the use of photographs, films, slides, video taken during the program for the promotional purposes of the Centre for Immigrant and Community Services (CICS). I understand that there will not be any compensation for photographs or videos taken of the participant in the program.'
+                  label='Photographs, films, slides, videoI give my permission for the use of photographs, films, slides, video taken during the program for the promotional purposes of the Centre for Immigrant and Community Services (CICS). I understand that there will not be any compensation for photographs or videos taken of the participant in the program.'
                 />
                 <Checkbox
+                  name='dummy'
                   id='agree-permission'
-                  label='Content Information I give permission to CICS to deliver agency information to my email address and understand I can withdraw my consent at any time.'
+                  label='Content InformationI give permission to CICS to deliver agency information to my email address and understand I can withdraw my consent at any time.'
                 />
                 <Input
                   label='Please read the Consent : https://bit.ly/CICSCentreforLearningConsentForm'
-                  description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility.   By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
+                  description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility. By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
                   type='text'
                   name='student-address'
                   placeholder='Please enter your answer'
