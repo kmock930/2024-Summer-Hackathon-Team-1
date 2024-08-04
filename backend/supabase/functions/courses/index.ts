@@ -6,6 +6,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {createClient} from 'npm:@supabase/supabase-js@2.39.3';
 
+const headers = {
+  'Content-Type': 'application/json',
+  'Access-Control-ALlow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
+}
+
 const sb = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -23,7 +29,7 @@ Deno.serve(async (req: Request) => {
           return new Response(
             JSON.stringify(error),
             {
-              headers: { 'Content-Type': 'application/json' },
+              headers: headers,
               status: 400
             }
           );
@@ -31,7 +37,10 @@ Deno.serve(async (req: Request) => {
 
         return new Response(
           JSON.stringify({ 'courses': data }),
-          { headers: { 'Content-Type': 'application/json' } }
+          {
+            headers: headers,
+            status: 200
+          }
         );
 
     case 'POST':
@@ -47,7 +56,7 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({ 'message': 'Not Implemented' }),
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           status: 400
         }
       );
