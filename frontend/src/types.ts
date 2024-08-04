@@ -1,7 +1,10 @@
+import React from 'react';
+
 export type CheckboxProps = {
-  value: string;
+  value?: string;
   label?: string;
   children?: React.ReactNode;
+  slot?: string;
 };
 
 export interface ICourse {
