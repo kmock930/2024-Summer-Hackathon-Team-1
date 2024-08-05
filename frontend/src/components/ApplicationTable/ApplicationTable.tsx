@@ -6,7 +6,6 @@ import {
   MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
   MRT_ToggleGlobalFilterButton,
-  MRT_ToggleRowActionMenuButton,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
@@ -77,7 +76,7 @@ function ApplicationTable() {
 
   const table = useMantineReactTable({
     columns,
-    data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data,
     enableEditing: true,
     enableRowSelection: true,
     renderToolbarInternalActions: ({ table }) => {
@@ -86,7 +85,7 @@ function ApplicationTable() {
           <MRT_ToggleGlobalFilterButton table={table} />
           <MRT_ToggleFiltersButton table={table} />
           <MRT_ToggleFullScreenButton table={table} />
-          <Link href='/admin/application/create'>Create New Survey</Link>
+          <Link href='/admin/applications/create'>Create New Survey</Link>
         </>
       );
     },
