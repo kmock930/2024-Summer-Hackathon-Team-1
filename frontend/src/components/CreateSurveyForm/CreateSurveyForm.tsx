@@ -56,7 +56,7 @@ function CreateSurveyForm() {
     >
       <FormWrapper>
         <FormToolbar>
-          <Link href='/admin/application'>{'< back to survey'}</Link>
+          <Link href='/admin/applications'>{'< back to survey'}</Link>
           <button>Create Survey</button>
         </FormToolbar>
         <hr />
