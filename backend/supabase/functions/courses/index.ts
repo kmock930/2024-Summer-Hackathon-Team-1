@@ -5,21 +5,14 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
-import {errorMessages} from '../_shared/constants.ts';
-import {parseQueryCondition} from '../_shared/common.ts';
-// import {corsHeaders} from "../_shared/cors.ts";
+import { errorMessages } from '../_shared/constants.ts';
+import { parseQueryCondition } from '../_shared/common.ts';
+import { corsHeaders } from "../_shared/cors.ts";
 
 /* TODO
  * 1. Set create / update / delete person
  * 2. Extract common parts to a function / shared file
  */
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": '*',
-  // "Access-Control-Request-Method": 'OPTIONS',
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -49,17 +42,15 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET': {
-      const url = new URL(req.url);
-      const id = url.searchParams.get('id');
-
       let query = supabase.from('courses').select();
 
-      if (id) query = query.eq('id', id); // Get course by ID
+      // Get course by ID if provided
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (id) query = query.eq('id', id);
 
       const { data, error } = await query;
-
-      if (error)
-        return generateResponse(error, responseHeader, 400);
+      if (error) return generateResponse(error, responseHeader, 400);
 
       const body = { 'courses': data };
       return generateResponse(body, responseHeader, 200);
@@ -72,16 +63,14 @@ Deno.serve(async (req: Request) => {
         .from('courses')
         .insert(reqBody)
         .select();
-
-      if (error)
-        return generateResponse(error, responseHeader, 400);
+      if (error) return generateResponse(error, responseHeader, 400);
 
       const body = { 'courses': data };
       return generateResponse(body, responseHeader, 200);
     }
 
     case 'PUT': {
-      // Validate ID
+      // check ID
       const url = new URL(req.url);
       const id = url.searchParams.get('id');
       if (!id) {
@@ -92,8 +81,7 @@ Deno.serve(async (req: Request) => {
         .from('courses')
         .select()
         .eq('id', id);
-      if (getError)
-        return generateResponse(getError, responseHeader, 400);
+      if (getError) return generateResponse(getError, responseHeader, 400);
       if (getData.length <= 0) {
         const body = { 'message': 'Course not found' };
         return generateResponse(body, responseHeader, 404);
@@ -116,15 +104,14 @@ Deno.serve(async (req: Request) => {
         .eq('id', id)
         .select();
 
-      if (error)
-        return generateResponse(error, responseHeader, 400);
+      if (error) return generateResponse(error, responseHeader, 400);
       
       const body = { 'courses': data };
       return generateResponse(body, responseHeader, 200);
     }
 
     case 'DELETE': {
-      // Validate ID
+      // check ID
       const url = new URL(req.url);
       const id = url.searchParams.get('id');
       if (!id) {
@@ -135,8 +122,7 @@ Deno.serve(async (req: Request) => {
         .from('courses')
         .select()
         .eq('id', id);
-      if (getError)
-        return generateResponse(getError, responseHeader, 400);
+      if (getError) return generateResponse(getError, responseHeader, 400);
       if (getData.length <= 0) {
         const body = { 'message': 'Course not found' };
         return generateResponse(body, responseHeader, 404);
@@ -148,9 +134,7 @@ Deno.serve(async (req: Request) => {
         .update({ 'deleted_dt': new Date().toISOString() })
         .eq('id', id)
         .select();
-
-      if (error)
-        return generateResponse(error, responseHeader, 400);
+      if (error) return generateResponse(error, responseHeader, 400);
 
       const body = { 'courses': data };
       return generateResponse(body, responseHeader, 200);
