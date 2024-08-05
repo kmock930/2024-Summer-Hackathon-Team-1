@@ -19,10 +19,11 @@ Deno.serve(async (req: Request) => {
   // Parse parameters from URL
   const url:URL = new URL(req.url);
   const adaptor = new StudentAdaptor(url);
+  let data: any;
   
   switch (req.method) {
     case 'GET':
-      const data = await adaptor.getStudents();
+      data = await adaptor.getStudents();
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;
@@ -38,15 +39,23 @@ Deno.serve(async (req: Request) => {
         JSON.stringify(data),
         responseHeader
       );
-    case 'POST':
-      // Add
-      /*
-      const { data, error } = await supabase
-        .from('students')
-        .insert({ id: 1, name: 'Denmark' })
-        .select()
-      */
-      break;
+    case 'POST': // Add
+      data = await adaptor.insertStudents();
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
     case 'PATCH':
       // Update
       break;

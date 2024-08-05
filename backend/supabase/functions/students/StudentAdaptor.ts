@@ -10,16 +10,19 @@ export class StudentAdaptor {
         //initialize db client
         this.supabase = createClient(
             Deno.env.get("API_URL"),
-            Deno.env.get("API_ANON")!
+            Deno.env.get("API_ANON")
         );
 
         // Parse parameters from URL
         this.queryParams = {
+            //for GET method
             param_student_id: url.searchParams.get('id'),
             param_firstname: url.searchParams.get('firstname'),
             param_lastname: url.searchParams.get('lastname'),
             param_gender: url.searchParams.get('gender'),
-            param_dob: url.searchParams.get('dob')
+            param_dob: url.searchParams.get('dob'),
+            //for POST method
+            param_record: url.searchParams.get('records')
         };
     }
 
@@ -56,12 +59,45 @@ export class StudentAdaptor {
             console.error(error);
             errorResponse = {
                 type: 'ERROR',
-                message: error,
-                reason: errorMessages.dbError
+                message: errorMessages.dbError,
+                reason: error
             };
             return errorResponse;
         }
         return data;
     };
-    
+
+    public insertStudents = async (): object => {
+        let errorResponse: object;
+        if (!this.queryParams.param_record) {
+            console.error(errorMessages.noRecordsToAdd);
+            errorResponse = {
+                type: 'ERROR',
+                message: errorMessages.noRecordsToAdd,
+                reason: errorMessages.noRecordsToAdd_reason
+            };
+            return errorResponse;
+        }
+        // Convert the insert JSON from string
+        const insertObj = eval(`(${this.queryParams.param_record})`);
+        console.log(insertObj)
+        // Construct the query
+        const query = this.supabase
+            .from('students')
+            .insert(insertObj, {return: 'representation', defaultToNull: true})
+            .select();
+        // Execute the query
+        const { data, error } = await query;
+        // Error handling
+        if (error) {
+            console.error(error);
+            errorResponse = {
+                type: 'ERROR',
+                message: errorMessages.dbError,
+                reason: error
+            };
+            return errorResponse;
+        }
+        return data;
+    }
 }
