@@ -1,3 +1,6 @@
+import { MRT_ColumnDef } from 'mantine-react-table';
+import React from 'react';
+
 export const BREAKPOINTS = {
   laptopMax: 1100,
   tabletMax: 1024,

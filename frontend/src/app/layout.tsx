@@ -57,6 +57,7 @@ p, h1, h2, h3, h4, h5, h6 {
 :root {
   --color-text: hsl(0deg, 0%, 100%);
   --color-blue: hsla(210deg, 63%, 45%, 1);
+  --color-blue-1: hsla(210deg, 77%, 33%, 1);
   --background: linear-gradient(
     50deg,
     hsl(209deg 87% 51%) 0%,

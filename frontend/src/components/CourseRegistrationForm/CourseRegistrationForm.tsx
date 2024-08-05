@@ -7,26 +7,17 @@ import { range } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
 import Input from '../Input';
-import OTPInput from '../OTPInput';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
 import { useList } from '@refinedev/core';
-import { CheckboxGroup, Label } from 'react-aria-components';
+import { CheckboxGroup } from 'react-aria-components';
+import FormContent from '../FormContent';
+import dynamic from 'next/dynamic';
+
+const OTPForm = dynamic(() => import('../OTPForm'), { ssr: false });
 
 const FormWrapper = styled.div`
   width: 100%;
-`;
-
-const FormStepContent = styled.div`
-  background-color: hsla(210, 100%, 95%, 1);
-  border-radius: 0 0 16px 16px;
-  color: black;
-  margin: calc((var(--padding) * -1) + 4px);
-  padding: var(--padding);
-  height: 660px; /*  */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -85,7 +76,13 @@ function CourseRegistrationForm() {
     <FormWrapper>
       <Formiz connect={form} autoForm='step'>
         <FormStepper />
-        <FormStepContent>
+        <FormContent
+          className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          })}
+        >
           {!isSubmited && (
             <>
               <FormizStep name='course-information' label='Course Information'>
@@ -148,13 +145,7 @@ function CourseRegistrationForm() {
                 />
               </FormizStep>
               <FormizStep name='one-time-password' label='One-time Password'>
-                <h2>One-time Password</h2>
-                <div>We’ve sent an OTP(One-Time Password) to your email.</div>
-                <div>
-                  Please enter the 6 digits OTP value to complete the
-                  verification.
-                </div>
-                <OTPInput length={6} />
+                <OTPForm />
               </FormizStep>
               <FormizStep name='account-setting' label='Account Setting'>
                 <h2>Account Setting</h2>
@@ -379,7 +370,7 @@ function CourseRegistrationForm() {
               </Button>
             </div>
           )}
-        </FormStepContent>
+        </FormContent>
       </Formiz>
     </FormWrapper>
   );

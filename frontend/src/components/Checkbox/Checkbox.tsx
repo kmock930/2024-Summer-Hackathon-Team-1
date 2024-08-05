@@ -69,9 +69,9 @@ const CheckedIcon = styled('svg')({
   },
 });
 
-function Checkbox({ value, label, children }: CheckboxProps) {
+function Checkbox({ value, label, children, ...delegated }: CheckboxProps) {
   return (
-    <AriaCheckbox value={value}>
+    <AriaCheckbox value={value} {...delegated}>
       <CheckboxIndicator>
         <CheckedIcon viewBox='0 0 18 18' aria-hidden='true'>
           <polyline points='1 9 7 14 15 4' />
