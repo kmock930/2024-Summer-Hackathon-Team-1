@@ -4,53 +4,151 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import {createClient} from 'npm:@supabase/supabase-js@2.39.3';
+import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
+import { errorMessages } from '../_shared/constants.ts';
+import { parseQueryCondition } from '../_shared/common.ts';
+import { corsHeaders } from "../_shared/cors.ts";
 
-const sb = createClient(
+/* TODO
+ * 1. Set create / update / delete person
+ * 2. Extract common parts to a function / shared file
+ */
+
+const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-)
+);
+
+const generateResponse = (
+  body: any,
+  headers: HeadersInit,
+  status: number
+): Response => {
+  console.log(body);
+  return new Response(
+    JSON.stringify(body),
+    {
+      headers: headers,
+      status: status
+    }
+  );
+};
 
 Deno.serve(async (req: Request) => {
-  switch (req.method) {
+  const responseHeader: HeadersInit = {
+    ...corsHeaders,
+    "Content-Type": "application/json"
+  };
 
-    case 'GET':
-      const {data, error} = await sb
+  switch (req.method) {
+    case 'GET': {
+      let query = supabase.from('courses').select();
+
+      // Get course by ID if provided
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (id) query = query.eq('id', id);
+
+      const { data, error } = await query;
+      if (error) return generateResponse(error, responseHeader, 400);
+
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    case 'POST': {
+      const reqBody = await req.json();
+
+      const { data, error } = await supabase
         .from('courses')
+        .insert(reqBody)
+        .select();
+      if (error) return generateResponse(error, responseHeader, 400);
+
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    case 'PUT': {
+      // check ID
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (!id) {
+        const body = { 'message': 'Missing ID' };
+        return generateResponse(body, responseHeader, 400);
+      }
+      const { data: getData, error: getError } = await supabase
+        .from('courses')
+        .select()
+        .eq('id', id);
+      if (getError) return generateResponse(getError, responseHeader, 400);
+      if (getData.length <= 0) {
+        const body = { 'message': 'Course not found' };
+        return generateResponse(body, responseHeader, 404);
+      }
+
+      // Validate request body
+      const reqBody = await req.json();
+      if (!reqBody) {
+        const body = { 'message': 'Missing request body' };
+        return generateResponse(body, responseHeader, 400);
+      }
+
+      // Update course
+      const { data, error } = await supabase
+        .from('courses')
+        .update({
+          ...reqBody,
+          'modified_dt': new Date().toISOString()
+        })
+        .eq('id', id)
         .select();
 
-        if (error) {
-          return new Response(
-            JSON.stringify(error),
-            {
-              headers: { 'Content-Type': 'application/json' },
-              status: 400
-            }
-          );
-        }
+      if (error) return generateResponse(error, responseHeader, 400);
+      
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
 
-        return new Response(
-          JSON.stringify({ 'courses': data }),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
+    case 'DELETE': {
+      // check ID
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (!id) {
+        const body = { 'message': 'Missing ID' };
+        return generateResponse(body, responseHeader, 400);
+      }
+      const { data: getData, error: getError } = await supabase
+        .from('courses')
+        .select()
+        .eq('id', id);
+      if (getError) return generateResponse(getError, responseHeader, 400);
+      if (getData.length <= 0) {
+        const body = { 'message': 'Course not found' };
+        return generateResponse(body, responseHeader, 404);
+      }
 
-    case 'POST':
-      // TODO
+      // Delete course (soft delete)
+      const { data, error } = await supabase
+        .from('courses')
+        .update({ 'deleted_dt': new Date().toISOString() })
+        .eq('id', id)
+        .select();
+      if (error) return generateResponse(error, responseHeader, 400);
 
-    case 'PUT':
-      // TODO
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
 
-    case 'DELETE':
-      // TODO
+    case 'OPTIONS':{
+      const body = {'message': 'OK'};
+      return generateResponse(body, responseHeader, 200);
+    }
 
-    default:
-      return new Response(
-        JSON.stringify({ 'message': 'Not Implemented' }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          status: 400
-        }
-      );
+    default: {
+      const body = {'message': 'Invalid request method'};
+      return generateResponse(body, responseHeader, 400);
+    }
   }
 });
 
