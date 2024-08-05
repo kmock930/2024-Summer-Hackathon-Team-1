@@ -142,7 +142,44 @@ export class StudentAdaptor {
         updateCond['modified_by'] = 'cics';
         console.log(updateCond)
         // Execute the query
-        const { data, error } = await query.update(updateCond).eq('id', this.queryParams.param_student_id).select();;
+        const { data, error } = await query.update(updateCond).eq('id', this.queryParams.param_student_id).select();
+        // Error handling
+        if (error) {
+            console.error(error);
+            errorResponse = {
+                type: 'ERROR',
+                message: errorMessages.dbError,
+                reason: error
+            };
+            return errorResponse;
+        }
+        return data;
+    };
+
+    public deleteStudents = async (): object => {
+        let errorResponse: object;
+        if (!this.queryParams?.param_student_id) {
+            console.error(errorMessages.noRecordsToAdd);
+            errorResponse = {
+                type: 'ERROR',
+                message: errorMessages.noRecordsToDelete,
+                reason: errorMessages.noRecordsToDelete_reason
+            };
+            return errorResponse;
+        }
+        // Construct the query
+        let query = this.supabase
+            .from('students');
+        // Construct fields to perform UPDATE
+        const updateCond: Record<string, any> = {};
+        // Set deleted_dt and deleted_by
+        updateCond['deleted_dt'] = getCurrentTimestampWithTimezone(); //UTC time
+        updateCond['deleted_by'] = 'cics';
+        // Set modified_dt and modified_by for auditing purpose in database
+        updateCond['modified_dt'] = getCurrentTimestampWithTimezone(); //UTC time
+        updateCond['modified_by'] = 'cics';
+        // Execute the query
+        const { data, error } = await query.update(updateCond).eq('id', this.queryParams.param_student_id).select();
         // Error handling
         if (error) {
             console.error(error);

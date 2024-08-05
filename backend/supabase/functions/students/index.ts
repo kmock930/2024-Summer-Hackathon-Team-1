@@ -58,8 +58,7 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'PATCH':
-    case 'PUT':
-      // Update
+    case 'PUT': // Update
       data = await adaptor.updateStudents();
       // Error handling
       if (data?.type === 'ERROR') {
@@ -82,8 +81,23 @@ Deno.serve(async (req: Request) => {
         'ok',
         responseHeader
       );
-    case 'DELETE':
-      break;
+    case 'DELETE': // Delete
+      data = await adaptor.deleteStudents();
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
     default:
       //other operations
       errorResponse = {
