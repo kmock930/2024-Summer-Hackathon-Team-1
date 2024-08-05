@@ -35,7 +35,9 @@ export class StudentAdaptor {
         // Construct the query first
         let query = this.supabase
             .from('students')
-            .select();
+            .select()
+            .is('is_active', true)
+            .is('deleted_dt', null);
         // Conditional chaining (for filtering)
         if (this.queryParams.param_student_id) {
             query.eq('id', this.queryParams.param_student_id);
