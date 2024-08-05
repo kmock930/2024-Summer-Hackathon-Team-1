@@ -18,3 +18,16 @@ export interface ICourse {
   endTime: string;
   weeks: string;
 }
+
+export interface ISurvey {
+  surveyNameEN: string;
+  surveyNameZhHant: string;
+  surveyNameZhHans: string;
+  CoursesEnabled: ICourse[];
+  isCareEnabled: boolean;
+  isCareOption: [];
+}
+
+export type SurveyFormProps = {
+  survey?: ISurvey;
+};

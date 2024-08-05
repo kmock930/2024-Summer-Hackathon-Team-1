@@ -1,4 +1,4 @@
-import CreateSurveyForm from '@/components/CreateSurveyForm';
+import SurveyForm from '@/components/SurveyForm';
 import Sidebar from '@/components/Sidebar';
 import { styled } from '@pigment-css/react';
 
@@ -12,7 +12,7 @@ export default function Page() {
     <Wrapper>
       <Sidebar />
 
-      <CreateSurveyForm />
+      <SurveyForm />
     </Wrapper>
   );
 }

@@ -1,8 +1,9 @@
 'use client';
-import { styled } from '@pigment-css/react';
+import { css, styled } from '@pigment-css/react';
 import * as React from 'react';
 import {
   MantineReactTable,
+  MRT_TableContainer,
   MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
   MRT_ToggleGlobalFilterButton,
@@ -10,10 +11,20 @@ import {
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { Link } from 'react-aria-components';
+import TopBar from '../TopBar';
 
 const Wrapper = styled.div`
   padding: 36px;
   width: 100%;
+  background-color: hsla(210, 100%, 95%, 1);
+`;
+
+const ToolWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 `;
 
 const data = [
@@ -93,7 +104,41 @@ function ApplicationTable() {
 
   return (
     <Wrapper>
-      <MantineReactTable table={table} />
+      <TopBar>
+        <ToolWrapper>
+          <MRT_ToggleGlobalFilterButton
+            table={table}
+            className={css({
+              color: 'hsla(210, 77%, 33%, 1)',
+            })}
+          />
+          <MRT_ToggleFiltersButton
+            table={table}
+            className={css({
+              color: 'hsla(210, 77%, 33%, 1)',
+            })}
+          />
+          <Link
+            className={css({
+              background: 'hsla(0, 0%, 100%, 1)',
+              border: '2px solid hsla(210, 77%, 33%, 1)',
+              width: '160px',
+              height: '32px',
+              color: 'hsla(210, 77%, 33%, 1)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textDecoration: 'none',
+              borderRadius: '4px',
+            })}
+            href='/admin/applications/create'
+          >
+            Create New Survey
+          </Link>
+        </ToolWrapper>
+      </TopBar>
+
+      <MRT_TableContainer table={table} />
     </Wrapper>
   );
 }
