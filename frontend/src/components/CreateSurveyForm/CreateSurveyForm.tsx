@@ -110,6 +110,7 @@ function CreateSurveyForm() {
                 gap: '16px',
               })}
             >
+              <Label>Select course(s) for this survey</Label>
               {courseData?.data.map((course) => {
                 return (
                   <Checkbox key={course.id} value={`${course.id}`}>
@@ -126,24 +127,27 @@ function CreateSurveyForm() {
                 all: 'unset',
                 width: '42px',
                 height: '25px',
-                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                backgroundColor: 'hsla(0, 0%, 100%, 1)',
                 borderRadius: '9999px',
+                border: '2px solid hsla(210, 77%, 33%, 1)',
                 position: 'relative',
                 boxShadow: 'rgba(0, 0, 0, 0.2) 0px 2px 10px',
                 WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
 
                 '&:focus': {
-                  boxShadow: '0 0 0 2px black',
+                  boxShadow: '0 0 0 2px hsla(210, 77%, 33%, 1)',
                 },
                 "&[data-state='checked']": {
-                  backgroundColor: 'black',
+                  backgroundColor: 'hsla(210, 77%, 33%, 1)',
                 },
               })}
               id='airplane-mode'
             >
               <Switch.Thumb
                 className={css({
-                  display: 'block',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   width: '21px',
                   height: '21px',
                   backgroundColor: 'white',
@@ -151,13 +155,16 @@ function CreateSurveyForm() {
                   boxShadow: 'rgba(0, 0, 0, 0.2) 0px 2px 2px',
                   transition: 'transform 100ms',
                   transform: 'translateX(2px)',
+                  fontSize: '0.75rem',
                   willChange: 'transform',
 
                   "&[data-state='checked']": {
                     transform: 'translateX(19px)',
                   },
                 })}
-              />
+              >
+                Off
+              </Switch.Thumb>
             </Switch.Root>
           </div>
 
