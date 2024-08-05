@@ -10,6 +10,7 @@ import * as Switch from '@radix-ui/react-switch';
 import { range } from '@/utils';
 import { SurveyFormProps } from '@/types';
 import * as Tabs from '@radix-ui/react-tabs';
+import TopBar from '../TopBar';
 
 const FormWrapper = styled.div`
   outline: 0;
@@ -48,12 +49,13 @@ const TabsList = styled(Tabs.List)({
   flexShrink: 0,
   display: 'flex',
   borderBottom: '1px solid rgb(219, 216, 224)',
+  gap: '4px',
 });
 
 const TabsTrigger = styled(Tabs.Trigger)({
   all: 'unset',
   fontFamily: 'inherit',
-  backgroundColor: 'white',
+  backgroundColor: 'hsla(210, 77%, 33%, 1)',
   padding: '0 20px',
   height: 45,
   flex: 1,
@@ -62,14 +64,16 @@ const TabsTrigger = styled(Tabs.Trigger)({
   justifyContent: 'center',
   fontSize: 15,
   lineHeight: 1,
-  color: 'rgb(101, 99, 109)',
+  color: 'white',
+  border: '2px solid hsla(210, 77%, 33%, 1)',
   userSelect: 'none',
   '&:first-child': { borderTopLeftRadius: 6 },
   '&:last-child': { borderTopRightRadius: 6 },
-  '&:hover': { color: 'rgb(101, 80, 185)' },
+  '&:hover': { opacity: 0.8 },
   '&[data-state="active"]': {
-    color: 'rgb(101, 80, 185)',
+    color: 'hsla(210, 77%, 33%, 1)',
     boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
+    background: 'white',
   },
   '&:focus': { position: 'relative', boxShadow: `0 0 0 2px black` },
 });
@@ -102,13 +106,27 @@ function SurveyForm({ survey }: SurveyFormProps) {
       className={css({
         padding: '36px',
         width: '100%',
+        backgroundColor: 'hsla(210, 100%, 95%, 1)',
       })}
     >
+      <TopBar
+        className={css({
+          justifyContent: 'space-between',
+        })}
+      >
+        <Link href='/admin/applications'>{'< back to survey'}</Link>
+        <button
+          className={css({
+            background: 'hsla(210, 77%, 33%, 1)',
+            border: '2px solid hsla(210, 77%, 33%, 1)',
+            color: 'white',
+            borderRadius: '4px',
+          })}
+        >
+          Create Survey
+        </button>
+      </TopBar>
       <FormWrapper>
-        <FormToolbar>
-          <Link href='/admin/applications'>{'< back to survey'}</Link>
-          <button>Create Survey</button>
-        </FormToolbar>
         <TabsRoot defaultValue='survey-information'>
           <TabsList aria-label='Manage your Survey'>
             <TabsTrigger value='survey-information'>

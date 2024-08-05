@@ -9,7 +9,7 @@ const TopBarWrapper = styled.div`
   padding: 8px;
 `;
 
-function TopBar({ children, ...deletaged }: { children?: React.ReactNode }) {
+function TopBar({ children, ...deletaged }: { children?: React.ReactNode } & React.ComponentProps<'div'>) {
   return <TopBarWrapper {...deletaged}>{children}</TopBarWrapper>;
 }
 

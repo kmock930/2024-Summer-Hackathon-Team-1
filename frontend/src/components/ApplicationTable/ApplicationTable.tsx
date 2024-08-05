@@ -3,6 +3,7 @@ import { css, styled } from '@pigment-css/react';
 import * as React from 'react';
 import {
   MantineReactTable,
+  MRT_GlobalFilterTextInput,
   MRT_TableContainer,
   MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
@@ -106,6 +107,7 @@ function ApplicationTable() {
     <Wrapper>
       <TopBar>
         <ToolWrapper>
+          <MRT_GlobalFilterTextInput table={table} />
           <MRT_ToggleGlobalFilterButton
             table={table}
             className={css({
