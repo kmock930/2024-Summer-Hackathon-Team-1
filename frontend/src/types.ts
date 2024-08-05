@@ -3,6 +3,7 @@ import React from 'react';
 export type CheckboxProps = {
   value?: string;
   label?: string;
+  hideLabel?: boolean;
   children?: React.ReactNode;
   slot?: string;
 };

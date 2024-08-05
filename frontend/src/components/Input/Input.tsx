@@ -8,23 +8,31 @@ import {
 import * as React from 'react';
 import CourseRegistrationForm from '../CourseRegistrationForm';
 import { css } from '@pigment-css/react';
+import { useVisuallyHidden } from 'react-aria';
 
 function Input({
   label,
   description,
   type,
   name,
+  isHideLabel,
   ...delegated
 }: {
   label: string;
   description?: string;
-  type: string;
+  isHideLabel?: boolean;
+  type?: string;
   name: string;
 } & InputProps) {
+  const { visuallyHiddenProps } = useVisuallyHidden();
   return (
     <div>
       <Field>
-        <Label>{label}</Label>
+        {isHideLabel ? (
+          <Label {...visuallyHiddenProps}>{label}</Label>
+        ) : (
+          <Label>{label}</Label>
+        )}
         <Description>{description}</Description>
         <HeadlessInput
           className={css({

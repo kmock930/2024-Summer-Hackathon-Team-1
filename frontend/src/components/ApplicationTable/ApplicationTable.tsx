@@ -3,9 +3,14 @@ import { styled } from '@pigment-css/react';
 import * as React from 'react';
 import {
   MantineReactTable,
+  MRT_ToggleFiltersButton,
+  MRT_ToggleFullScreenButton,
+  MRT_ToggleGlobalFilterButton,
+  MRT_ToggleRowActionMenuButton,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
+import { Link } from 'react-aria-components';
 
 const Wrapper = styled.div`
   padding: 36px;
@@ -74,6 +79,17 @@ function ApplicationTable() {
     columns,
     data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enableEditing: true,
+    enableRowSelection: true,
+    renderToolbarInternalActions: ({ table }) => {
+      return (
+        <>
+          <MRT_ToggleGlobalFilterButton table={table} />
+          <MRT_ToggleFiltersButton table={table} />
+          <MRT_ToggleFullScreenButton table={table} />
+          <Link href='/admin/application/create'>Create New Survey</Link>
+        </>
+      );
+    },
   });
 
   return (
