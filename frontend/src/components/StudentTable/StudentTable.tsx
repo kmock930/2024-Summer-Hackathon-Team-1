@@ -1,18 +1,16 @@
 'use client';
 import { css, styled } from '@pigment-css/react';
-import * as React from 'react';
 import {
-  MantineReactTable,
+  type MRT_ColumnDef,
   MRT_GlobalFilterTextInput,
   MRT_TableContainer,
   MRT_ToggleFiltersButton,
-  MRT_ToggleFullScreenButton,
   MRT_ToggleGlobalFilterButton,
   useMantineReactTable,
-  type MRT_ColumnDef,
 } from 'mantine-react-table';
-import { Link } from 'react-aria-components';
+import * as React from 'react';
 import TopBar from '../TopBar';
+import Link from '../Link';
 
 const Wrapper = styled.div`
   padding: 36px;
@@ -30,57 +28,43 @@ const ToolWrapper = styled.div`
 
 const data = [
   {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2025 S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
+    name: 'Chan Siu Man(He/Him)',
+    age: '6',
+    parent: 'Chan Tai Man(Father)',
+    specialNeeds: 'No Mango, No Peanut Butter',
+    courseEnrolled: `Kids Can Cook,
+Nature Seekers Adventure,
+Lego Lab,
+Chaotic Concert Carnival,
+Little Edison’s Laboratory,
+My Camp’s Got Talent,
+NASA Space Station,
+The Sustainable You`,
   },
 ];
 
-function ApplicationTable() {
+function StudentTable() {
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name', //access nested data with dot notation
+        accessorKey: 'name',
         header: 'Name',
       },
       {
-        accessorKey: 'ageGroup',
-        header: 'Age Group',
+        accessorKey: 'age',
+        header: 'Age',
       },
       {
-        accessorKey: 'time', //normal accessorKey
-        header: 'Time',
+        accessorKey: 'parent',
+        header: 'Parent',
       },
       {
-        accessorKey: 'owner',
-        header: 'Owner',
+        accessorKey: 'specialNeeds', //normal accessorKey
+        header: 'Special Needs',
       },
       {
-        accessorKey: 'lastEdit',
-        header: 'Last Edit',
+        accessorKey: 'courseEnrolled',
+        header: 'Course Enrolled',
       },
     ],
     []
@@ -122,9 +106,9 @@ function ApplicationTable() {
               textDecoration: 'none',
               borderRadius: '4px',
             })}
-            href='/admin/applications/create'
+            href='/admin/students/create'
           >
-            Create New Survey
+            Create New Student
           </Link>
         </ToolWrapper>
       </TopBar>
@@ -134,4 +118,4 @@ function ApplicationTable() {
   );
 }
 
-export default ApplicationTable;
+export default StudentTable;

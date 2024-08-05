@@ -1,5 +1,5 @@
 import Sidebar from '@/components/Sidebar';
-import StudentTable from '@/components/StudentTable';
+import StudentForm from '@/components/StudentForm';
 import { styled } from '@pigment-css/react';
 
 const Wrapper = styled.div`
@@ -12,7 +12,7 @@ export default function Page() {
     <Wrapper>
       <Sidebar />
 
-      <StudentTable />
+      <StudentForm />
     </Wrapper>
   );
 }

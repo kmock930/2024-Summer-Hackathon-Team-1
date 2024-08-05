@@ -11,6 +11,7 @@ import { range } from '@/utils';
 import { SurveyFormProps } from '@/types';
 import * as Tabs from '@radix-ui/react-tabs';
 import TopBar from '../TopBar';
+import SurveyResponseTable from '../SurveyResponseTable';
 
 const FormWrapper = styled.div`
   outline: 0;
@@ -296,6 +297,9 @@ function SurveyForm({ survey }: SurveyFormProps) {
                 Add New Care Option
               </button>
             </div>
+          </TabsContent>
+          <TabsContent value='response'>
+            <SurveyResponseTable />
           </TabsContent>
         </TabsRoot>
       </FormWrapper>
