@@ -4,62 +4,167 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import {createClient} from 'npm:@supabase/supabase-js@2.39.3';
+import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
+import {errorMessages} from '../_shared/constants.ts';
+import {parseQueryCondition} from '../_shared/common.ts';
+// import {corsHeaders} from "../_shared/cors.ts";
 
-const headers = {
-  'Content-Type': 'application/json',
-  'Access-Control-ALlow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-}
+/* TODO
+ * 1. Set create / update / delete person
+ * 2. Extract common parts to a function / shared file
+ */
 
-const sb = createClient(
+const corsHeaders = {
+  "Access-Control-Allow-Origin": '*',
+  // "Access-Control-Request-Method": 'OPTIONS',
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
+
+const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-)
+);
+
+const generateResponse = (
+  body: any,
+  headers: HeadersInit,
+  status: number
+): Response => {
+  console.log(body);
+  return new Response(
+    JSON.stringify(body),
+    {
+      headers: headers,
+      status: status
+    }
+  );
+};
 
 Deno.serve(async (req: Request) => {
-  switch (req.method) {
+  const responseHeader: HeadersInit = {
+    ...corsHeaders,
+    "Content-Type": "application/json"
+  };
 
-    case 'GET':
-      const {data, error} = await sb
+  switch (req.method) {
+    case 'GET': {
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+
+      let query = supabase.from('courses').select();
+
+      if (id) query = query.eq('id', id); // Get course by ID
+
+      const { data, error } = await query;
+
+      if (error)
+        return generateResponse(error, responseHeader, 400);
+
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    case 'POST': {
+      const reqBody = await req.json();
+
+      const { data, error } = await supabase
         .from('courses')
+        .insert(reqBody)
         .select();
 
-        if (error) {
-          return new Response(
-            JSON.stringify(error),
-            {
-              headers: headers,
-              status: 400
-            }
-          );
-        }
+      if (error)
+        return generateResponse(error, responseHeader, 400);
 
-        return new Response(
-          JSON.stringify({ 'courses': data }),
-          {
-            headers: headers,
-            status: 200
-          }
-        );
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
 
-    case 'POST':
-      // TODO
+    case 'PUT': {
+      // Validate ID
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (!id) {
+        const body = { 'message': 'Missing ID' };
+        return generateResponse(body, responseHeader, 400);
+      }
+      const { data: getData, error: getError } = await supabase
+        .from('courses')
+        .select()
+        .eq('id', id);
+      if (getError)
+        return generateResponse(getError, responseHeader, 400);
+      if (getData.length <= 0) {
+        const body = { 'message': 'Course not found' };
+        return generateResponse(body, responseHeader, 404);
+      }
 
-    case 'PUT':
-      // TODO
+      // Validate request body
+      const reqBody = await req.json();
+      if (!reqBody) {
+        const body = { 'message': 'Missing request body' };
+        return generateResponse(body, responseHeader, 400);
+      }
 
-    case 'DELETE':
-      // TODO
+      // Update course
+      const { data, error } = await supabase
+        .from('courses')
+        .update({
+          ...reqBody,
+          'modified_dt': new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
 
-    default:
-      return new Response(
-        JSON.stringify({ 'message': 'Not Implemented' }),
-        {
-          headers: headers,
-          status: 400
-        }
-      );
+      if (error)
+        return generateResponse(error, responseHeader, 400);
+      
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    case 'DELETE': {
+      // Validate ID
+      const url = new URL(req.url);
+      const id = url.searchParams.get('id');
+      if (!id) {
+        const body = { 'message': 'Missing ID' };
+        return generateResponse(body, responseHeader, 400);
+      }
+      const { data: getData, error: getError } = await supabase
+        .from('courses')
+        .select()
+        .eq('id', id);
+      if (getError)
+        return generateResponse(getError, responseHeader, 400);
+      if (getData.length <= 0) {
+        const body = { 'message': 'Course not found' };
+        return generateResponse(body, responseHeader, 404);
+      }
+
+      // Delete course (soft delete)
+      const { data, error } = await supabase
+        .from('courses')
+        .update({ 'deleted_dt': new Date().toISOString() })
+        .eq('id', id)
+        .select();
+
+      if (error)
+        return generateResponse(error, responseHeader, 400);
+
+      const body = { 'courses': data };
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    case 'OPTIONS':{
+      const body = {'message': 'OK'};
+      return generateResponse(body, responseHeader, 200);
+    }
+
+    default: {
+      const body = {'message': 'Invalid request method'};
+      return generateResponse(body, responseHeader, 400);
+    }
   }
 });
 
