@@ -22,7 +22,7 @@ Deno.serve(async (req: Request) => {
   let data: any;
   
   switch (req.method) {
-    case 'GET':
+    case 'GET': // GET all (no param); GET by id.
       data = await adaptor.getStudents();
       // Error handling
       if (data?.type === 'ERROR') {
@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify(data),
         responseHeader
       );
-    case 'PATCH':
+    case 'PATCH': // same as PUT
     case 'PUT': // Update
       data = await adaptor.updateStudents();
       // Error handling
@@ -75,8 +75,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify(data),
         responseHeader
       );
-    case 'OPTIONS':
-      // To handle preflight response from browser
+    case 'OPTIONS': // To handle preflight response from browser
       return new Response(
         'ok',
         responseHeader
@@ -98,8 +97,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify(data),
         responseHeader
       );
-    default:
-      //other operations
+    default: // Error handling: other operations
       errorResponse = {
         message: errorMessages.invalidOp,
         reason: errorMessages.invalidOp_reason
