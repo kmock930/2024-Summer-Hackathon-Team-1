@@ -41,3 +41,9 @@ export type TableProps = {
   isEnableGlobalFilter?: boolean;
   isEnableFilter?: boolean;
 };
+
+export type DashboardFormProps = {
+  actions?: React.ReactNode;
+  name?: string;
+  children?: React.ReactNode;
+};

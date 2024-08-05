@@ -63,10 +63,6 @@ function OTPForm() {
           </button>
         </div>
       </div>
-
-      <div className={css({ display: 'flex', gap: '8px' })}>
-        <Button type='button'>login</Button>
-      </div>
     </div>
   );
 }

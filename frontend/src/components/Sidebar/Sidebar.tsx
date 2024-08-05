@@ -110,10 +110,7 @@ function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link
-              className={`${LinkStyle} ${pathname === '/admin/setting' ? 'active' : ''}`}
-              href='/admin/login'
-            >
+            <Link className={`${LinkStyle}`} href='/admin/login'>
               Logout
             </Link>
           </li>

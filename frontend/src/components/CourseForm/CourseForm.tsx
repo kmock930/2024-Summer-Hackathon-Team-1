@@ -1,43 +1,11 @@
 'use client';
 import { css, styled } from '@pigment-css/react';
-import Link from '../Link';
-import { useList } from '@refinedev/core';
 import Checkbox from '../Checkbox';
 import Input from '../Input';
 import { CheckboxGroup, Label } from 'react-aria-components';
-import * as Switch from '@radix-ui/react-switch';
-import { range } from '@/utils';
-import { SurveyFormProps } from '@/types';
 import * as Tabs from '@radix-ui/react-tabs';
-import TopBar from '../TopBar';
 import SurveyResponseTable from '../SurveyResponseTable';
-import Select from '../Select';
-
-const FormWrapper = styled.div`
-  outline: 0;
-  text-decoration: none;
-  color: #000;
-  background-color: #fff;
-  box-sizing: border-box;
-  border-radius: 0.25rem;
-  box-shadow:
-    0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.05),
-    0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 100ms ease-in-out;
-  padding: 8px;
-`;
-
-const FormToolbar = styled.div`
-  display: flex;
-  align-items: flex-start;
-  box-sizing: border-box;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 3.5rem;
-  align-items: center;
-  border-bottom: 1px solid black;
-`;
+import DashboardForm from '../DashboardForm';
 
 const TabsRoot = styled(Tabs.Root)({
   display: 'flex',
@@ -91,19 +59,8 @@ const TabsContent = styled(Tabs.Content)({
 
 function CourseForm() {
   return (
-    <div
-      className={css({
-        padding: '36px',
-        width: '100%',
-        backgroundColor: 'hsla(210, 100%, 95%, 1)',
-      })}
-    >
-      <TopBar
-        className={css({
-          justifyContent: 'space-between',
-        })}
-      >
-        <Link href='/admin/applications'>{'< back to student'}</Link>
+    <DashboardForm
+      actions={
         <button
           className={css({
             background: ' var(--color-blue-1)',
@@ -112,124 +69,111 @@ function CourseForm() {
             borderRadius: '4px',
           })}
         >
-          Create Survey
+          Create Course
         </button>
-      </TopBar>
-      <FormWrapper>
-        <TabsRoot defaultValue='student-information'>
-          <TabsList aria-label='Manage your student'>
-            <TabsTrigger value='student-information'>
-              Student Information
-            </TabsTrigger>
-            <TabsTrigger value='course-history' disabled={true}>
-              Course History
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value='student-information'>
-            <div
+      }
+    >
+      <TabsRoot defaultValue='student-information'>
+        <TabsList aria-label='Manage your student'>
+          <TabsTrigger value='student-information'>
+            Student Information
+          </TabsTrigger>
+          <TabsTrigger value='course-history' disabled={true}>
+            Course History
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value='student-information'>
+          <div
+            className={css({
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            })}
+          >
+            <h2>Course Detail</h2>
+            <fieldset
               className={css({
+                border: 0,
+                padding: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '8px',
               })}
             >
-              <h2>Course Detail</h2>
-              <fieldset
+              <legend className={css({ padding: 0 })}>
+                Course Name, 課程名稱, 课程名称
+              </legend>
+              <Input
+                type='text'
+                name='course-name-en'
+                label='Course Name'
+                placeholder='COurse Name'
+                isHideLabel={true}
+              />
+              <Input
+                type='text'
+                name='course-name-zh-Hant'
+                label='课程名称'
+                placeholder='课程名称'
+                isHideLabel={true}
+              />
+              <Input
+                type='text'
+                name='course-name-zh-Hans'
+                label='課程名稱'
+                placeholder='課程名稱'
+                isHideLabel={true}
+              />
+            </fieldset>
+            <Input
+              type='number'
+              name='vacancy'
+              label='Vacancy'
+              placeholder='Please enter your answer'
+            />
+            <Input
+              type='text'
+              name='courseLang'
+              label='Course Language'
+              placeholder='Please enter your answer'
+            />
+            <Input
+              type='text'
+              name='ageGroup'
+              label='Age Group'
+              placeholder='Please enter your answer'
+            />
+            <Input
+              type='time'
+              name='time'
+              label='Time'
+              placeholder='Please enter your answer'
+            />
+            <h2>Survey Linked</h2>
+            <Label>
+              Select course(s) for this survey
+              <CheckboxGroup
                 className={css({
-                  border: 0,
-                  padding: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '16px',
                 })}
               >
-                <legend className={css({ padding: 0 })}>
-                  Course Name, 課程名稱, 课程名称
-                </legend>
-                <Input
-                  type='text'
-                  name='course-name-en'
-                  label='Course Name'
-                  placeholder='COurse Name'
-                  isHideLabel={true}
-                />
-                <Input
-                  type='text'
-                  name='course-name-zh-Hant'
-                  label='课程名称'
-                  placeholder='课程名称'
-                  isHideLabel={true}
-                />
-                <Input
-                  type='text'
-                  name='course-name-zh-Hans'
-                  label='課程名稱'
-                  placeholder='課程名稱'
-                  isHideLabel={true}
-                />
-              </fieldset>
-              <Input
-                type='number'
-                name='vacancy'
-                label='Vacancy'
-                placeholder='Please enter your answer'
-              />
-              <Input
-                type='text'
-                name='courseLang'
-                label='Course Language'
-                placeholder='Please enter your answer'
-              />
-              <Input
-                type='text'
-                name='ageGroup'
-                label='Age Group'
-                placeholder='Please enter your answer'
-              />
-              <Input
-                type='time'
-                name='time'
-                label='Time'
-                placeholder='Please enter your answer'
-              />
-              <h2>Survey Linked</h2>
-              <Label>
-                Select course(s) for this survey
-                <CheckboxGroup
-                  className={css({
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '16px',
-                  })}
-                >
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                  <Checkbox value='survey'>
-                    Summer 2024 S.T.E.A.M. Camp
-                  </Checkbox>
-                </CheckboxGroup>
-              </Label>
-            </div>
-          </TabsContent>
-          <TabsContent value='response'>
-            <SurveyResponseTable />
-          </TabsContent>
-        </TabsRoot>
-      </FormWrapper>
-    </div>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+              </CheckboxGroup>
+            </Label>
+          </div>
+        </TabsContent>
+        <TabsContent value='response'>
+          <SurveyResponseTable />
+        </TabsContent>
+      </TabsRoot>
+    </DashboardForm>
   );
 }
 
