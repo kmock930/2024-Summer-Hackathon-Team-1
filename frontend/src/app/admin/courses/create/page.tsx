@@ -1,4 +1,4 @@
-import CourseTable from '@/components/CourseTable';
+import CourseForm from '@/components/CourseForm';
 import Sidebar from '@/components/Sidebar';
 import { styled } from '@pigment-css/react';
 
@@ -12,7 +12,7 @@ export default function Page() {
     <Wrapper>
       <Sidebar />
 
-      <CourseTable />
+      <CourseForm />
     </Wrapper>
   );
 }

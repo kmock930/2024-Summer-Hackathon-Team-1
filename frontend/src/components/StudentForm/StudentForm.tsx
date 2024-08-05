@@ -219,7 +219,6 @@ function StudentForm() {
                 name='specialNeeds'
                 label='Special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other? '
                 placeholder='Please enter your answer'
-                isHideLabel={true}
               />
               <h2>Parent Information</h2>
               <fieldset
