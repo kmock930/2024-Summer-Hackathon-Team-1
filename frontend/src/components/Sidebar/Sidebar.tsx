@@ -63,24 +63,24 @@ function Sidebar() {
         <NavItems>
           <li>
             <Link
-              className={`${LinkStyle} ${pathname.includes('/admin/application') ? 'active' : ''}`}
-              href='/admin/application'
+              className={`${LinkStyle} ${pathname.includes('/admin/applications') ? 'active' : ''}`}
+              href='/admin/applications'
             >
               Application
             </Link>
           </li>
           <li>
             <Link
-              className={`${LinkStyle} ${pathname === '/admin/student' ? 'active' : ''}`}
-              href='/admin/student'
+              className={`${LinkStyle} ${pathname.includes('/admin/students') ? 'active' : ''}`}
+              href='/admin/students'
             >
               Student
             </Link>
           </li>
           <li>
             <Link
-              className={`${LinkStyle} ${pathname === '/admin/course' ? 'active' : ''}`}
-              href='/admin/course'
+              className={`${LinkStyle} ${pathname.includes('/admin/courses') ? 'active' : ''}`}
+              href='/admin/courses'
             >
               Course
             </Link>
