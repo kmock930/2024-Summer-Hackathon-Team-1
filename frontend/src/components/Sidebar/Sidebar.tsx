@@ -63,7 +63,7 @@ function Sidebar() {
         <NavItems>
           <li>
             <Link
-              className={`${LinkStyle} ${pathname === '/admin/application' ? 'active' : ''}`}
+              className={`${LinkStyle} ${pathname.includes('/admin/application') ? 'active' : ''}`}
               href='/admin/application'
             >
               Application
