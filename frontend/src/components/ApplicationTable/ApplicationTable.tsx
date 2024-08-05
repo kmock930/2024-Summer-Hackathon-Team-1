@@ -1,32 +1,7 @@
 'use client';
-import { css, styled } from '@pigment-css/react';
 import * as React from 'react';
-import {
-  MantineReactTable,
-  MRT_GlobalFilterTextInput,
-  MRT_TableContainer,
-  MRT_ToggleFiltersButton,
-  MRT_ToggleFullScreenButton,
-  MRT_ToggleGlobalFilterButton,
-  useMantineReactTable,
-  type MRT_ColumnDef,
-} from 'mantine-react-table';
-import { Link } from 'react-aria-components';
-import TopBar from '../TopBar';
-
-const Wrapper = styled.div`
-  padding: 36px;
-  width: 100%;
-  background-color: hsla(210, 100%, 95%, 1);
-`;
-
-const ToolWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-`;
+import { useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
+import Table from '../Table';
 
 const data = [
   {
@@ -63,7 +38,7 @@ function ApplicationTable() {
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name', //access nested data with dot notation
+        accessorKey: 'name',
         header: 'Name',
       },
       {
@@ -71,7 +46,7 @@ function ApplicationTable() {
         header: 'Age Group',
       },
       {
-        accessorKey: 'time', //normal accessorKey
+        accessorKey: 'time',
         header: 'Time',
       },
       {
@@ -92,46 +67,7 @@ function ApplicationTable() {
     enableRowSelection: true,
   });
 
-  return (
-    <Wrapper>
-      <TopBar>
-        <ToolWrapper>
-          <MRT_GlobalFilterTextInput table={table} />
-          <MRT_ToggleGlobalFilterButton
-            table={table}
-            className={css({
-              color: 'hsla(210, 77%, 33%, 1)',
-            })}
-          />
-          <MRT_ToggleFiltersButton
-            table={table}
-            className={css({
-              color: 'hsla(210, 77%, 33%, 1)',
-            })}
-          />
-          <Link
-            className={css({
-              background: 'hsla(0, 0%, 100%, 1)',
-              border: '2px solid hsla(210, 77%, 33%, 1)',
-              width: '160px',
-              height: '32px',
-              color: 'hsla(210, 77%, 33%, 1)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              textDecoration: 'none',
-              borderRadius: '4px',
-            })}
-            href='/admin/applications/create'
-          >
-            Create New Survey
-          </Link>
-        </ToolWrapper>
-      </TopBar>
-
-      <MRT_TableContainer table={table} />
-    </Wrapper>
-  );
+  return <Table name='application' table={table} />;
 }
 
 export default ApplicationTable;

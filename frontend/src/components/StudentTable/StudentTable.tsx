@@ -1,30 +1,7 @@
 'use client';
-import { css, styled } from '@pigment-css/react';
-import {
-  type MRT_ColumnDef,
-  MRT_GlobalFilterTextInput,
-  MRT_TableContainer,
-  MRT_ToggleFiltersButton,
-  MRT_ToggleGlobalFilterButton,
-  useMantineReactTable,
-} from 'mantine-react-table';
+import { type MRT_ColumnDef, useMantineReactTable } from 'mantine-react-table';
 import * as React from 'react';
-import TopBar from '../TopBar';
-import Link from '../Link';
-
-const Wrapper = styled.div`
-  padding: 36px;
-  width: 100%;
-  background-color: hsla(210, 100%, 95%, 1);
-`;
-
-const ToolWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-`;
+import Table from '../Table';
 
 const data = [
   {
@@ -59,7 +36,7 @@ function StudentTable() {
         header: 'Parent',
       },
       {
-        accessorKey: 'specialNeeds', //normal accessorKey
+        accessorKey: 'specialNeeds',
         header: 'Special Needs',
       },
       {
@@ -76,46 +53,7 @@ function StudentTable() {
     enableRowSelection: true,
   });
 
-  return (
-    <Wrapper>
-      <TopBar>
-        <ToolWrapper>
-          <MRT_GlobalFilterTextInput table={table} />
-          <MRT_ToggleGlobalFilterButton
-            table={table}
-            className={css({
-              color: 'hsla(210, 77%, 33%, 1)',
-            })}
-          />
-          <MRT_ToggleFiltersButton
-            table={table}
-            className={css({
-              color: 'hsla(210, 77%, 33%, 1)',
-            })}
-          />
-          <Link
-            className={css({
-              background: 'hsla(0, 0%, 100%, 1)',
-              border: '2px solid hsla(210, 77%, 33%, 1)',
-              width: '160px',
-              height: '32px',
-              color: 'hsla(210, 77%, 33%, 1)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              textDecoration: 'none',
-              borderRadius: '4px',
-            })}
-            href='/admin/students/create'
-          >
-            Create New Student
-          </Link>
-        </ToolWrapper>
-      </TopBar>
-
-      <MRT_TableContainer table={table} />
-    </Wrapper>
-  );
+  return <Table name='student' table={table} />;
 }
 
 export default StudentTable;

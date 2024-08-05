@@ -57,7 +57,7 @@ const TabsList = styled(Tabs.List)({
 const TabsTrigger = styled(Tabs.Trigger)({
   all: 'unset',
   fontFamily: 'inherit',
-  backgroundColor: 'hsla(210, 77%, 33%, 1)',
+  backgroundColor: ' var(--color-blue-1)',
   padding: '0 20px',
   height: 45,
   flex: 1,
@@ -67,13 +67,13 @@ const TabsTrigger = styled(Tabs.Trigger)({
   fontSize: 15,
   lineHeight: 1,
   color: 'white',
-  border: '2px solid hsla(210, 77%, 33%, 1)',
+  border: '2px solid  var(--color-blue-1)',
   userSelect: 'none',
   '&:first-child': { borderTopLeftRadius: 6 },
   '&:last-child': { borderTopRightRadius: 6 },
   '&:hover': { opacity: 0.8 },
   '&[data-state="active"]': {
-    color: 'hsla(210, 77%, 33%, 1)',
+    color: ' var(--color-blue-1)',
     boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
     background: 'white',
   },
@@ -107,8 +107,8 @@ function StudentForm() {
         <Link href='/admin/applications'>{'< back to student'}</Link>
         <button
           className={css({
-            background: 'hsla(210, 77%, 33%, 1)',
-            border: '2px solid hsla(210, 77%, 33%, 1)',
+            background: ' var(--color-blue-1)',
+            border: '2px solid  var(--color-blue-1)',
             color: 'white',
             borderRadius: '4px',
           })}

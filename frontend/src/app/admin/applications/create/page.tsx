@@ -1,6 +1,7 @@
 import SurveyForm from '@/components/SurveyForm';
 import Sidebar from '@/components/Sidebar';
 import { styled } from '@pigment-css/react';
+import Dashboard from '@/components/Dashboard';
 
 const Wrapper = styled.div`
   display: flex;
@@ -9,10 +10,8 @@ const Wrapper = styled.div`
 
 export default function Page() {
   return (
-    <Wrapper>
-      <Sidebar />
-
+    <Dashboard>
       <SurveyForm />
-    </Wrapper>
+    </Dashboard>
   );
 }

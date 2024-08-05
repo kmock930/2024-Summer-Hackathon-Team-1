@@ -4,6 +4,7 @@ import {
   MRT_TableContainer,
 } from 'mantine-react-table';
 import * as React from 'react';
+import Table from '../Table';
 
 const data = [
   {
@@ -122,7 +123,7 @@ function SurveyResponseTable() {
 
   return (
     <div>
-      <MRT_TableContainer table={table} />
+      <Table name='surveyResponse' isEnableTopBar={false} table={table} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
 
 export type CheckboxProps = {
@@ -30,4 +31,13 @@ export interface ISurvey {
 
 export type SurveyFormProps = {
   survey?: ISurvey;
+};
+
+export type TableProps = {
+  table: MRT_TableInstance;
+  name: string;
+  isEnableCreate?: boolean;
+  isEnableTopBar?: boolean;
+  isEnableGlobalFilter?: boolean;
+  isEnableFilter?: boolean;
 };

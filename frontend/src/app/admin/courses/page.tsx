@@ -1,4 +1,5 @@
 import CourseTable from '@/components/CourseTable';
+import Dashboard from '@/components/Dashboard';
 import Sidebar from '@/components/Sidebar';
 import { styled } from '@pigment-css/react';
 
@@ -9,10 +10,8 @@ const Wrapper = styled.div`
 
 export default function Page() {
   return (
-    <Wrapper>
-      <Sidebar />
-
+    <Dashboard>
       <CourseTable />
-    </Wrapper>
+    </Dashboard>
   );
 }

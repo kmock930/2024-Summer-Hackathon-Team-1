@@ -1,3 +1,4 @@
+import Dashboard from '@/components/Dashboard';
 import Sidebar from '@/components/Sidebar';
 import StudentForm from '@/components/StudentForm';
 import { styled } from '@pigment-css/react';
@@ -9,10 +10,8 @@ const Wrapper = styled.div`
 
 export default function Page() {
   return (
-    <Wrapper>
-      <Sidebar />
-
+    <Dashboard>
       <StudentForm />
-    </Wrapper>
+    </Dashboard>
   );
 }
