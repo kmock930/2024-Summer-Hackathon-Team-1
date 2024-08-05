@@ -40,7 +40,8 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'POST': // Add
-      data = await adaptor.insertStudents();
+      const reqBody = await req.json();
+      data = await adaptor.insertStudents(reqBody);
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;
@@ -57,8 +58,24 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'PATCH':
+    case 'PUT':
       // Update
-      break;
+      data = await adaptor.updateStudents();
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
     case 'OPTIONS':
       // To handle preflight response from browser
       return new Response(
