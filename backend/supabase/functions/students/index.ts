@@ -5,9 +5,8 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from 'npm:@supabase/supabase-js@2.39.3'
-import {errorMessages} from '../_shared/constants.ts';
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
-import {StudentModel}  from "./StudentModel.ts";
+import {StudentAdaptor}  from "./StudentAdaptor.ts";
 
 const supabase = createClient(
   Deno.env.get("API_URL"),
@@ -19,11 +18,11 @@ Deno.serve(async (req: Request) => {
   let errorResponse: object;
   // Parse parameters from URL
   const url:URL = new URL(req.url);
-  const model = new StudentModel(url);
+  const adaptor = new StudentAdaptor(url);
   
   switch (req.method) {
     case 'GET':
-      const data = await model.getStudents();
+      const data = await adaptor.getStudents();
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;

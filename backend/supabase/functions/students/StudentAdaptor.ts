@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts"; //Deno
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
 import { errorMessages } from "../_shared/constants.ts";
 
-export class StudentModel {
+export class StudentAdaptor {
     private queryParams: object;
     private supabase: any; //db client
 
@@ -62,5 +62,6 @@ export class StudentModel {
             return errorResponse;
         }
         return data;
-    }
+    };
+    
 }
