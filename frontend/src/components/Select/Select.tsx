@@ -3,6 +3,7 @@ import * as RadixSelect from '@radix-ui/react-select';
 import { CheckIcon } from '@radix-ui/react-icons';
 import { css, styled } from '@pigment-css/react';
 import { Label } from '@radix-ui/react-label';
+import { SelectProps } from '@/types';
 
 interface SelectOptionProps {
   value: string;
@@ -15,20 +16,20 @@ function Select({
   className,
   defaultValue,
   label,
-}: {
-  options: SelectOptionProps[];
-  placeholder: string;
-  className?: string;
-  defaultValue?: string;
-  label?: string;
-}) {
+  value,
+  setValue,
+}: SelectProps) {
   const selectId = React.useId();
   return (
     <Wrapper className={className}>
       <Label className={css({ display: 'block' })} htmlFor={selectId}>
         {label}
       </Label>
-      <RadixSelect.Root defaultValue={defaultValue}>
+      <RadixSelect.Root
+        defaultValue={defaultValue}
+        onValueChange={setValue}
+        value={value}
+      >
         <RadixSelect.Trigger
           id={selectId}
           className={css({

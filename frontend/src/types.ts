@@ -1,13 +1,7 @@
+import { FieldProps } from '@formiz/core';
+import { InputProps as HeadlessUIInputProps } from '@headlessui/react';
 import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
-
-export type CheckboxProps = {
-  value?: string;
-  label?: string;
-  hideLabel?: boolean;
-  children?: React.ReactNode;
-  slot?: string;
-};
 
 export interface ICourse {
   id: string;
@@ -47,3 +41,43 @@ export type DashboardFormProps = {
   name?: string;
   children?: React.ReactNode;
 };
+
+export type InputProps<FormattedValue> = FieldProps<string, FormattedValue> & {
+  label: string;
+  description?: string;
+  isHideLabel?: boolean;
+  type?: string;
+  name: string;
+} & HeadlessUIInputProps;
+
+export type CheckboxProps<FormattedValue> = FieldProps<
+  boolean,
+  FormattedValue
+> & {
+  value?: string;
+  label?: string;
+  hideLabel?: boolean;
+  children?: React.ReactNode;
+  slot?: string;
+};
+
+export interface SelectOptionProps {
+  value: string;
+  text: string;
+}
+
+export type SelectProps = {
+  options: SelectOptionProps[];
+  placeholder: string;
+  className?: string;
+  label?: string;
+  value?: SelectOptionProps['value'];
+  defaultValue?: SelectOptionProps['value'];
+  setValue?: (fieldValue: string) => void;
+};
+
+export type FormizSelectProps<FormattedValue> = FieldProps<
+  SelectOptionProps['value'],
+  FormattedValue
+> &
+  SelectProps;

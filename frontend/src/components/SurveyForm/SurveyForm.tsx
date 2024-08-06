@@ -151,7 +151,11 @@ function SurveyForm({ survey }: SurveyFormProps) {
               >
                 {courseData?.data.map((course) => {
                   return (
-                    <Checkbox key={course.id} value={`${course.id}`}>
+                    <Checkbox
+                      name={`course.${course.id}`}
+                      key={course.id}
+                      value={`${course.id}`}
+                    >
                       {course.name}
                     </Checkbox>
                   );

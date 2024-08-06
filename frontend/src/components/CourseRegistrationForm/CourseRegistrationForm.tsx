@@ -13,6 +13,7 @@ import { useList } from '@refinedev/core';
 import { CheckboxGroup } from 'react-aria-components';
 import FormContent from '../FormContent';
 import dynamic from 'next/dynamic';
+import FormizSelect from '../FormizSelect';
 
 const OTPForm = dynamic(() => import('../OTPForm'), { ssr: false });
 
@@ -44,7 +45,12 @@ const Button = styled.button`
 `;
 
 function CourseRegistrationForm() {
-  const form = useForm({ onSubmit: () => setIsSubmited(true) });
+  const form = useForm({
+    onSubmit: (values) => {
+      console.log(values);
+      setIsSubmited(true);
+    },
+  });
   const newChildrenForm = useForm();
   const [isDisplayNewChildrenForm, setIsDisplayNewChildrenForm] =
     React.useState(false);
@@ -54,10 +60,8 @@ function CourseRegistrationForm() {
     setIsDisplayNewChildrenForm(!isDisplayNewChildrenForm);
 
   const { data: courseData } = useList({ resource: 'courses' });
-  console.log(courseData?.data);
 
   const { data: formTitle } = useList({ resource: 'title' });
-  console.log(formTitle);
 
   const courseFields = useFormFields({
     connect: form,
@@ -98,6 +102,7 @@ function CourseRegistrationForm() {
                     return (
                       <React.Fragment key={course.id}>
                         <Checkbox
+                          name={`courses.${course.id}`}
                           label={course.name}
                           value={`${course.id}`}
                           key={course.id}
@@ -114,9 +119,10 @@ function CourseRegistrationForm() {
                     );
                   })}
                 </CheckboxGroup>
-                <Select
-                  label='Before and/or After Camp Option'
-                  placeholder='Select a Before and/or After Camp Option'
+                <FormizSelect
+                  label='Before and/or After Care Option'
+                  placeholder='Select a Before and/or After Care Option'
+                  name='careOptions'
                   options={[
                     {
                       value: 'dummy1',
@@ -160,6 +166,7 @@ function CourseRegistrationForm() {
                       {range(5).map((index) => {
                         return (
                           <Checkbox
+                            name={`childrens.${index}`}
                             value={`${index}`}
                             key={index}
                             label='Dummy'
@@ -228,8 +235,9 @@ function CourseRegistrationForm() {
                         name='student-name'
                         placeholder='Please enter your answer'
                       />
-                      <Select
+                      <FormizSelect
                         label="Student's Gender"
+                        name='studentGender'
                         placeholder='Please select your answer'
                         options={[
                           { value: 'dummy1', text: 'Dummy1' },
@@ -246,8 +254,9 @@ function CourseRegistrationForm() {
                         type='text'
                         name='student-address'
                       />
-                      <Select
+                      <FormizSelect
                         label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
+                        name='specialNeeds'
                         placeholder='Please select your answer'
                         options={[
                           { value: 'dummy1', text: 'Dummy1' },
@@ -263,42 +272,44 @@ function CourseRegistrationForm() {
                 <Input
                   label="Parent/Guardian's Legal Full Name"
                   type='text'
-                  name='student-address'
+                  name='studentFullName'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Relationship to Student'
                   type='text'
-                  name='student-address'
+                  name='relationship'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Name'
                   type='text'
-                  name='student-address'
+                  name='emergencyContactName'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Phone'
                   type='text'
-                  name='student-address'
+                  name='emergencyContactPhone'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label={'Pick Up Arrangements'}
                   description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
                   type='text'
-                  name='student-address'
+                  name='pickUpArragements'
                   placeholder='Please enter your answer'
                 />
               </FormizStep>
               <FormizStep name='consent' label='Consent'>
                 <h2>Consent</h2>
                 <Checkbox
+                  name='agreePhoto'
                   value={'dummy'}
                   label='Photographs, films, slides, videoI give my permission for the use of photographs, films, slides, video taken during the program for the promotional purposes of the Centre for Immigrant and Community Services (CICS). I understand that there will not be any compensation for photographs or videos taken of the participant in the program.'
                 />
                 <Checkbox
+                  name='agreePermission'
                   value={'dummy'}
                   label='Content InformationI give permission to CICS to deliver agency information to my email address and understand I can withdraw my consent at any time.'
                 />
@@ -306,7 +317,7 @@ function CourseRegistrationForm() {
                   label='Please read the Consent : https://bit.ly/CICSCentreforLearningConsentForm'
                   description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility. By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
                   type='text'
-                  name='student-address'
+                  name='sign'
                   placeholder='Please enter your answer'
                 />
               </FormizStep>

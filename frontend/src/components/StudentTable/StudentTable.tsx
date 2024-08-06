@@ -2,6 +2,8 @@
 import { type MRT_ColumnDef, useMantineReactTable } from 'mantine-react-table';
 import * as React from 'react';
 import Table from '../Table';
+import useSWR from 'swr';
+import { fetcher } from '@/utils';
 
 const data = [
   {
@@ -21,10 +23,12 @@ The Sustainable You`,
 ];
 
 function StudentTable() {
+  const { data } = useSWR<{}[]>('students', fetcher);
+
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'firstname',
         header: 'Name',
       },
       {
@@ -49,7 +53,7 @@ function StudentTable() {
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: data ?? [],
     enableRowSelection: true,
   });
 

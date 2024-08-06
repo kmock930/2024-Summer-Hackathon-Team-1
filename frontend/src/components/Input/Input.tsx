@@ -3,37 +3,27 @@ import {
   Description,
   Field,
   Label,
-  InputProps,
 } from '@headlessui/react';
 import * as React from 'react';
 import CourseRegistrationForm from '../CourseRegistrationForm';
 import { css } from '@pigment-css/react';
 import { useVisuallyHidden } from 'react-aria';
+import { useField } from '@formiz/core';
+import { InputProps } from '@/types';
 
-function Input({
-  label,
-  description,
-  type,
-  name,
-  isHideLabel,
-  ...delegated
-}: {
-  label: string;
-  description?: string;
-  isHideLabel?: boolean;
-  type?: string;
-  name: string;
-} & InputProps) {
+function Input<FormattedValue = string>(props: InputProps<FormattedValue>) {
+  const { value, setValue, otherProps } = useField(props);
+  const { isHideLabel, ...delegated } = otherProps;
   const { visuallyHiddenProps } = useVisuallyHidden();
   return (
     <div>
       <Field>
         {isHideLabel ? (
-          <Label {...visuallyHiddenProps}>{label}</Label>
+          <Label {...visuallyHiddenProps}>{props.label}</Label>
         ) : (
-          <Label>{label}</Label>
+          <Label>{props.label}</Label>
         )}
-        <Description>{description}</Description>
+        <Description>{props.description}</Description>
         <HeadlessInput
           className={css({
             [`${CourseRegistrationForm} &`]: {
@@ -42,8 +32,9 @@ function Input({
               borderRadius: '4px',
             },
           })}
-          name={name}
-          type={type}
+          type={props.type}
+          value={value ?? ''}
+          onChange={(event) => setValue(event.target.value)}
           {...delegated}
         />
       </Field>

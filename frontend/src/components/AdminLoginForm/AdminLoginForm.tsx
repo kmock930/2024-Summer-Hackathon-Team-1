@@ -3,6 +3,7 @@ import * as React from 'react';
 import Input from '../Input';
 import OTPForm from '../OTPForm';
 import { css, styled } from '@pigment-css/react';
+import { Formiz, useForm } from '@formiz/core';
 
 const Button = styled.button`
   background-color: var(--color-blue);
@@ -23,12 +24,13 @@ const Button = styled.button`
 
 function AdminLoginForm() {
   const [isLoginRequested, setIsLoginRequested] = React.useState(false);
+  const form = useForm();
 
   const handleLoginRequest = () => {
     setIsLoginRequested(!isLoginRequested);
   };
   return (
-    <>
+    <Formiz connect={form}>
       {!isLoginRequested && (
         <div
           className={css({
@@ -62,7 +64,7 @@ function AdminLoginForm() {
         </div>
       )}
       {isLoginRequested && <OTPForm />}
-    </>
+    </Formiz>
   );
 }
 
