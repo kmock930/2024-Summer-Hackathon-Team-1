@@ -15,12 +15,16 @@ function Select({
   className,
   defaultValue,
   label,
+  value,
+  setValue,
 }: {
   options: SelectOptionProps[];
   placeholder: string;
   className?: string;
   defaultValue?: string;
   label?: string;
+  value: SelectOptionProps['value'];
+  setValue: () => void;
 }) {
   const selectId = React.useId();
   return (
@@ -28,7 +32,11 @@ function Select({
       <Label className={css({ display: 'block' })} htmlFor={selectId}>
         {label}
       </Label>
-      <RadixSelect.Root defaultValue={defaultValue}>
+      <RadixSelect.Root
+        defaultValue={defaultValue}
+        onValueChange={setValue}
+        value={value}
+      >
         <RadixSelect.Trigger
           id={selectId}
           className={css({

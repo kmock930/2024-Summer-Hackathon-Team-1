@@ -2,6 +2,9 @@
 import { useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import * as React from 'react';
 import Table from '../Table';
+import useSWR from 'swr';
+import { fetcher } from '@/utils';
+import { ICourse } from '@/types';
 
 const data = [
   {
@@ -15,10 +18,11 @@ const data = [
 ];
 
 function CourseTable() {
+  const { data } = useSWR<{ courses: ICourse[] }>('courses', fetcher);
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'id',
         header: 'Name',
       },
       {
@@ -43,11 +47,15 @@ function CourseTable() {
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: data?.courses ?? [],
     enableRowSelection: true,
   });
 
-  return <Table name='course' table={table} />;
+  return (
+    <>
+      <Table name='course' table={table} />
+    </>
+  );
 }
 
 export default CourseTable;

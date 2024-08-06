@@ -5,6 +5,7 @@ import { css, styled } from '@pigment-css/react';
 import Link from '../Link';
 import { usePathname } from 'next/navigation';
 import { DashboardFormProps } from '@/types';
+import { Formiz, useForm } from '@formiz/core';
 
 const Wrapper = styled.div`
   background-color: hsla(210deg, 100%, 95%, 1);
@@ -33,21 +34,24 @@ const FormWrapper = styled.div`
 
 function DashboardForm({ actions, name, children }: DashboardFormProps) {
   const pathname = usePathname();
+  const form = useForm({ onSubmit: (values) => console.log({ values }) });
 
   return (
-    <Wrapper>
-      <TopBar
-        className={css({
-          justifyContent: 'space-between',
-        })}
-      >
-        <BackLink href={pathname.split('/').slice(0, -1).join('/')}>
-          Go Back
-        </BackLink>
-        {actions}
-      </TopBar>
-      <FormWrapper>{children}</FormWrapper>
-    </Wrapper>
+    <Formiz connect={form} autoForm='form'>
+      <Wrapper>
+        <TopBar
+          className={css({
+            justifyContent: 'space-between',
+          })}
+        >
+          <BackLink href={pathname.split('/').slice(0, -1).join('/')}>
+            Go Back
+          </BackLink>
+          {actions}
+        </TopBar>
+        <FormWrapper>{children}</FormWrapper>
+      </Wrapper>
+    </Formiz>
   );
 }
 

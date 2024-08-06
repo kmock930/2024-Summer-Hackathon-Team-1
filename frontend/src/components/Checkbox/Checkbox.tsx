@@ -2,6 +2,7 @@ import { styled } from '@pigment-css/react';
 import * as React from 'react';
 import { Label, Checkbox as ReactAriaCheckbox } from 'react-aria-components';
 import { CheckboxProps } from '@/types';
+import { useField } from '@formiz/core';
 
 const AriaCheckbox = styled(ReactAriaCheckbox)({
   '--selected-color': '#6f46ed',
@@ -69,17 +70,25 @@ const CheckedIcon = styled('svg')({
   },
 });
 
-function Checkbox({ value, label, children, ...delegated }: CheckboxProps) {
+function Checkbox<FormattedValue = boolean>(
+  props: CheckboxProps<FormattedValue>
+) {
+  const { value: isSelected, setValue: setIsSelected } = useField(props);
   return (
-    <AriaCheckbox value={value} {...delegated}>
+    <AriaCheckbox
+      value={props.value}
+      isSelected={isSelected ?? false}
+      onChange={setIsSelected}
+      {...props}
+    >
       <CheckboxIndicator>
         <CheckedIcon viewBox='0 0 18 18' aria-hidden='true'>
           <polyline points='1 9 7 14 15 4' />
         </CheckedIcon>
       </CheckboxIndicator>
       <div>
-        <Label>{label}</Label>
-        {children}
+        <Label>{props.label}</Label>
+        {props.children}
       </div>
     </AriaCheckbox>
   );
