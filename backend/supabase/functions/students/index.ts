@@ -4,14 +4,8 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
-import {createClient} from 'npm:@supabase/supabase-js@2.39.3'
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
 import {StudentAdaptor}  from "./StudentAdaptor.ts";
-
-const supabase = createClient(
-  Deno.env.get("API_URL"),
-  Deno.env.get("API_ANON")!
-);
 
 Deno.serve(async (req: Request) => {
   const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json"}, status: 200};
