@@ -192,6 +192,8 @@ export class StudentAdaptor {
             .from('students');
         // Construct fields to perform UPDATE
         const updateCond: Record<string, any> = {};
+        // Set is_active to False
+        updateCond['is_active'] = false;
         // Set deleted_dt and deleted_by
         updateCond['deleted_dt'] = getCurrentTimestampWithTimezone(); //UTC time
         updateCond['deleted_by'] = 'cics';
