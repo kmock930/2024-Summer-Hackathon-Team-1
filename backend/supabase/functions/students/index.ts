@@ -6,6 +6,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
 import {StudentAdaptor}  from "./StudentAdaptor.ts";
+import { errorMessages } from "../_shared/constants.ts";
 
 Deno.serve(async (req: Request) => {
   const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json"}, status: 200};
@@ -34,8 +35,21 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'POST': // Add
-      const reqBody = await req.json();
-      data = await adaptor.insertStudents(reqBody);
+      try {
+        const reqBody = await req.json();
+        data = await adaptor.insertStudents(reqBody);
+      } catch (exception) {
+        console.error(exception);
+        errorResponse = {
+          message: errorMessages.noRecordsToAdd,
+          reason: errorMessages.noRecordsToAdd_reason
+        };
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;
