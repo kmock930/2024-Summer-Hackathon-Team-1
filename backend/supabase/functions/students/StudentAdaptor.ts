@@ -74,6 +74,15 @@ export class StudentAdaptor {
         if (this.queryParams.param_age_highlimit) {
             res = res.filter((record) => Number.parseInt(record.age) <= Number.parseInt(this.queryParams.param_age_highlimit));
         }
+        // fields to display
+        const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
+        res.map((record) => {
+            for (var key in record) {
+                if (fieldDisp.indexOf(key) < 0) {
+                    delete record[key];
+                }
+            }
+        });
         return res;
     };
 
@@ -115,6 +124,15 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
+        // fields to display
+        const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
+        data.map((record) => {
+            for (var key in record) {
+                if (fieldDisp.indexOf(key) < 0) {
+                    delete record[key];
+                }
+            }
+        });
         return data;
     };
 
@@ -165,6 +183,15 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
+        // fields to display
+        const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'modified_dt', 'modified_by'];
+        data.map((record) => {
+            for (var key in record) {
+                if (fieldDisp.indexOf(key) < 0) {
+                    delete record[key];
+                }
+            }
+        });
         return data;
     };
 
@@ -204,6 +231,15 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
+        // fields to display
+        const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'modified_dt', 'modified_by', 'deleted_dt', 'deleted_by'];
+        data.map((record) => {
+            for (var key in record) {
+                if (fieldDisp.indexOf(key) < 0) {
+                    delete record[key];
+                }
+            }
+        });
         return data;
     }
 }
