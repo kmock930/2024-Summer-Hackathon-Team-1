@@ -139,10 +139,10 @@ export class StudentAdaptor {
     public updateStudents = async (): object => {
         let errorResponse: object;
         if (!this.queryParams.param_student_id || !(this.queryParams.param_name || this.queryParams.param_gender || this.queryParams.param_age || this.queryParams.param_pronounce || this.queryParams.param_is_active)) {
-            console.error(errorMessages.noRecordsToAdd);
+            console.error(`${errorMessages.noRecordsToUpdate} - students table`);
             errorResponse = {
                 type: 'ERROR',
-                message: errorMessages.noRecordsToUpdate,
+                message: `${errorMessages.noRecordsToUpdate} - students table`,
                 reason: errorMessages.noRecordsToUpdate_reason
             };
             return errorResponse;
@@ -170,7 +170,6 @@ export class StudentAdaptor {
         // Set modified_dt and modified_by for auditing purpose in database
         updateCond['modified_dt'] = getCurrentTimestampWithTimezone(); //UTC time
         updateCond['modified_by'] = 'cics';
-        console.log(updateCond)
         // Execute the query
         const { data, error } = await query.update(updateCond).eq('id', this.queryParams.param_student_id).select();
         // Error handling
