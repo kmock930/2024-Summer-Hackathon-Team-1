@@ -21,7 +21,11 @@ export class StudentAdaptor {
             param_firstname: url.searchParams.get('firstname'),
             param_lastname: url.searchParams.get('lastname'),
             param_gender: url.searchParams.get('gender'),
-            param_dob: url.searchParams.get('dob'),
+            param_age_lowlimit: url.searchParams.get('age_lowlimit'),
+            param_age_highlimit: url.searchParams.get('age_highlimit'),
+            param_pronounce: url.searchParams.get('pronounce'),
+            param_is_active: url.searchParams.get('is_active'),
+            param_age:url.searchParams.get('age')
         };
     }
 
@@ -35,7 +39,7 @@ export class StudentAdaptor {
         let query = this.supabase
             .from('students')
             .select()
-            .is('is_active', true)
+            .is('is_active', this.queryParams.param_is_active ? this.queryParams.param_is_active === 'true' : true)
             .is('deleted_dt', null);
         // Conditional chaining (for filtering)
         if (this.queryParams.param_student_id) {
@@ -50,9 +54,10 @@ export class StudentAdaptor {
         if (this.queryParams.param_gender) {
             query.eq('gender', this.queryParams.param_gender)
         }
-        if (this.queryParams.param_dob) {
-            query.eq('dob', this.queryParams.param_dob);
+        if (this.queryParams.param_pronounce) {
+            query.eq('pronounce', this.queryParams.param_pronounce);
         }
+
         // Execute the query
         const { data, error } = await query;
         // Error handling
@@ -65,7 +70,16 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
-        return data;
+        // further filtering 
+        let res: Array<object> = data;
+        // age ranges
+        if (this.queryParams.param_age_lowlimit) {
+            res = res.filter((record) => Number.parseInt(record.age) >= Number.parseInt(this.queryParams.param_age_lowlimit));
+        }
+        if (this.queryParams.param_age_highlimit) {
+            res = res.filter((record) => Number.parseInt(record.age) <= Number.parseInt(this.queryParams.param_age_highlimit));
+        }
+        return res;
     };
 
     public insertStudents = async (reqBody: object): object => {
@@ -111,7 +125,7 @@ export class StudentAdaptor {
 
     public updateStudents = async (): object => {
         let errorResponse: object;
-        if (!this.queryParams.param_student_id || !(this.queryParams.param_firstname || this.queryParams.param_lastname || this.queryParams.param_gender || this.queryParams.param_dob)) {
+        if (!this.queryParams.param_student_id || !(this.queryParams.param_firstname || this.queryParams.param_lastname || this.queryParams.param_gender || this.queryParams.param_age || this.queryParams.param_pronounce || this.queryParams.param_is_active)) {
             console.error(errorMessages.noRecordsToAdd);
             errorResponse = {
                 type: 'ERROR',
@@ -134,8 +148,14 @@ export class StudentAdaptor {
         if (this.queryParams.param_gender) {
             updateCond['gender'] = this.queryParams.param_gender;
         }
-        if (this.queryParams.param_dob) {
-            updateCond['dob'] = this.queryParams.param_dob;
+        if (this.queryParams.param_age) {
+            updateCond['age'] = this.queryParams.param_age;
+        }
+        if (this.queryParams.param_pronounce) {
+            updateCond['pronounce'] = this.queryParams.param_pronounce;
+        }
+        if (this.queryParams.param_is_active) {
+            updateCond['is_active'] = this.queryParams.param_is_active;
         }
         // Set modified_dt and modified_by for auditing purpose in database
         updateCond['modified_dt'] = getCurrentTimestampWithTimezone(); //UTC time
