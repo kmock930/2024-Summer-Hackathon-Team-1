@@ -38,7 +38,9 @@ export class StudentAdaptor {
             param_parent_name: url.searchParams.get('name'),
             // for parent-student relationship
             param_parent_rel: url.searchParams.get('parent_rel'),
-            paran_student_rel: url.searchParams.get('student_rel')
+            paran_student_rel: url.searchParams.get('student_rel'),
+            // no parent option
+            parma_no_parent: url.searchParams.get('no_parent')
         };
     }
 
@@ -176,17 +178,22 @@ export class StudentAdaptor {
                 }
             }
         });
-        // call insert parents to add the corresponding parent's record and association
-        const parentAdaptor = new ParentAdaptor(this.url);
-        const parentData = await parentAdaptor.insertParents(reqBody, data /* student data */);
 
-        // format final response
-        var res: Array<object> = [];
-        studentres.map((studentRecord: Object, ind: Number) => {
-            res.push({...studentRecord, ...parentData[ind]});
-        });
+        if (this.queryParams.parma_no_parent === 'true') {
+            return studentres;
+        } else {
+            // call insert parents to add the corresponding parent's record and association
+            const parentAdaptor = new ParentAdaptor(this.url);
+            const parentData = await parentAdaptor.insertParents(reqBody, data /* student data */);
 
-        return res;
+            // format final response
+            var res: Array<object> = [];
+            studentres.map((studentRecord: Object, ind: Number) => {
+                res.push({...studentRecord, ...parentData[ind]});
+            });
+
+            return res;
+        }
     };
 
     public updateStudents = async (): object => {
