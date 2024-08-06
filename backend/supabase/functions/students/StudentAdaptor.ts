@@ -2,10 +2,12 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts"; //Deno
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
 import { errorMessages } from "../_shared/constants.ts";
 import { getCurrentTimestampWithTimezone } from "../_shared/timestamp.ts";
+import { ParentAdaptor } from "../parents/ParentAdaptor.ts";
 
 export class StudentAdaptor {
     private queryParams: object;
     private supabase: any; //db client
+    private url: URL;
 
     public constructor(url: URL) {
         //initialize db client
@@ -13,6 +15,8 @@ export class StudentAdaptor {
             Deno.env.get("API_URL"),
             Deno.env.get("API_ANON")
         );
+
+        this.url = url;
 
         // Parse parameters from URL
         this.queryParams = {
@@ -23,12 +27,24 @@ export class StudentAdaptor {
             param_age_highlimit: url.searchParams.get('age_highlimit'),
             param_pronounce: url.searchParams.get('pronounce'),
             param_is_active: url.searchParams.get('is_active'),
-            param_age:url.searchParams.get('age')
+            param_age:url.searchParams.get('age'),
+            // for parent table
+            param_parent_id: url.searchParams.get('id'),
+            param_parent_email: url.searchParams.get('email'),
+            param_parent_tel: url.searchParams.get('tel'),
+            param_parent_address: url.searchParams.get('address'),
+            param_parent_city: url.searchParams.get('city'),
+            param_parent_postcode: url.searchParams.get('postcode'),
+            param_parent_name: url.searchParams.get('name'),
+            // for parent-student relationship
+            param_parent_rel: url.searchParams.get('parent_rel'),
+            paran_student_rel: url.searchParams.get('student_rel')
         };
     }
 
     //getter
     public getQueryParams = () => this.queryParams;
+    public getURL = () => this.url;
     
     //database calling function
     public getStudents = async (): object => {
@@ -86,7 +102,7 @@ export class StudentAdaptor {
         return res;
     };
 
-    public insertStudents = async (reqBody: object): object => {
+    public insertStudents = async (reqBody: object | Array<object>): object => {
         let errorResponse: object;
         if (!reqBody) {
             console.error(`${errorMessages.noRecordsToAdd} - students table`);
@@ -97,43 +113,80 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
-        //add audit fields to request body object
+
+        // not overwriting request body during querying
+        const studentQueryFields: Array<object> = [];
         if (Array.isArray(reqBody)) {
             reqBody.map((record) => {
+                let currStudentQueryField: object = {};
                 if (typeof(record) === 'object' && !Array.isArray(record)) {
-                    record['created_by'] = 'cics';
+                    currStudentQueryField['created_by'] = 'cics'; //add audit fields to request body object
+                    for (var key in record) {
+                        if (key.startsWith('student_')) {
+                            // remove prefix for querying database
+                            currStudentQueryField[key.substring(8)] = record[key];
+                        }
+                    }
                 }
+                studentQueryFields.push(currStudentQueryField)
             });
         } else if (typeof(reqBody) === 'object') {
-            reqBody['created_by'] = 'cics';
+            let currStudentQueryField: object = {};
+            // not overwriting request body during querying
+            currStudentQueryField['created_by'] = 'cics'; //add audit fields to request body object
+            for (var key in reqBody) {
+                if (key.startsWith('student_')) {
+                    // remove prefix for querying database
+                    currStudentQueryField[key.substring(8)] = reqBody[key];
+                }
+            }
+            studentQueryFields.push(currStudentQueryField);
         }
+
         // Construct the query
         const query = this.supabase
             .from('students')
-            .insert(reqBody, {return: 'representation', defaultToNull: true})
+            .insert(studentQueryFields, {return: 'representation', defaultToNull: true})
             .select();
         // Execute the query
         const { data, error } = await query;
         // Error handling
         if (error) {
-            console.error(error);
+            console.error(`students table - ${error}`);
             errorResponse = {
                 type: 'ERROR',
-                message: errorMessages.dbError,
+                message: `${errorMessages.dbError} - students table`,
                 reason: error
             };
             return errorResponse;
         }
         // fields to display
-        const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
-        data.map((record) => {
+        const student_fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
+        // format field names from students database table query
+        var studentres = data;
+        studentres.map((record) => {
             for (var key in record) {
-                if (fieldDisp.indexOf(key) < 0) {
+                if (student_fieldDisp.indexOf(key) < 0) {
+                    // i.e. not a field to display
+                    delete record[key];
+                } else {
+                    // i.e. is a field to display
+                    record[`student_${key}`] = record[key]; //add back the prefix for display
                     delete record[key];
                 }
             }
         });
-        return data;
+        // call insert parents to add the corresponding parent's record and association
+        const parentAdaptor = new ParentAdaptor(this.url);
+        const parentData = await parentAdaptor.insertParents(reqBody, data /* student data */);
+
+        // format final response
+        var res: Array<object> = [];
+        studentres.map((studentRecord: Object, ind: Number) => {
+            res.push({...studentRecord, ...parentData[ind]});
+        });
+
+        return res;
     };
 
     public updateStudents = async (): object => {
@@ -184,6 +237,9 @@ export class StudentAdaptor {
         }
         // fields to display
         const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'modified_dt', 'modified_by'];
+        if (this.queryParams.param_gender) {
+            fieldDisp.push('gender');
+        }
         data.map((record) => {
             for (var key in record) {
                 if (fieldDisp.indexOf(key) < 0) {

@@ -44,6 +44,9 @@ Deno.serve(async (req: Request) => {
           message: errorMessages.noRecordsToAdd,
           reason: errorMessages.noRecordsToAdd_reason
         };
+        if (exception) {
+          errorResponse['error'] = exception;
+        }
         return new Response(
           JSON.stringify(errorResponse),
           responseHeader

@@ -22,15 +22,20 @@ export class ParentAdaptor {
             param_parent_address: url.searchParams.get('address'),
             param_parent_city: url.searchParams.get('city'),
             param_parent_postcode: url.searchParams.get('postcode'),
-            param_parent_name: url.searchParams.get('name')
+            param_parent_name: url.searchParams.get('name'),
+            // for parent-student relationship
+            param_student_id: url.searchParams.get('student_id'),
+            param_parent_rel: url.searchParams.get('parent_rel'),
+            paran_student_rel: url.searchParams.get('student_rel')
         }
     }
 
-    //getter
+    // getter
     public getQueryParams = () => this.queryParams;
 
-    //database calling function
-    public insertParents = async (reqBody: object): object => {
+    // database calling function
+    // trigger from insert student
+    public insertParents = async (reqBody: object, studentData: Array<object>): object => {
         let errorResponse: object;
         if (!reqBody) {
             console.error(`${errorMessages.noRecordsToAdd} - parents table`);
@@ -41,46 +46,92 @@ export class ParentAdaptor {
             };
             return errorResponse;
         }
-
-        //add audit fields to request body object
+        
+        // not overwriting request body during querying
+        const parentQueryFields: Array<object> = [];
         if (Array.isArray(reqBody)) {
             reqBody.map((record) => {
+                let currParentQueryField: object = {};
                 if (typeof(record) === 'object' && !Array.isArray(record)) {
-                    record['created_by'] = 'cics';
+                    currParentQueryField['created_by'] = 'cics'; //add audit fields to request body object
+                    for (var key in record) {
+                        console.log(key)
+                        if (key.startsWith('parent_')) {
+                            // remove prefix for querying database
+                            currParentQueryField[key.substring(7)] = record[key];
+                        }
+                    }
                 }
+                parentQueryFields.push(currParentQueryField);
             });
         } else if (typeof(reqBody) === 'object') {
-            reqBody['created_by'] = 'cics';
+            let currParentQueryField: object = {};
+            // not overwriting request body during querying
+            currParentQueryField['created_by'] = 'cics'; //add audit fields to request body object
+            for (var key in reqBody) {
+                if (key.startsWith('parent_')) {
+                    // remove prefix for querying database
+                    currParentQueryField[key.substring(7)] = reqBody[key];
+                }
+            }
+            parentQueryFields.push(currParentQueryField);
         }
 
         // Construct the query
         const query = this.supabase
             .from('parents')
-            .insert(reqBody, {return: 'representation', defaultToNull: true})
+            .insert(parentQueryFields, {return: 'representation', defaultToNull: true})
             .select();
         
         // Execute the query
         const { data, error } = await query;
         // Error handling
         if (error) {
-            console.error(error);
+            console.error(`parents table - ${error}`);
             errorResponse = {
                 type: 'ERROR',
-                message: errorMessages.dbError,
+                message: `${errorMessages.dbError} - parents table`,
                 reason: error
             };
             return errorResponse;
         }
         // fields to display
-        const fieldDisp = ['id', 'name', 'email', 'address', 'tel', 'is_active', 'created_dt', 'created_by'];
-        data.map((record) => {
+        const parent_fieldDisp = ['id', 'name', 'email', 'address', 'tel', 'created_dt', 'created_by'];
+        // format field names from parents database table query
+        var parentres = data;
+        parentres.map((record) => {
             for (var key in record) {
-                if (fieldDisp.indexOf(key) < 0) {
+                if (parent_fieldDisp.indexOf(key) < 0) {
+                    // i.e. not a field to display
+                    delete record[key];
+                } else {
+                    // i.e. is a field to display
+                    record[`parent_${key}`] = record[key]; //add back the prefix for display
                     delete record[key];
                 }
             }
         });
-        return data;
+
+        //insert parent-student relationship
+        const relData = await this.insertParentStudentRel(reqBody, studentData, data /* parent data */);
+        // Error handling
+        if (relData.type === 'ERROR') {
+            console.error(`rel_parent_student table - ${error}`);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - rel_parent_student table`,
+                reason: error
+            };
+            return errorResponse;
+        }
+
+        // format final response
+        var res: Array<object> = [];
+        parentres.map((parentRecord: Object, ind: Number) => {
+            res.push({...parentRecord, ...relData[ind]});
+        });
+
+        return res;
     };
 
     public getParents = async (reqBody: object): object => {
@@ -198,7 +249,7 @@ export class ParentAdaptor {
         return data;
     };
 
-    public deleteParents = async (): objecr => {
+    public deleteParents = async (): object => {
         let errorResponse: object;
         if (!this.queryParams?.param_parent_id) {
             console.error(`${errorMessages.noRecordsToDelete} - parents table`);
@@ -242,5 +293,119 @@ export class ParentAdaptor {
             }
         });
         return data;
+    };
+
+    // trigger from insert parent
+    public insertParentStudentRel = async (reqBody: Request, studentData: Array<object>, parentData: Array<object>): object => {
+        let errorResponse: object;
+        if (!reqBody) {
+            console.error(`${errorMessages.noRecordsToAdd} - rel_parent_student table`);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.noRecordsToAdd} - rel_parent_student table`,
+                reason: errorMessages.noRecordsToAdd_reason
+            };
+            return errorResponse;
+        }
+
+        // not overwriting request body during querying
+        const relQueryFields: Array<object> = [];
+        var student_rel: string; 
+        if (Array.isArray(reqBody)) {
+            reqBody.map((record) => {
+                let currRelQueryField: object = {};
+                if (typeof(record) === 'object' && !Array.isArray(record)) {
+                    currRelQueryField['created_by'] = 'cics'; //add audit fields to request body object
+                    for (var key in record) {
+                        if (key.substring(4) === 'student_rel') {
+                            // make record because user supplies with student's relationship
+                            // To be added to database
+                            student_rel = record[key];
+                        }
+                        if (key.startsWith('rel_')) {
+                            // remove prefix for querying database
+                            currRelQueryField[key.substring(4)] = record[key];
+                        }
+                    }
+                }
+                relQueryFields.push(currRelQueryField);
+            })
+        } else if (typeof(reqBody) === 'object') {
+            let currRelQueryField: object = {};
+            // not overwriting request body during querying
+            currRelQueryField['created_by'] = 'cics'; //add audit fields to request body object
+            for (var key in reqBody) {
+                if (key.startsWith('rel_')) {
+                    // remove prefix for querying database
+                    currRelQueryField[key.substring(4)] = reqBody[key];
+                }
+            }
+            relQueryFields.push(currRelQueryField);
+        }
+
+        // extracting parent id
+        var parent_ids: Array<string | Number> = [];
+        if (parentData && Array.isArray(parentData)) {
+            parentData.map((parentRecord) => {
+                parent_ids.push(parentRecord['parent_id']);
+            })
+        }
+
+        // extracting student id
+        var student_ids: Array<any> = [];
+        if (studentData && Array.isArray(studentData)) {
+            studentData.map((studentRecord) => {
+                student_ids.push(studentRecord['student_id']);
+            })
+        }
+
+        // storing parent ids into current query
+        for (var i=0; i<parent_ids.length; ++i) {
+            relQueryFields[i]['parent_id'] = parent_ids[i];
+        }
+        student_ids.map((id, ind) => {
+            relQueryFields[ind]['student_id'] = id;
+        });
+
+
+        // Construct the query
+        const query = this.supabase
+            .from('rel_parent_student')
+            .insert(relQueryFields, {return: 'representation', defaultToNull: true})
+            .select();
+        // Execute the query
+        const { data, error } = await query;
+        // fields to display
+        const rel_fieldDisp = ['parent_rel', 'created_dt', 'created_by'];
+        if (student_rel) {
+            // display student rel field ONLY IF user supplies with this info in request body
+            rel_fieldDisp.push('student_rel');
+        }
+        // Error handling
+        if (error) {
+            console.error(error);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - rel_parent_student table`,
+                reason: error
+            };
+            return errorResponse;
+        }
+        var res = data;
+        // format field names from rel_parent_student database table query
+        res.map((record) => {
+            for (var key in record) {
+                if (rel_fieldDisp.indexOf(key) < 0) {
+                    // i.e. not a field to display
+                    delete record[key];
+                } else {
+                    // i.e. is a field to display
+                    record[`rel_${key}`] = record[key]; //add back the prefix for display
+                    delete record[key];
+                }
+            }
+        });
+
+        return res;
     }
 }

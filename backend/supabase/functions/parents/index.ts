@@ -6,7 +6,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
 import {ParentAdaptor} from "./ParentAdaptor.ts";
-import { errorMessages} from "../_shared/constants.ts";
+import { errorMessages, warningMessages } from "../_shared/constants.ts";
 
 Deno.serve(async (req: Request) => {
   const responseHeader: object = {headers: {...corsHeaders /*Resolving Issue #16*/, "Content-Type": "application/json"}, status: 200};
@@ -35,34 +35,16 @@ Deno.serve(async (req: Request) => {
         responseHeader
       );
     case 'POST':
-      try {
-        const reqBody = await req.json();
-        data = await adaptor.insertParents(reqBody);
-      } catch (exception) {
-        console.error(exception);
-        errorResponse = {
-          message: errorMessages.noRecordsToAdd,
-          reason: errorMessages.noRecordsToAdd_reason
-        };
-        return new Response(
-          JSON.stringify(errorResponse),
-          responseHeader
-        );
-      }
-
-      // Error handling
-      if (data?.type === 'ERROR') {
-        const errorResponse = data;
-        console.error(`ERROR: ${errorResponse?.message}`);
-        responseHeader.status = 500;
-        return new Response(
-          JSON.stringify(errorResponse),
-          responseHeader
-        );
-      }
       // Return the response in JSON
+      console.error(`parents API - ${warningMessages.opNotOK}`)
+      const response = {
+        type: 'WARNING',
+        message: warningMessages.opNotOK,
+        reason: warningMessages.opNotOK_reason
+      }
+      responseHeader.status = 404;
       return new Response(
-        JSON.stringify(data),
+        JSON.stringify(response),
         responseHeader
       );
     case 'PATCH':
