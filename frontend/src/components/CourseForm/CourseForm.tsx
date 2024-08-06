@@ -159,12 +159,15 @@ function CourseForm() {
                   gap: '16px',
                 })}
               >
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
-                <Checkbox value='survey'>Summer 2024 S.T.E.A.M. Camp</Checkbox>
+                <Checkbox name='course.dummy1' value='survey'>
+                  Summer 2024 S.T.E.A.M. Camp
+                </Checkbox>
+                <Checkbox name='course.dummy2' value='survey'>
+                  Summer 2024 S.T.E.A.M. Camp
+                </Checkbox>
+                <Checkbox name='course.dummy3' value='survey'>
+                  Summer 2024 S.T.E.A.M. Camp
+                </Checkbox>
               </CheckboxGroup>
             </Label>
           </div>

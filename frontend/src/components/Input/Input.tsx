@@ -12,12 +12,13 @@ import { useField } from '@formiz/core';
 import { InputProps } from '@/types';
 
 function Input<FormattedValue = string>(props: InputProps<FormattedValue>) {
-  const { value, setValue } = useField(props);
+  const { value, setValue, otherProps } = useField(props);
+  const { isHideLabel, ...delegated } = otherProps;
   const { visuallyHiddenProps } = useVisuallyHidden();
   return (
     <div>
       <Field>
-        {props.isHideLabel ? (
+        {isHideLabel ? (
           <Label {...visuallyHiddenProps}>{props.label}</Label>
         ) : (
           <Label>{props.label}</Label>
@@ -34,7 +35,7 @@ function Input<FormattedValue = string>(props: InputProps<FormattedValue>) {
           type={props.type}
           value={value ?? ''}
           onChange={(event) => setValue(event.target.value)}
-          {...props}
+          {...delegated}
         />
       </Field>
     </div>
