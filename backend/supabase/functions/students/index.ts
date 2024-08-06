@@ -5,9 +5,8 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from 'npm:@supabase/supabase-js@2.39.3'
-import {errorMessages} from '../_shared/constants.ts';
-import {parseQueryCondition} from '../_shared/common.ts';
 import {corsHeaders} from "../_shared/cors.ts"; //Resolving Issue #16 - CORS policy issue
+import {StudentAdaptor}  from "./StudentAdaptor.ts";
 
 const supabase = createClient(
   Deno.env.get("API_URL"),
@@ -19,39 +18,16 @@ Deno.serve(async (req: Request) => {
   let errorResponse: object;
   // Parse parameters from URL
   const url:URL = new URL(req.url);
-  const queryParams = parseQueryCondition(url);
+  const adaptor = new StudentAdaptor(url);
+  let data: any;
   
   switch (req.method) {
-    case 'GET':
-      // Construct the query first
-      let query = supabase
-        .from('students')
-        .select();
-      // Conditional chaining (for filtering)
-      if (queryParams.param_student_id) {
-        query.eq('id', queryParams.param_student_id);
-      }
-      if (queryParams.param_firstname) {
-        query.eq('firstname', queryParams.param_firstname);
-      }
-      if (queryParams.param_lastname) {
-        query.eq('lastname', queryParams.param_lastname);
-      }
-      if (queryParams.param_gender) {
-        query.eq('gender', queryParams.param_gender)
-      }
-      if (queryParams.param_dob) {
-        query.eq('dob', queryParams.param_dob);
-      }
-      // Execute the query
-      const { data, error } = await query;
+    case 'GET': // GET all (no param); GET by id.
+      data = await adaptor.getStudents();
       // Error handling
-      if (error) {
-        console.error(error);
-        errorResponse = {
-          message: `ERROR: ${error}`,
-          reason: errorMessages.dbError
-        };
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
         responseHeader.status = 500;
         return new Response(
           JSON.stringify(errorResponse),
@@ -63,22 +39,65 @@ Deno.serve(async (req: Request) => {
         JSON.stringify(data),
         responseHeader
       );
-    case 'POST':
-      // Add
-      break;
-    case 'PATCH':
-      // Update
-      break;
-    case 'OPTIONS':
-      // To handle preflight response from browser
+    case 'POST': // Add
+      const reqBody = await req.json();
+      data = await adaptor.insertStudents(reqBody);
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
+    case 'PATCH': // same as PUT
+    case 'PUT': // Update
+      data = await adaptor.updateStudents();
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
+    case 'OPTIONS': // To handle preflight response from browser
       return new Response(
         'ok',
         responseHeader
       );
-    case 'DELETE':
-      break;
-    default:
-      //other operations
+    case 'DELETE': // Delete
+      data = await adaptor.deleteStudents();
+      // Error handling
+      if (data?.type === 'ERROR') {
+        const errorResponse = data;
+        console.error(`ERROR: ${errorResponse?.message}`);
+        responseHeader.status = 500;
+        return new Response(
+          JSON.stringify(errorResponse),
+          responseHeader
+        );
+      }
+      // Return the response in JSON
+      return new Response(
+        JSON.stringify(data),
+        responseHeader
+      );
+    default: // Error handling: other operations
       errorResponse = {
         message: errorMessages.invalidOp,
         reason: errorMessages.invalidOp_reason
