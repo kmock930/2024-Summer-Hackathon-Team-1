@@ -36,7 +36,59 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET': {
+      const url = new URL(req.url);
+      const course_id = url.searchParams.get('course_id');
+      const survey_id = url.searchParams.get('survey_id');
 
+      if ((course_id && survey_id) || (!course_id && !survey_id))
+        return generateResponse(errorMessages.invalidRegistrationQuery, responseHeader, 400);
+
+      if (course_id) { /* Checking registration of a course */
+        // Course Details
+        const { data: courseData, error: courseError } = await supabase
+          .from('courses')
+          .select()
+          .eq('id', course_id);
+        if (courseError)
+          return generateResponse(courseError, responseHeader, 400);
+
+        // Courses Registration Status
+        const { data: registrationData, error: registrationError } = await supabase
+          .from('registered_courses')
+          .select('student_id')
+          .eq('course_id', course_id);
+        if (registrationError)
+          return generateResponse(registrationError, responseHeader, 400);
+
+        const data = {
+          ...courseData[0],
+          'student_ids': registrationData.map((i:any) => i.student_id)
+        };
+        return generateResponse(data, responseHeader, 200);
+      }
+      else { /* Checking responses of a survey */
+        // Survey Details
+        const { data: surveyData, error: surveyError } = await supabase
+          .from('surveys')
+          .select()
+          .eq('id', survey_id);
+        if (surveyError)
+          return generateResponse(surveyError, responseHeader, 400);
+
+        // Survey Responses
+        const { data: responseData, error: responseError } = await supabase
+          .from('survey_responses')
+          .select()
+          .eq('survey_id', survey_id);
+        if (responseError)
+          return generateResponse(responseError, responseHeader, 400);
+
+        const data = {
+          ...surveyData[0],
+          'responses': responseData
+        };
+        return generateResponse(data, responseHeader, 200);
+      }
     }
 
     case 'POST': {
@@ -88,19 +140,13 @@ Deno.serve(async (req: Request) => {
       return generateResponse(body, responseHeader, 200);
     }
 
-    case 'PUT': {
-
-    }
-
-    case 'DELETE': {
-
-    }
-
     case 'OPTIONS':{
       const body = {'message': 'OK'};
       return generateResponse(body, responseHeader, 200);
     }
 
+    case 'PUT':
+    case 'DELETE':
     default: {
       const body = {'message': 'Invalid / Disabled request method'};
       return generateResponse(body, responseHeader, 400);

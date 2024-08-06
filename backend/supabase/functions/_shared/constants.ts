@@ -11,4 +11,5 @@ export const errorMessages = {
     noStudentId: 'No student ID provided.',
     noCourseIds: 'Invalid course IDs. (Null or empty)',
     noParentIds: 'Invalid parent IDs. (Null or empty)',
+    invalidRegistrationQuery: 'Either course_id or survey_id must be provided, but not both.',
 }
