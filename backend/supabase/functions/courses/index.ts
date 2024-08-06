@@ -6,7 +6,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.39.3';
 import { errorMessages } from '../_shared/constants.ts';
-import { parseQueryCondition } from '../_shared/common.ts';
 import { corsHeaders } from "../_shared/cors.ts";
 
 /* TODO
@@ -52,8 +51,7 @@ Deno.serve(async (req: Request) => {
       const { data, error } = await query;
       if (error) return generateResponse(error, responseHeader, 400);
 
-      const body = { 'courses': data };
-      return generateResponse(body, responseHeader, 200);
+      return generateResponse(data, responseHeader, 200);
     }
 
     case 'POST': {
@@ -65,8 +63,7 @@ Deno.serve(async (req: Request) => {
         .select();
       if (error) return generateResponse(error, responseHeader, 400);
 
-      const body = { 'courses': data };
-      return generateResponse(body, responseHeader, 200);
+      return generateResponse(data, responseHeader, 200);
     }
 
     case 'PUT': {
@@ -106,8 +103,7 @@ Deno.serve(async (req: Request) => {
 
       if (error) return generateResponse(error, responseHeader, 400);
       
-      const body = { 'courses': data };
-      return generateResponse(body, responseHeader, 200);
+      return generateResponse(data, responseHeader, 200);
     }
 
     case 'DELETE': {
@@ -136,8 +132,7 @@ Deno.serve(async (req: Request) => {
         .select();
       if (error) return generateResponse(error, responseHeader, 400);
 
-      const body = { 'courses': data };
-      return generateResponse(body, responseHeader, 200);
+      return generateResponse(data, responseHeader, 200);
     }
 
     case 'OPTIONS':{
