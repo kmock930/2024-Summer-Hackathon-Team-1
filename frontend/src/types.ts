@@ -1,3 +1,5 @@
+import { FieldProps } from '@formiz/core';
+import { InputProps as HeadlessUIInputProps } from '@headlessui/react';
 import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
 
@@ -47,3 +49,11 @@ export type DashboardFormProps = {
   name?: string;
   children?: React.ReactNode;
 };
+
+export type InputProps<FormattedValue> = FieldProps<string, FormattedValue> & {
+  label: string;
+  description?: string;
+  isHideLabel?: boolean;
+  type?: string;
+  name: string;
+} & HeadlessUIInputProps;

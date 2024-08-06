@@ -44,7 +44,12 @@ const Button = styled.button`
 `;
 
 function CourseRegistrationForm() {
-  const form = useForm({ onSubmit: () => setIsSubmited(true) });
+  const form = useForm({
+    onSubmit: (values) => {
+      console.log(values);
+      setIsSubmited(true);
+    },
+  });
   const newChildrenForm = useForm();
   const [isDisplayNewChildrenForm, setIsDisplayNewChildrenForm] =
     React.useState(false);
@@ -54,10 +59,8 @@ function CourseRegistrationForm() {
     setIsDisplayNewChildrenForm(!isDisplayNewChildrenForm);
 
   const { data: courseData } = useList({ resource: 'courses' });
-  console.log(courseData?.data);
 
   const { data: formTitle } = useList({ resource: 'title' });
-  console.log(formTitle);
 
   const courseFields = useFormFields({
     connect: form,
@@ -263,32 +266,32 @@ function CourseRegistrationForm() {
                 <Input
                   label="Parent/Guardian's Legal Full Name"
                   type='text'
-                  name='student-address'
+                  name='studentFullName'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Relationship to Student'
                   type='text'
-                  name='student-address'
+                  name='relationship'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Name'
                   type='text'
-                  name='student-address'
+                  name='emergencyContactName'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Phone'
                   type='text'
-                  name='student-address'
+                  name='emergencyContactPhone'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label={'Pick Up Arrangements'}
                   description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
                   type='text'
-                  name='student-address'
+                  name='pickUpArragements'
                   placeholder='Please enter your answer'
                 />
               </FormizStep>
@@ -306,7 +309,7 @@ function CourseRegistrationForm() {
                   label='Please read the Consent : https://bit.ly/CICSCentreforLearningConsentForm'
                   description='In case of emergency, I authorize CICS staff to administer first aid, or call an ambulance.  I understand that should such an emergency arise, I, or my emergency contact (when I cannot be reached), will be notified immediately.  I agree that any cost incurred for such services shall be my responsibility. By signing below, I have read and agree to the above.  By participating in the program, I release Centre for Immigrant and Community Services, its employees, and volunteers from any claims, actions, liabilities, losses and injuries to any person or property while participating in the program.'
                   type='text'
-                  name='student-address'
+                  name='sign'
                   placeholder='Please enter your answer'
                 />
               </FormizStep>
