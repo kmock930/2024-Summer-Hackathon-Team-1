@@ -16,10 +16,8 @@ export class StudentAdaptor {
 
         // Parse parameters from URL
         this.queryParams = {
-            //for GET method
             param_student_id: url.searchParams.get('id'),
-            param_firstname: url.searchParams.get('firstname'),
-            param_lastname: url.searchParams.get('lastname'),
+            param_name: url.searchParams.get('name'),
             param_gender: url.searchParams.get('gender'),
             param_age_lowlimit: url.searchParams.get('age_lowlimit'),
             param_age_highlimit: url.searchParams.get('age_highlimit'),
@@ -45,11 +43,8 @@ export class StudentAdaptor {
         if (this.queryParams.param_student_id) {
             query.eq('id', this.queryParams.param_student_id);
         }
-        if (this.queryParams.param_firstname) {
-            query.eq('firstname', this.queryParams.param_firstname);
-        }
-        if (this.queryParams.param_lastname) {
-            query.eq('lastname', this.queryParams.param_lastname);
+        if (this.queryParams.param_name) {
+            query.eq('name', this.queryParams.param_name);
         }
         if (this.queryParams.param_gender) {
             query.eq('gender', this.queryParams.param_gender)
@@ -85,10 +80,10 @@ export class StudentAdaptor {
     public insertStudents = async (reqBody: object): object => {
         let errorResponse: object;
         if (!reqBody) {
-            console.error(errorMessages.noRecordsToAdd);
+            console.error(`${errorMessages.noRecordsToAdd} - students table`);
             errorResponse = {
                 type: 'ERROR',
-                message: errorMessages.noRecordsToAdd,
+                message: `${errorMessages.noRecordsToAdd} - students table`,
                 reason: errorMessages.noRecordsToAdd_reason
             };
             return errorResponse;
@@ -125,7 +120,7 @@ export class StudentAdaptor {
 
     public updateStudents = async (): object => {
         let errorResponse: object;
-        if (!this.queryParams.param_student_id || !(this.queryParams.param_firstname || this.queryParams.param_lastname || this.queryParams.param_gender || this.queryParams.param_age || this.queryParams.param_pronounce || this.queryParams.param_is_active)) {
+        if (!this.queryParams.param_student_id || !(this.queryParams.param_name || this.queryParams.param_gender || this.queryParams.param_age || this.queryParams.param_pronounce || this.queryParams.param_is_active)) {
             console.error(errorMessages.noRecordsToAdd);
             errorResponse = {
                 type: 'ERROR',
@@ -139,11 +134,8 @@ export class StudentAdaptor {
             .from('students');
         // Conditional Chaining (for updating based on provided parameters)
         const updateCond: Record<string, any> = {};
-        if (this.queryParams.param_firstname) {
-            updateCond['firstname'] = this.queryParams.param_firstname;
-        }
-        if (this.queryParams.param_lastname) {
-            updateCond['lastname'] = this.queryParams.param_lastname;
+        if (this.queryParams.param_name) {
+            updateCond['name'] = this.queryParams.param_name;
         }
         if (this.queryParams.param_gender) {
             updateCond['gender'] = this.queryParams.param_gender;
