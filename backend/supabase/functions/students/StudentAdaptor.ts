@@ -309,6 +309,8 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
+
+        // Step 1: Mark student record to be deleted
         // Construct the query
         let query = this.supabase
             .from('students');
@@ -334,15 +336,60 @@ export class StudentAdaptor {
             };
             return errorResponse;
         }
+        let studentres: Array<object> = data;
         // fields to display
         const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'modified_dt', 'modified_by', 'deleted_dt', 'deleted_by'];
-        data.map((record) => {
-            for (var key in record) {
+        studentres.map((studentRecord) => {
+            for (var key in studentRecord) {
                 if (fieldDisp.indexOf(key) < 0) {
-                    delete record[key];
+                    delete studentRecord[key];
                 }
             }
         });
-        return data;
-    }
+
+        // Step 2: Mark student-parent relationship record to be deleted
+        // Construct the query
+        query = this.supabase
+            .from('rel_parent_student');
+        // Update the fields accordingly
+        delete updateCond['is_active'];
+        query.update(updateCond).eq('student_id', this.queryParams.param_student_id).select();
+        // Execute the query 
+        const { data: relationship, error: relationshipsError} = await query;
+        if (relationshipsError) {
+            console.error('Error fetching rel_parent_student relationships:', relationshipsError);
+            return studentres.map((studentRecord) => ({...studentRecord, parent: []}));
+        }
+
+        // Step 3: Update the corresponding parent's record (if any)
+        // Fetch the parent id
+        // Construct the query
+        query = this.supabase
+            .from('rel_parent_student')
+            .select(`parent_id`)
+            .eq('student_id', this.queryParams.param_student_id); //should be 1 record only
+        // Execute the query
+        const {data: relationship_parentid, error: relationshipsError_parentid } = await query;
+        // Error handling
+        if (relationshipsError_parentid) {
+            console.error('Error fetching parent_id from rel_parent_student relationship: ', relationshipsError_parentid);
+            return studentres.map((studentRecord) => ({...studentRecord, parent: []}));
+        }
+        // Extract the parent id from response
+        const parent_id = relationship_parentid[0]['parent_id'];
+
+        // Perform the UPDATE
+        query = this.supabase
+            .from('parents')
+            .update(updateCond).eq('id', parent_id)
+            .select();
+        // Execute the query
+        const { data: parent, error: parentError } = await query;
+        if (parentError) {
+            console.error('Error fetching parent record: ', parentError);
+            return studentres.map((studentRecord) => ({...studentRecord, parent: {parent_id: parent_id}}));
+        }
+        // Step 4: Extract the parent information and merge it into student record
+        return studentres.map((studentRecord, ind) => ({...studentRecord, parent: parent[ind]}));
+    };
 }
