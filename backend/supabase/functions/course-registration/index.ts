@@ -60,9 +60,17 @@ Deno.serve(async (req: Request) => {
         if (registrationError)
           return generateResponse(registrationError, responseHeader, 400);
 
+        // Populate students
+        const { data: studentData, error: studentError } = await supabase
+          .from('students')
+          .select()
+          .in('id', registrationData.map((i: any) => i.student_id));
+        if (studentError)
+          return generateResponse(studentError, responseHeader, 400);
+
         const data = {
           ...courseData[0],
-          'student_ids': registrationData.map((i:any) => i.student_id)
+          'student': studentData
         };
         return generateResponse(data, responseHeader, 200);
       }
@@ -83,6 +91,30 @@ Deno.serve(async (req: Request) => {
         if (responseError)
           return generateResponse(responseError, responseHeader, 400);
 
+        // Populate student, courses
+        await Promise.all(responseData.map(async (response: any) => {
+          // Student
+          const { data: studentData, error: studentError } = await supabase
+            .from('students')
+            .select()
+            .eq('id', response.student_id);
+          if (studentError) return generateResponse(studentError, responseHeader, 400);
+          response.student = studentData[0];
+
+          // Courses
+          const { data: courseData, error: courseError } = await supabase
+            .from('courses')
+            .select()
+            .in('id', response.course_ids);
+          if (courseError) return generateResponse(courseError, responseHeader, 400);
+          response.courses = courseData.map((course: any) => ({
+            id: course.id,
+            course_name: course.course_name
+          }));
+
+          return response;
+        }));
+
         const data = {
           ...surveyData[0],
           'responses': responseData
@@ -100,7 +132,7 @@ Deno.serve(async (req: Request) => {
       if (!reqBody.course_ids || reqBody.course_ids.length === 0)
         return generateResponse(errorMessages.noCourseIds, responseHeader, 400);
 
-      if (!reqBody.parent_ids || reqBody.parent_ids.length === 0)
+      if (!reqBody.parent_id)
         return generateResponse(errorMessages.noParentIds, responseHeader, 400);
 
       // Save survey response

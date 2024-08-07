@@ -51,15 +51,39 @@ Deno.serve(async (req: Request) => {
       const { data, error } = await query;
       if (error) return generateResponse(error, responseHeader, 400);
 
+      // Populate courses
+      await Promise.all(data.map(async (survey: any) => {
+        const { data: courseData, error: courseError } = await supabase
+          .from('courses')
+          .select()
+          .in('id', survey.course_ids);
+        if (courseError) return generateResponse(courseError, responseHeader, 400);
+        survey.courses = courseData.map((course: any) => ({
+          id: course.id,
+          course_name: course.course_name 
+        }));
+        return survey;
+      }));
+
       return generateResponse(data, responseHeader, 200);
     }
 
     case 'POST': {
       const reqBody = await req.json();
 
-      const { data, error } = await supabase
+      const { data: createData, error: createError } = await supabase
         .from('surveys')
         .insert(reqBody)
+        .select();
+      if (createError) return generateResponse(createError, responseHeader, 400);
+
+      // Add survey link (TODO: check to frontend url)
+      const { data, error } = await supabase
+        .from('surveys')
+        .update({
+          survey_link: `https://ibhwsqyqdziekcjyakog.supabase.co/functions/v1/surveys?id=${createData[0].id}`
+        })
+        .eq('id', createData[0].id)
         .select();
       if (error) return generateResponse(error, responseHeader, 400);
 
@@ -91,7 +115,7 @@ Deno.serve(async (req: Request) => {
         return generateResponse(body, responseHeader, 400);
       }
 
-      // Update course
+      // Update survey
       const { data, error } = await supabase
         .from('surveys')
         .update({
