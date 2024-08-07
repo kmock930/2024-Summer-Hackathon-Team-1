@@ -4,7 +4,7 @@ import * as React from 'react';
 import Table from '../Table';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
-import { ICourse } from '@/types';
+import { Course } from '@/types';
 
 const data = [
   {
@@ -18,7 +18,7 @@ const data = [
 ];
 
 function CourseTable() {
-  const { data } = useSWR<{ courses: ICourse[] }>('courses', fetcher);
+  const { data } = useSWR<{ courses: Course[] }>('courses', fetcher);
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {

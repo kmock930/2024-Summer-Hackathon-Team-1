@@ -4,6 +4,7 @@ import * as React from 'react';
 import Table from '../Table';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
+import { Student } from '@/types';
 
 const data = [
   {
@@ -23,12 +24,13 @@ The Sustainable You`,
 ];
 
 function StudentTable() {
-  const { data } = useSWR<{}[]>('students', fetcher);
+  const { data } = useSWR<Student[]>('students', fetcher);
 
-  const columns = React.useMemo<MRT_ColumnDef[]>(
+  const columns = React.useMemo<MRT_ColumnDef<Student>[]>(
     () => [
       {
-        accessorKey: 'firstname',
+        id: 'name',
+        accessorFn: (row) => `${row.name}(${row.pronounce})`,
         header: 'Name',
       },
       {

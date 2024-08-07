@@ -39,14 +39,14 @@ const CreateLink = styled(Link)`
   padding: 8px;
 `;
 
-function Table({
+function Table<TData extends Record<string, any>>({
   name,
   isEnableCreate = true,
   isEnableTopBar = true,
   isEnableGlobalFilter = true,
   isEnableFilter = true,
   table,
-}: TableProps) {
+}: TableProps<TData>) {
   return (
     <div>
       {isEnableTopBar && (

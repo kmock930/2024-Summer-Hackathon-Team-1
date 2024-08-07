@@ -3,7 +3,7 @@ import { InputProps as HeadlessUIInputProps } from '@headlessui/react';
 import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
 
-export interface ICourse {
+export interface Course {
   id: string;
   name: string;
   startDate: string;
@@ -14,21 +14,26 @@ export interface ICourse {
   weeks: string;
 }
 
-export interface ISurvey {
+export interface Student {
+  name: string;
+  pronounce: string;
+}
+
+export interface Survey {
   surveyNameEN: string;
   surveyNameZhHant: string;
   surveyNameZhHans: string;
-  CoursesEnabled: ICourse[];
+  CoursesEnabled: Course[];
   isCareEnabled: boolean;
   isCareOption: [];
 }
 
 export type SurveyFormProps = {
-  survey?: ISurvey;
+  survey?: Survey;
 };
 
-export type TableProps = {
-  table: MRT_TableInstance;
+export type TableProps<TData extends Record<string, any> = any> = {
+  table: MRT_TableInstance<TData>;
   name: string;
   isEnableCreate?: boolean;
   isEnableTopBar?: boolean;
