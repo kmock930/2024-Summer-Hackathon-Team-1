@@ -40,7 +40,7 @@ export class StudentAdaptor {
             param_parent_rel: url.searchParams.get('parent_rel'),
             paran_student_rel: url.searchParams.get('student_rel'),
             // no parent option
-            parma_no_parent: url.searchParams.get('no_parent')
+            param_no_parent: url.searchParams.get('no_parent')
         };
     }
 
@@ -50,6 +50,7 @@ export class StudentAdaptor {
     
     //database calling function
     public getStudents = async (): object => {
+        // Step 1: GET student records first.
         let errorResponse: object;
         // Construct the query first
         let query = this.supabase
@@ -84,7 +85,7 @@ export class StudentAdaptor {
             return errorResponse;
         }
         // further filtering 
-        let res: Array<object> = data;
+        let studentres: Array<object> = data;
         // age ranges
         if (this.queryParams.param_age_lowlimit) {
             res = res.filter((record) => Number.parseInt(record.age) >= Number.parseInt(this.queryParams.param_age_lowlimit));
@@ -94,13 +95,53 @@ export class StudentAdaptor {
         }
         // fields to display
         const fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
-        res.map((record) => {
+        studentres.map((record) => {
             for (var key in record) {
                 if (fieldDisp.indexOf(key) < 0) {
                     delete record[key];
                 }
             }
         });
+
+        // Step 2: GET student-parent relationship data
+        const { data: relationships, error: relationshipsError } = await this.supabase
+            .from('rel_parent_student')
+            .select(`
+                student_id,
+                parent_id,
+                parent_rel,
+                student_rel,
+                parents (
+                    id, 
+                    name,
+                    email, 
+                    tel,
+                    address
+                )
+            `);
+        // Error handling
+        if (relationshipsError) {
+            console.error('Error fetching relationships:', relationshipsError);
+            return studentres.map(student => ({ ...student, parents: [] }));
+        }
+
+        // Step 3: Mapping student IDs to parent records
+        const studentParentMap = new Map();
+        relationships.forEach( (rel) => {
+            if (!studentParentMap.has(rel.student_id)) {
+                studentParentMap.set(rel.student_id, []);
+            }
+            studentParentMap.get(rel.student_id).push(rel.parents);
+        });
+
+        // Step 4: Merge student data with parent data
+        const res = studentres.map(student => {
+            return {
+                ...student,
+                parents: studentParentMap.get(student.id) || []
+            };
+        });
+
         return res;
     };
 
@@ -179,7 +220,7 @@ export class StudentAdaptor {
             }
         });
 
-        if (this.queryParams.parma_no_parent === 'true') {
+        if (this.queryParams.param_no_parent === 'true') {
             return studentres;
         } else {
             // call insert parents to add the corresponding parent's record and association

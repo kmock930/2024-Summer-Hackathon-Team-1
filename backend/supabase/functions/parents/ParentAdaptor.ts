@@ -134,7 +134,7 @@ export class ParentAdaptor {
         return res;
     };
 
-    public getParents = async (reqBody: object): object => {
+    public getParents = async (): object => {
         let errorResponse: object;
         // Construct the query first
         let query = this.supabase
@@ -406,6 +406,35 @@ export class ParentAdaptor {
             }
         });
 
+        return res;
+    };
+
+    // trigger from get parent
+    public getParentStudentRel = async (student_ids: Array<string | bigint>): Array<object> => {
+        var res: Array<object> = [];
+        student_ids.map(async (student_id) => {
+            // Construct the query
+            const query = this.supabase
+                .from('rel_parent_student')
+                .select(`
+                    parent_rel,
+                    student_rel    
+                `)
+                .eq('student_id', student_id);
+            // Execute the query
+            const { data, error } = await query;
+            // Error handling
+            if (error) {
+                console.error(error);
+                errorResponse = {
+                    type: 'ERROR',
+                    message: errorMessages.dbError,
+                    reason: error
+                };
+                return errorResponse;
+            }
+            res.push(data);
+        });
         return res;
     }
 }
