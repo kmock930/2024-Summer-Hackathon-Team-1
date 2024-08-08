@@ -11,6 +11,9 @@ import { SurveyFormProps } from '@/types';
 import * as Tabs from '@radix-ui/react-tabs';
 import SurveyResponseTable from '../SurveyResponseTable';
 import DashboardForm from '../DashboardForm';
+import useSWR from 'swr';
+import { fetcher } from '@/utils';
+import { Course } from '@/types';
 
 const TabsRoot = styled(Tabs.Root)({
   display: 'flex',
@@ -64,8 +67,7 @@ const TabsContent = styled(Tabs.Content)({
 
 function SurveyForm({ survey }: SurveyFormProps) {
   const [careOptions, setCareOptions] = React.useState(0);
-  const { data: courseData } = useList({ resource: 'courses' });
-  console.log(courseData?.data);
+  const { data: courseData } = useSWR<{ courses: Course[] }>('courses', fetcher);
 
   const handleAddCareOption = () => {
     setCareOptions(careOptions + 1);
@@ -149,14 +151,14 @@ function SurveyForm({ survey }: SurveyFormProps) {
                   gap: '16px',
                 })}
               >
-                {courseData?.data.map((course) => {
+                {courseData?.map((course) => {
                   return (
                     <Checkbox
                       name={`course.${course.id}`}
                       key={course.id}
                       value={`${course.id}`}
                     >
-                      {course.name}
+                      {course.course_name['en-us']} | {course.time}
                     </Checkbox>
                   );
                 })}
