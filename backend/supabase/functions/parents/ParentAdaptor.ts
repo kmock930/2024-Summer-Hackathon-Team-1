@@ -47,6 +47,7 @@ export class ParentAdaptor {
             return errorResponse;
         }
         
+        // Construct query to insert into parents table
         // not overwriting request body during querying
         const parentQueryFields: Array<object> = [];
         if (Array.isArray(reqBody)) {
@@ -55,7 +56,6 @@ export class ParentAdaptor {
                 if (typeof(record) === 'object' && !Array.isArray(record)) {
                     currParentQueryField['created_by'] = 'cics'; //add audit fields to request body object
                     for (var key in record) {
-                        console.log(key)
                         if (key.startsWith('parent_')) {
                             // remove prefix for querying database
                             currParentQueryField[key.substring(7)] = record[key];
@@ -84,21 +84,21 @@ export class ParentAdaptor {
             .select();
         
         // Execute the query
-        const { data, error } = await query;
+        const { data: parentData, error: parentError } = await query;
         // Error handling
-        if (error) {
-            console.error(`parents table - ${error}`);
+        if (parentError) {
+            console.error(`parents table - ${parentError}`);
             errorResponse = {
                 type: 'ERROR',
                 message: `${errorMessages.dbError} - parents table`,
-                reason: error
+                reason: parentError
             };
             return errorResponse;
         }
         // fields to display
         const parent_fieldDisp = ['id', 'name', 'email', 'address', 'tel', 'created_dt', 'created_by'];
         // format field names from parents database table query
-        var parentres = data;
+        var parentres = parentData;
         parentres.map((record) => {
             for (var key in record) {
                 if (parent_fieldDisp.indexOf(key) < 0) {
@@ -113,24 +113,38 @@ export class ParentAdaptor {
         });
 
         //insert parent-student relationship
-        const relData = await this.insertParentStudentRel(reqBody, studentData, data /* parent data */);
+        const relData = await this.insertParentStudentRel(reqBody, studentData, parentData /* parent data */);
         // Error handling
         if (relData.type === 'ERROR') {
-            console.error(`rel_parent_student table - ${error}`);
+            console.error(`rel_parent_student table - ${relData?.reason}`);
             errorResponse = {
                 type: 'ERROR',
                 message: `${errorMessages.dbError} - rel_parent_student table`,
-                reason: error
+                reason: relData?.reason
             };
             return errorResponse;
         }
 
+        //insert emergency contact details
+        const emergencyData = await this.insertEmergencyContact(reqBody);
+        // Error handling
+        if (emergencyData.type === 'ERROR') {
+            console.error(`rel_parent_student table - ${emergencyData?.reason}`);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - rel_parent_student table`,
+                reason: emergencyData?.reason
+            };
+            return errorResponse;
+        }
+        var emergencyres = emergencyData;
+
         // format final response
         var res: Array<object> = [];
         parentres.map((parentRecord: Object, ind: Number) => {
-            res.push({...parentRecord, ...relData[ind]});
+            res.push({...parentRecord, ...relData[ind], emergency_contact: emergencyres[ind]});
         });
-
+        
         return res;
     };
 
@@ -436,5 +450,71 @@ export class ParentAdaptor {
             res.push(data);
         });
         return res;
+    };
+
+    public insertEmergencyContact = async (reqBody: Array<object> | object): Array<object> | object => {
+        let errorResponse: object;
+        if (!reqBody) {
+            console.error(`${errorMessages.noRecordsToAdd} - emergency_contact table`);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.noRecordsToAdd} - emergenct_contact table`,
+                reason: errorMessages.noRecordsToAdd_reason
+            };
+            return errorResponse;
+        }
+
+        const emergencyQueryFields: Array<object> = [];
+        if (Array.isArray(reqBody)) {
+            reqBody.map((reqRecord) => {
+                let currEmergencyQueryField: object = {};
+                if (typeof(reqRecord) === 'object' && !Array.isArray(reqRecord)) {
+                    currEmergencyQueryField['created_by'] = 'cics';
+                    for (var key in reqRecord) {
+                        if (key.startsWith('emergency_')) {
+                            // remove prefix for querying database
+                            currEmergencyQueryField[key.substring(10)] = reqRecord[key];
+                        }
+                    }
+                }
+                emergencyQueryFields.push(currEmergencyQueryField);
+            })
+        } else if   (typeof(reqBody) === 'object') {
+            let currEmergencyQueryField: object = {};
+            if (typeof(reqRecord) === 'object' && !Array.isArray(reqRecord)) {
+                currEmergencyQueryField['created_by'] = 'cics';
+                for (var key in reqRecord) {
+                    if (key.startsWith('emergency_')) {
+                        // remove prefix for querying database
+                        currEmergencyQueryField[key.substring(10)] = reqRecord[key];
+                    }
+                }
+            }
+            emergencyQueryFields.push(currEmergencyQueryField);
+        }
+
+        // Construct and Execute the query
+        const { data: emergencyData, error: emergency_error } = await this.supabase
+            .from('emergency_contact')
+            .insert(emergencyQueryFields, {return: 'representation', defaultToNull: true})
+            .select(`
+                id,
+                name,
+                relationship,
+                tel,
+                pickup_arrangement    
+            `);
+        // Error handling
+        if (emergency_error) {
+            console.error(emergency_error);
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - emergency_contact table`,
+                reason: emergency_error
+            };
+            return errorResponse;
+        }
+
+        return emergencyData;
     }
 }
