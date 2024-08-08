@@ -18,7 +18,7 @@ Deno.serve(async (req: Request) => {
   
   switch (req.method) {
     case 'GET': // GET all (no param); GET by id.
-      data = await adaptor.getStudents();
+      data = await adaptor.getStudents_Parents_Courses();
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;
@@ -44,9 +44,6 @@ Deno.serve(async (req: Request) => {
           message: errorMessages.noRecordsToAdd,
           reason: errorMessages.noRecordsToAdd_reason
         };
-        if (exception) {
-          errorResponse['error'] = exception;
-        }
         return new Response(
           JSON.stringify(errorResponse),
           responseHeader
