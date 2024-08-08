@@ -257,14 +257,40 @@ export class StudentAdaptor {
         // Query registered-course table
         const { data: regCourseData, error: regCourseError } = await this.supabase
             .from('registered_courses')
-            .select()
+            .select(`
+                special_needs,
+                pickup_arrangements,
+                is_active,
+                created_dt,
+                created_by,
+                course_attendance,
+                status,
+                courses (
+                    course_name,
+                    course_language,
+                    admin_in_charge,
+                    age_group,
+                    time,
+                    is_active,
+                    quota,
+                    created_dt,
+                    created_by,
+                    modified_dt,
+                    modified_by
+                ),
+                emergency_contact (
+                    name,
+                    relationship,
+                    tel
+                )
+            `)
             .eq('student_id', studentID);
         if (regCourseError) {
             console.error('Failed to fetch registered_courses relationship record.');
             errorResponse = {
                 type: 'ERROR',
                 message: `${errorMessages.dbError} - Failed to fetch registered_courses relationship record.`,
-                reason: relationshipsError
+                reason: regCourseRelError
             };
             return errorResponse;
         }
