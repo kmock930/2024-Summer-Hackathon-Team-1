@@ -41,7 +41,7 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET': {
-      let query = supabase.from('surveys').select();
+      let query = supabase.from('surveys').select().is('deleted_dt', null);
 
       // Get course by ID if provided
       const url = new URL(req.url);
