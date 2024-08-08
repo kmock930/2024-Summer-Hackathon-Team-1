@@ -287,13 +287,26 @@ export class StudentAdaptor {
             .eq('student_id', studentID);
         if (regCourseError) {
             console.error('Failed to fetch registered_courses relationship record.');
-            errorResponse = {
+            var errorResponse = {
                 type: 'ERROR',
                 message: `${errorMessages.dbError} - Failed to fetch registered_courses relationship record.`,
-                reason: regCourseRelError
+                reason: regCourseError
             };
             return errorResponse;
         }
+
+        // fine tuning field names
+        for (var regCourse: object of regCourseData) {
+            for (var key in regCourse) {
+                switch (key) {
+                    case 'courses':
+                        regCourse['course'] = regCourse['courses'];
+                        delete regCourse['courses'];
+                        break;
+                }
+            }
+        }
+        
         return regCourseData;
     }
 
