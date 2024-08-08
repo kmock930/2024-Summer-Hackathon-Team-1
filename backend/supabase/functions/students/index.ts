@@ -44,6 +44,7 @@ Deno.serve(async (req: Request) => {
           message: errorMessages.noRecordsToAdd,
           reason: errorMessages.noRecordsToAdd_reason
         };
+        responseHeader.status = 500;
         return new Response(
           JSON.stringify(errorResponse),
           responseHeader
