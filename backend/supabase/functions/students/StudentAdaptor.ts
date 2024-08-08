@@ -155,7 +155,7 @@ export class StudentAdaptor {
         return relationships;
     };
 
-    public getStudents_Parents_Courses = async (): Array<object> | object => {
+    public getStudents_Parents_Courses= async (): Array<object> | object => {
         var res: Array<any> = [];
         const parent_fieldDisp = ['parent_name', 'parent_email', 'parent_tel', 'created_dt', 'created_by'];
 
@@ -237,12 +237,39 @@ export class StudentAdaptor {
                         parents.push(relRecord);
                     }
                 }
-                res.push({...studentRecord, parent: parents});
+
+                // get list of registered courses
+                const regCoursesRes: Array<object> | object = await this.getCourseRegByStudent(studentID);
+                if (regCoursesRes?.type != 'ERROR') {
+                    relRecord = {...relRecord, registered_courses: regCoursesRes};
+                } else {
+                    return regCoursesRes;
+                }
+
+                res.push({...studentRecord, parent: parents, registered_courses: regCoursesRes});
             }
         }
         
         return res;
     };
+
+    public getCourseRegByStudent = async (studentID: string | bigint) => {
+        // Query registered-course table
+        const { data: regCourseData, error: regCourseError } = await this.supabase
+            .from('registered_courses')
+            .select()
+            .eq('student_id', studentID);
+        if (regCourseError) {
+            console.error('Failed to fetch registered_courses relationship record.');
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - Failed to fetch registered_courses relationship record.`,
+                reason: relationshipsError
+            };
+            return errorResponse;
+        }
+        return regCourseData;
+    }
 
     public insertStudents = async (reqBody: object | Array<object>): object => {
         let errorResponse: object;
