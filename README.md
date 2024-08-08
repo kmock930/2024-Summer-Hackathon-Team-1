@@ -93,4 +93,4 @@ Other useful commands
 - `supabase secrets list`
   Remarks
 - Add `npx` in front of the command if needed
-- Check this (tutorial video)[https://www.youtube.com/watch?v=5OWH9c4u68M] if necessary
+- Check this [tutorial video](https://www.youtube.com/watch?v=5OWH9c4u68M) if necessary

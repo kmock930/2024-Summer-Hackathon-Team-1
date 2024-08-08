@@ -41,7 +41,7 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET': {
-      let query = supabase.from('courses').select();
+      let query = supabase.from('surveys').select();
 
       // Get course by ID if provided
       const url = new URL(req.url);
@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
       const reqBody = await req.json();
 
       const { data, error } = await supabase
-        .from('courses')
+        .from('surveys')
         .insert(reqBody)
         .select();
       if (error) return generateResponse(error, responseHeader, 400);
@@ -75,7 +75,7 @@ Deno.serve(async (req: Request) => {
         return generateResponse(body, responseHeader, 400);
       }
       const { data: getData, error: getError } = await supabase
-        .from('courses')
+        .from('surveys')
         .select()
         .eq('id', id);
       if (getError) return generateResponse(getError, responseHeader, 400);
@@ -93,7 +93,7 @@ Deno.serve(async (req: Request) => {
 
       // Update course
       const { data, error } = await supabase
-        .from('courses')
+        .from('surveys')
         .update({
           ...reqBody,
           'modified_dt': new Date().toISOString()
@@ -115,7 +115,7 @@ Deno.serve(async (req: Request) => {
         return generateResponse(body, responseHeader, 400);
       }
       const { data: getData, error: getError } = await supabase
-        .from('courses')
+        .from('surveys')
         .select()
         .eq('id', id);
       if (getError) return generateResponse(getError, responseHeader, 400);
@@ -126,7 +126,7 @@ Deno.serve(async (req: Request) => {
 
       // Delete course (soft delete)
       const { data, error } = await supabase
-        .from('courses')
+        .from('surveys')
         .update({ 'deleted_dt': new Date().toISOString() })
         .eq('id', id)
         .select();
