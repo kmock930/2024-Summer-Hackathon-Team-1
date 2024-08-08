@@ -2,6 +2,9 @@
 import * as React from 'react';
 import { useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import Table from '../Table';
+import useSWR from 'swr';
+import { fetcher } from '@/utils';
+import { Survey } from '@/types';
 
 const data = [
   {
@@ -35,35 +38,38 @@ const data = [
 ];
 
 function ApplicationTable() {
+  const { data } = useSWR<{ surveys: Survey[] }>('surveys', fetcher);
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'survey_name.en-us',
         header: 'Name',
       },
       {
-        accessorKey: 'ageGroup',
+        accessorKey: 'age_group',
         header: 'Age Group',
       },
       {
-        accessorKey: 'time',
-        header: 'Time',
+        accessorKey: 'period',
+        header: 'Period',
       },
       {
-        accessorKey: 'owner',
+        accessorKey: 'created_by',
         header: 'Owner',
       },
       {
-        accessorKey: 'lastEdit',
-        header: 'Last Edit',
-      },
+        accessorFn: (row) => (
+          row.courses.map((course: any) => course.course_name['en-us']).join(', ')
+        ),
+        header: 'Courses',
+      }
     ],
     []
   );
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: data ?? [],
     enableRowSelection: true,
   });
 

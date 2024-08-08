@@ -38,17 +38,17 @@ function StudentTable() {
         header: 'Age',
       },
       {
-        accessorKey: 'parent',
+        accessorKey: 'parent.parent_name',
         header: 'Parent',
       },
-      {
-        accessorKey: 'specialNeeds',
-        header: 'Special Needs',
-      },
-      {
-        accessorKey: 'courseEnrolled',
-        header: 'Course Enrolled',
-      },
+      // {
+      //   accessorKey: 'specialNeeds',
+      //   header: 'Special Needs',
+      // },
+      // {
+      //   accessorKey: 'courseEnrolled',
+      //   header: 'Course Enrolled',
+      // },
     ],
     []
   );
