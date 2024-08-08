@@ -20,9 +20,22 @@ export interface ThreeLangString {
   'zh-cn': string;
 }
 
-export interface Student {
+export interface Student extends BaseModel{
+  // TODO: student_id change to id on BE
   name: string;
+  gender: string;
+  dob: string;
+  age: number;
+  account_credit: number;
+  account_records: any[]; // TODO
   pronounce: string;
+  address: {
+    address: string;
+    city: string;
+    postcode: string;
+  },
+  parent: any[]; // TODO
+  registered_courses: any[]; // TODO
 }
 
 export interface Course extends BaseModel{
