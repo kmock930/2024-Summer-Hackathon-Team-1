@@ -3,29 +3,62 @@ import { InputProps as HeadlessUIInputProps } from '@headlessui/react';
 import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
 
-export interface Course {
+interface BaseModel {
   id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  daysOfWeek: string;
-  startTime: string;
-  endTime: string;
-  weeks: string;
+  creeated_at: string | null;
+  created_by: string | null;
+  modified_at: string | null;
+  modified_by: string | null;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  is_active: boolean;
 }
 
-export interface Student {
+export interface ThreeLangString {
+  'en-us': string;
+  'zh-hk': string;
+  'zh-cn': string;
+}
+
+export interface Student extends BaseModel{
+  // TODO: student_id change to id on BE
   name: string;
+  gender: string;
+  dob: string;
+  age: number;
+  account_credit: number;
+  account_records: any[]; // TODO
   pronounce: string;
+  address: {
+    address: string;
+    city: string;
+    postcode: string;
+  },
+  parent: any[]; // TODO
+  registered_courses: any[]; // TODO
 }
 
-export interface Survey {
-  surveyNameEN: string;
-  surveyNameZhHant: string;
-  surveyNameZhHans: string;
-  CoursesEnabled: Course[];
-  isCareEnabled: boolean;
-  isCareOption: [];
+export interface Course extends BaseModel{
+  course_name: ThreeLangString;
+  quota: number;
+  age_group: string;
+  time: string;
+  course_language: string;
+  admin_in_charge: string[];
+}
+
+export interface Survey extends BaseModel{
+  survey_name: ThreeLangString;
+  survey_link: string;
+  course_question: ThreeLangString;
+  be_camp_question: ThreeLangString;
+  be_camp_answers: ThreeLangString[];
+  age_group: string;
+  course_ids: number[];
+  courses: {
+    id: number;
+    course_name: ThreeLangString;
+  }[];
 }
 
 export type SurveyFormProps = {

@@ -22,23 +22,25 @@ function CourseTable() {
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'id',
+        accessorKey: 'course_name.en-us',
         header: 'Name',
       },
+      // {
+      //   accessorFn: (row) => (
+      //     row.surveys.map((survey: any) => survey.survey_name['en-us']).join(', ')
+      //   ),
+      //   header: 'Survey',
+      // },
       {
-        accessorKey: 'survey',
-        header: 'Survey',
-      },
-      {
-        accessorKey: 'ageGroup',
+        accessorKey: 'age_group',
         header: 'Age Group',
       },
       {
-        accessorKey: 'owner',
+        accessorKey: 'created_by',
         header: 'Owner',
       },
       {
-        accessorKey: 'lastEdit',
+        accessorFn: (row) => (new Date(row.modified_dt)).toLocaleString(),
         header: 'Last Edit',
       },
     ],
@@ -47,7 +49,7 @@ function CourseTable() {
 
   const table = useMantineReactTable({
     columns,
-    data: data?.courses ?? [],
+    data: data ?? [],
     enableRowSelection: true,
   });
 

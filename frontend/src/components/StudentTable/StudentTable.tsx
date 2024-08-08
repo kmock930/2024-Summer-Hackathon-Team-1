@@ -38,17 +38,31 @@ function StudentTable() {
         header: 'Age',
       },
       {
-        accessorKey: 'parent',
+        id: 'paraent',
+        // accessorKey: 'parent.parent_name',
+        accessorFn: (row) => row.parent.map(p => p.parent_name).join(', '),
         header: 'Parent',
       },
       {
-        accessorKey: 'specialNeeds',
-        header: 'Special Needs',
+        accessorFn: (row) => row.parent.map(p => p.parent_rel).join(', '),
+        header: 'Relationship',
       },
       {
-        accessorKey: 'courseEnrolled',
-        header: 'Course Enrolled',
+        accessorFn: (row) => (
+          row.registered_courses.length !== 0 ?
+            row.registered_courses.map(c => c.course.course_name).join(', '):
+            'N/A'
+        ),
+        header: 'Courses',
       },
+      {
+        accessorKey: 'account_credit',
+        header: 'Account Credit',
+      }
+      // {
+      //   accessorKey: 'specialNeeds',
+      //   header: 'Special Needs',
+      // },
     ],
     []
   );

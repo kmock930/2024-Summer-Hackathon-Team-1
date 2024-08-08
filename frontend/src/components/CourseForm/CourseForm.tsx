@@ -107,7 +107,7 @@ function CourseForm() {
                 type='text'
                 name='course-name-en'
                 label='Course Name'
-                placeholder='COurse Name'
+                placeholder='Course Name'
                 isHideLabel={true}
               />
               <Input
