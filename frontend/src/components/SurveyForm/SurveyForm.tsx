@@ -67,6 +67,7 @@ const TabsContent = styled(Tabs.Content)({
 function SurveyForm({ survey }: SurveyFormProps) {
   const [careOptions, setCareOptions] = React.useState(0);
   const { data: courseData } = useSWR<Course[]>('courses', fetcher);
+  const [enableCare, setEnableCare] = React.useState(false);
 
   const handleAddCareOption = () => {
     setCareOptions(careOptions + 1);
@@ -78,7 +79,7 @@ function SurveyForm({ survey }: SurveyFormProps) {
 
   return (
     <DashboardForm
-      name='surveys'
+      name='applications'
       actions={
         <button
           className={css({
@@ -122,23 +123,43 @@ function SurveyForm({ survey }: SurveyFormProps) {
               </legend>
               <Input
                 type='text'
-                name='survey-name-en'
+                name='survey_name.en-us'
                 label='Survey Name'
                 placeholder='Survey Name'
                 isHideLabel={true}
               />
               <Input
                 type='text'
-                name='survey-name-zh-Hant'
+                name='survey_name.zh-cn'
                 label='问卷名称'
                 placeholder='问卷名称'
                 isHideLabel={true}
               />
               <Input
                 type='text'
-                name='survey-name-zh-Hans'
+                name='survey_name.zh-cn'
                 label='問卷名稱'
                 placeholder='問卷名稱'
+                isHideLabel={true}
+              />
+              <legend className={css({ padding: 0 })}>
+                Age Group
+              </legend>
+              <Input
+                type='text'
+                name='age_group'
+                label='Age Group'
+                placeholder='Age Group'
+                isHideLabel={true}
+              />
+              <legend className={css({ padding: 0 })}>
+                Period
+              </legend>
+              <Input
+                type='text'
+                name='period'
+                label='Period'
+                placeholder='Period'
                 isHideLabel={true}
               />
             </fieldset>
@@ -154,7 +175,7 @@ function SurveyForm({ survey }: SurveyFormProps) {
                 {courseData?.map((course) => {
                   return (
                     <Checkbox
-                      name={`course.${course.id}`}
+                      name={`courses.${course.id}`}
                       key={course.id}
                       value={`${course.id}`}
                     >
@@ -187,6 +208,10 @@ function SurveyForm({ survey }: SurveyFormProps) {
                   },
                 })}
                 id='airplane-mode'
+                onCheckedChange={(e) => {
+                  setEnableCare(e);
+                  setCareOptions(0);
+                }}
               >
                 <Switch.Thumb
                   className={css({
@@ -236,21 +261,21 @@ function SurveyForm({ survey }: SurveyFormProps) {
                   </div>
                   <Input
                     type='text'
-                    name={`option-${key + 1}-en`}
+                    name={`option${key + 1}.en-us`}
                     label='Option'
                     placeholder='Option'
                     isHideLabel={true}
                   />
                   <Input
                     type='text'
-                    name={`option-${key + 1}-zh-Hant`}
+                    name={`option${key + 1}.zh-hk`}
                     label='選擇'
                     placeholder='選擇'
                     isHideLabel={true}
                   />
                   <Input
                     type='text'
-                    name={`option-${key + 1}-zh-Hans`}
+                    name={`option${key + 1}.zh-cn`}
                     label='选择'
                     placeholder='选择'
                     isHideLabel={true}
@@ -258,9 +283,9 @@ function SurveyForm({ survey }: SurveyFormProps) {
                 </div>
               );
             })}
-            <button type='button' onClick={handleAddCareOption}>
+            {enableCare && <button type='button' onClick={handleAddCareOption}>
               Add New Care Option
-            </button>
+            </button>}
           </div>
         </TabsContent>
         <TabsContent value='response'>
