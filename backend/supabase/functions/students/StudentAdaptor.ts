@@ -31,6 +31,7 @@ export class StudentAdaptor {
             param_pronounce: url.searchParams.get('pronounce'),
             param_is_active: url.searchParams.get('is_active'),
             param_payment_credit: url.searchParams.get('payment_credit'),
+
             // for parent table
             param_parent_id: url.searchParams.get('id'),
             param_parent_email: url.searchParams.get('email'),
@@ -104,6 +105,7 @@ export class StudentAdaptor {
         }
         // fields to display
         const student_fieldDisp = ['student_id', 'gender', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by', 'payment_credit'];
+
         studentres.map((record) => {
             var fullname: string = '';
             for (var key in record) {
