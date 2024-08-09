@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Formiz, FormizStep, useForm, useFormFields } from '@formiz/core';
 import { css, styled } from '@pigment-css/react';
 import FormStepper from '../FormStepper';
-import { fetcher, getParentByEmail, range } from '@/utils';
+import { fetcher, getParentByEmail, range, sendRequest } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
 import Input from '../Input';
@@ -14,7 +14,7 @@ import FormContent from '../FormContent';
 import dynamic from 'next/dynamic';
 import FormizSelect from '../FormizSelect';
 import useSWR from 'swr';
-import { Course, Survey } from '@/types';
+import { Course, Survey, Parent } from '@/types';
 import useSWRMutation from 'swr/mutation';
 
 const OTPForm = dynamic(() => import('../OTPForm'), { ssr: false });
@@ -51,6 +51,40 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
     onSubmit: (values) => {
       console.log(values);
       setIsSubmited(true);
+      // Student ID / New Student
+      values.student_id = Object.keys(values.childrens).filter(
+        c => values.childrens[c] === true
+      );
+      delete values.childrens;
+      // Parent ID / New Parent
+  
+      // Survey ID
+      values.survey_id = surveyId;
+      delete values.surveyId;
+      // Course IDs
+      values.course_ids = Object.keys(values.courses).filter(
+        c => values.courses[c] === true
+      );
+      delete values.courses;
+      // Email
+      // Tel
+      values.tel = values.phoneNo;
+      delete values.phoneNo;
+      // Special Needs
+      if (values.specialNeeds) {
+        values.special_needs = values.specialNeeds;
+        delete values.specialNeeds;  
+      }
+      // Emergency Contact (JSON)
+      values.emergency_contact = {
+        name: values.emergencyContactName,
+        phone: values.emergencyContactPhone,
+      };
+      delete values.emergencyContactName;
+      // Pickup Arrangements
+      values.pickup_arrangement = values.pickUpArragements;
+      delete values.pickUpArragements;
+      // sendRequest('course-registration', values);
     },
   });
   const newChildrenForm = useForm({
@@ -69,7 +103,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
     `surveys?id=${surveyId}`,
     fetcher
   );
-  const { data: parentData, trigger } = useSWRMutation(
+  const { data: parentData, trigger } = useSWRMutation<Parent []>(
     `parents`,
     getParentByEmail
   );
@@ -103,21 +137,23 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                     gap: '16px',
                   })}
                 >
-                  {courseData?.map((course) => {
-                    return (
-                      <React.Fragment key={course.id}>
-                        <Checkbox
-                          name={`courses.${course.id}`}
-                          label={
-                            course.course_name && course.course_name['en-us']
-                          }
-                          value={course.id}
-                          key={course.id}
-                        >
-                          <div>{course.time}</div>
-                        </Checkbox>
-                      </React.Fragment>
-                    );
+                  {surveyData?.map((survey) => {
+                    return survey?.courses.map((course) => {
+                      return (
+                        <React.Fragment key={course.id}>
+                          <Checkbox
+                            name={`courses.${course.id}`}
+                            label={
+                              course.course_name && course.course_name['en-us']
+                            }
+                            value={course.id}
+                            key={course.id}
+                          >
+                            <div>{course.time}</div>
+                          </Checkbox>
+                        </React.Fragment>
+                      );
+                    })
                   })}
                 </CheckboxGroup>
                 <FormizSelect
@@ -165,16 +201,16 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                     </div>
 
                     <CheckboxWrapper>
-                      {range(5).map((index) => {
+                      {parentData?.[0].student?.map((student, index) => {
                         return (
                           <Checkbox
                             name={`childrens.${index}`}
                             value={`${index}`}
                             key={index}
-                            label='Dummy'
                           >
-                            <div>Chan Siu Ming</div>
-                            <div>Birth date: 18Jul 2016</div>
+                            <div>{student.firstname} {student.lastname}</div>
+                            <div>Birth date: {student.dob}</div>
+                            <div>{student.student_rel}</div>
                           </Checkbox>
                         );
                       })}
@@ -349,7 +385,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                       console.log(fields.email.value);
                       trigger(fields.email.value);
                     }
-                    if (form.currentStep?.index !== form.steps?.length) {
+                    if (form.currentStep?.index !== 6) { // Harded 6 as last step
                       form.goToNextStep();
                     } else {
                       form.submit();
@@ -393,7 +429,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                 type='button'
                 style={{ backgroundColor: 'var(--color-blue)' }}
               >
-                Back to Course Information
+                Back to Survey Page
               </Button>
             </div>
           )}

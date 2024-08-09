@@ -4,7 +4,7 @@ import { MRT_TableInstance } from 'mantine-react-table';
 import React from 'react';
 
 interface BaseModel {
-  id: string;
+  id: number;
   creeated_at: string | null;
   created_by: string | null;
   modified_at: string | null;
@@ -56,10 +56,11 @@ export interface Survey extends BaseModel {
   ba_camp_answers: ThreeLangString[];
   age_group: string;
   course_ids: number[];
-  courses: {
-    id: number;
-    course_name: ThreeLangString;
-  }[];
+  courses: any[];
+}
+
+export interface Parent extends BaseModel {
+  student: any[];
 }
 
 export type SurveyFormProps = {
