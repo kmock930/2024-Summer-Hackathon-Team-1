@@ -107,10 +107,7 @@ Deno.serve(async (req: Request) => {
             .select()
             .in('id', response.course_ids);
           if (courseError) return generateResponse(courseError, responseHeader, 400);
-          response.courses = courseData.map((course: any) => ({
-            id: course.id,
-            course_name: course.course_name
-          }));
+          response.courses = courseData;
 
           return response;
         }));
