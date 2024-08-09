@@ -30,6 +30,7 @@ export class StudentAdaptor {
             param_age_highlimit: url.searchParams.get('age_highlimit'),
             param_pronounce: url.searchParams.get('pronounce'),
             param_is_active: url.searchParams.get('is_active'),
+            param_payment_credit: url.searchParams.get('payment_credit'),
             // for parent table
             param_parent_id: url.searchParams.get('id'),
             param_parent_email: url.searchParams.get('email'),
@@ -76,6 +77,9 @@ export class StudentAdaptor {
         if (this.queryParams.param_pronounce) {
             query.eq('pronounce', this.queryParams.param_pronounce);
         }
+        if (this.queryParams.param_payment_credit) {
+            query.eq('payment_credit', this.queryParams.param_payment_credit);
+        }
 
         // Execute the query
         const { data: studentData, error: studentError } = await query;
@@ -99,7 +103,7 @@ export class StudentAdaptor {
             studentres = studentres.filter((record) => calculateAge(record.dob) <= Number.parseInt(this.queryParams.param_age_highlimit));
         }
         // fields to display
-        const student_fieldDisp = ['student_id', 'gender', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
+        const student_fieldDisp = ['student_id', 'gender', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by', 'payment_credit'];
         studentres.map((record) => {
             var fullname: string = '';
             for (var key in record) {
@@ -120,6 +124,8 @@ export class StudentAdaptor {
                     case 'lastname':
                         fullname += `${record[key]}`;
                         break;
+                    case 'payment_credit':
+                        record[key] = Number.parseFloat(record[key]).toFixed(2);
                 }
                 if (student_fieldDisp.indexOf(key) < 0) {
                     // delete non relevant fields for output
@@ -335,6 +341,9 @@ export class StudentAdaptor {
                             currStudentQueryField[key.substring(8)] = record[key];
                         }
                     }
+                    if (!currStudentQueryField['student_payment_credit'] && !currStudentQueryField['payment_credit']) {
+                        currStudentQueryField['payment_credit'] = 0.00;
+                    }
                 }
                 studentQueryFields.push(currStudentQueryField)
             });
@@ -347,6 +356,9 @@ export class StudentAdaptor {
                     // remove prefix for querying database
                     currStudentQueryField[key.substring(8)] = reqBody[key];
                 }
+            }
+            if (!currStudentQueryField['student_payment_credit'] && !currStudentQueryField['payment_credit']) {
+                currStudentQueryField['payment_credit'] = 0.00;
             }
             studentQueryFields.push(currStudentQueryField);
         }
@@ -369,7 +381,7 @@ export class StudentAdaptor {
             return errorResponse;
         }
         // fields to display
-        const student_fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by'];
+        const student_fieldDisp = ['id', 'name', 'age', 'pronounce', 'is_active', 'created_dt', 'created_by', 'payment_credit'];
         // format field names from students database table query
         var studentres = data;
         studentres.map((record) => {
