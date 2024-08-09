@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@pigment-css/react/styles.css';
 import { globalCss, styled } from '@pigment-css/react';
-import RetoolProvider from '@/components/RetoolProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
