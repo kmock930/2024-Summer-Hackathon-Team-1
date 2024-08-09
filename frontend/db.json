@@ -1,0 +1,113 @@
+{
+  "title": {
+    "name": "Learning Summer 2024 S.T.E.A.M. Camp"
+  },
+  "courses": [
+    {
+      "id": "1",
+      "name": "course1",
+      "startDate": "2024-01-01",
+      "startTime": "09:00",
+      "endDate": "2024-01-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "2",
+      "name": "course2",
+      "startDate": "2024-02-01",
+      "startTime": "09:00",
+      "endDate": "2024-02-28",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "3",
+      "name": "course3",
+      "startDate": "2024-03-01",
+      "startTime": "09:00",
+      "endDate": "2024-03-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "4",
+      "name": "course4",
+      "startDate": "2024-04-01",
+      "startTime": "09:00",
+      "endDate": "2024-04-30",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "5",
+      "name": "course5",
+      "startDate": "2024-05-01",
+      "startTime": "09:00",
+      "endDate": "2024-05-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "6",
+      "name": "course6",
+      "startDate": "2024-06-01",
+      "startTime": "09:00",
+      "endDate": "2024-06-30",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "7",
+      "name": "course7",
+      "startDate": "2024-07-01",
+      "startTime": "09:00",
+      "endDate": "2024-07-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "8",
+      "name": "course8",
+      "startDate": "2024-08-01",
+      "startTime": "09:00",
+      "endDate": "2024-08-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "9",
+      "name": "course9",
+      "startDate": "2024-09-01",
+      "startTime": "09:00",
+      "endDate": "2024-09-30",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    },
+    {
+      "id": "10",
+      "name": "course10",
+      "startDate": "2024-10-01",
+      "startTime": "09:00",
+      "endDate": "2024-10-31",
+      "daysOfWeek": "Mon-Fri",
+      "endTime": "13:00",
+      "weeks": "4"
+    }
+  ],
+  "students": [
+    {
+      "id": "1",
+      "name": "student1"
+    }
+  ]
+}
