@@ -60,6 +60,7 @@ export interface Survey extends BaseModel {
 }
 
 export interface Parent extends BaseModel {
+  name: string;
   student: any[];
 }
 

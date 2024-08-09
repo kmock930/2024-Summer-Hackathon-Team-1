@@ -49,42 +49,38 @@ const Button = styled.button`
 function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
   const form = useForm({
     onSubmit: (values) => {
-      console.log(values);
-      setIsSubmited(true);
+      // Parent ID / New Parent (check parentData?.[0].id;)
+      values.parent_id = Number(parentData?.[0].id);
+      values.parent = {
+        firstname: values.parent.firstname,
+        lastname: values.parent.lastname,
+        email: values.email,
+        tel: values.phoneNo,
+      }
+
       // Student ID / New Student
-      values.student_id = Object.keys(values.childrens).filter(
-        c => values.childrens[c] === true
-      );
-      delete values.childrens;
-      // Parent ID / New Parent
+      if (values.childrens) {
+        values.student_id = Number(Object.keys(values.childrens).filter(
+          c => values.childrens[c] === true
+        )?.[0]);
+        delete values.childrens;  
+      }
   
       // Survey ID
-      values.survey_id = surveyId;
-      delete values.surveyId;
+      values.survey_id = Number(surveyId);
+
       // Course IDs
       values.course_ids = Object.keys(values.courses).filter(
         c => values.courses[c] === true
       );
+      values.course_ids = values.course_ids.map(Number);
       delete values.courses;
-      // Email
-      // Tel
-      values.tel = values.phoneNo;
-      delete values.phoneNo;
-      // Special Needs
-      if (values.specialNeeds) {
-        values.special_needs = values.specialNeeds;
-        delete values.specialNeeds;  
-      }
-      // Emergency Contact (JSON)
-      values.emergency_contact = {
-        name: values.emergencyContactName,
-        phone: values.emergencyContactPhone,
-      };
-      delete values.emergencyContactName;
-      // Pickup Arrangements
-      values.pickup_arrangement = values.pickUpArragements;
-      delete values.pickUpArragements;
-      // sendRequest('course-registration', values);
+
+      values.created_by = 'RegistrationForm';
+
+      console.log(values);
+      setIsSubmited(true);
+      sendRequest('course-registration', values);
     },
   });
   const newChildrenForm = useForm({
@@ -159,7 +155,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                 <FormizSelect
                   label='Before and/or After Care Option'
                   placeholder='Select a Before and/or After Care Option'
-                  name='careOptions'
+                  name='ba_camp_options'
                   options={
                     surveyData?.[0].ba_camp_answers.map((option) => {
                       return {
@@ -204,9 +200,9 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                       {parentData?.[0].student?.map((student, index) => {
                         return (
                           <Checkbox
-                            name={`childrens.${index}`}
-                            value={`${index}`}
-                            key={index}
+                            name={`childrens.${student.id}`}
+                            value={student.id}
+                            key={student.id}
                           >
                             <div>{student.firstname} {student.lastname}</div>
                             <div>Birth date: {student.dob}</div>
@@ -266,76 +262,106 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                     >
                       {'< Back to select'}
                     </button>
-                    <Formiz connect={newChildrenForm}>
+                    {/* <Formiz connect={newChildrenForm}> */}
                       <Input
-                        label="Student's Legal Name"
+                        label="Student's Legal First Name"
                         type='text'
-                        name='student-name'
+                        name='student.firstname'
+                        placeholder='Please enter your answer'
+                      />
+                      <Input
+                        label="Student's Legal Last Name"
+                        type='text'
+                        name='student.lastname'
                         placeholder='Please enter your answer'
                       />
                       <FormizSelect
                         label="Student's Gender"
-                        name='studentGender'
+                        name='student.gender'
                         placeholder='Please select your answer'
                         options={[
-                          { value: 'dummy1', text: 'Dummy1' },
-                          { value: 'dummy2', text: 'Dummy2' },
+                          { value: 'Male', text: 'Male' },
+                          { value: 'Female', text: 'Female' },
+                          { value: 'Others', text: 'Others' },
                         ]}
+                      />
+                      <Input
+                        label="Student's Pronoun"
+                        type='text'
+                        name='student.pronoun'
                       />
                       <Input
                         label="Student's Date of Birth"
                         type='date'
-                        name='student-dob'
+                        name='student.dob'
                       />
                       <Input
                         label="Student's Home Address"
                         type='text'
-                        name='student-address'
+                        name='address.street'
+                        placeholder='Street Address'
                       />
-                      <FormizSelect
-                        label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
-                        name='specialNeeds'
-                        placeholder='Please select your answer'
-                        options={[
-                          { value: 'dummy1', text: 'Dummy1' },
-                          { value: 'dummy2', text: 'Dummy2' },
-                        ]}
+                      <Input
+                        label=''
+                        type='text'
+                        name='address.city'
+                        placeholder='City'
                       />
-                    </Formiz>
+                      <Input
+                        label=''
+                        type='text'
+                        name='address.postal'
+                        placeholder='Postal Code'
+                      />
+
+                    {/* </Formiz> */}
                   </div>
                 )}
               </FormizStep>
               <FormizStep name='emergency-contact' label='Emergency Contact'>
                 <h2>Parent/Guardian and Emergency Contact Information</h2>
                 <Input
-                  label="Parent/Guardian's Legal Full Name"
+                  label="Parent/Guardian's Legal First Name"
                   type='text'
-                  name='studentFullName'
+                  name='parent.firstname'
                   placeholder='Please enter your answer'
+                  defaultValue={parentData?.[0].name ?? ''}
                 />
                 <Input
-                  label='Relationship to Student'
+                  label="Parent/Guardian's Legal Last Name"
                   type='text'
-                  name='relationship'
+                  name='parent.lastname'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Name'
                   type='text'
-                  name='emergencyContactName'
+                  name='emergency_contact.name'
                   placeholder='Please enter your answer'
                 />
                 <Input
                   label='Emergency Contact Phone'
                   type='text'
-                  name='emergencyContactPhone'
+                  name='emergency_contact.tel'
                   placeholder='Please enter your answer'
+                />
+                <Input
+                  label='Relationship of Emergency Contact to Student'
+                  type='text'
+                  name='emergency_contact.relationship'
+                  placeholder='Please enter your answer'
+                />
+                <Input
+                  label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
+                  name='special_needs'
+                  placeholder='Please select your answer'
+                  type='text'
                 />
                 <Input
                   label={'Pick Up Arrangements'}
                   description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
                   type='text'
-                  name='pickUpArragements'
+                  name='pickup_arrangements'
                   placeholder='Please enter your answer'
                 />
               </FormizStep>
