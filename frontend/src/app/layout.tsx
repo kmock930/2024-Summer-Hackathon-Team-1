@@ -107,9 +107,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <RetoolProvider>
-          <BackgroundWrapper>{children}</BackgroundWrapper>
-        </RetoolProvider>
+        <BackgroundWrapper>{children}</BackgroundWrapper>
       </body>
     </html>
   );

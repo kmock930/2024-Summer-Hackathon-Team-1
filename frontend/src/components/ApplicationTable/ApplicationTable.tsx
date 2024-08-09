@@ -38,8 +38,8 @@ const data = [
 ];
 
 function ApplicationTable() {
-  const { data } = useSWR<{ surveys: Survey[] }>('surveys', fetcher);
-  const columns = React.useMemo<MRT_ColumnDef[]>(
+  const { data } = useSWR<Survey[]>('surveys', fetcher);
+  const columns = React.useMemo<MRT_ColumnDef<Survey>[]>(
     () => [
       {
         accessorKey: 'survey_name.en-us',
@@ -58,11 +58,12 @@ function ApplicationTable() {
         header: 'Owner',
       },
       {
-        accessorFn: (row) => (
-          row.courses.map((course: any) => course.course_name['en-us']).join(', ')
-        ),
+        accessorFn: (row) =>
+          row.courses
+            .map((course: any) => course.course_name['en-us'])
+            .join(', '),
         header: 'Courses',
-      }
+      },
     ],
     []
   );

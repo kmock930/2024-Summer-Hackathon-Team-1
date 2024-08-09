@@ -60,6 +60,7 @@ const TabsContent = styled(Tabs.Content)({
 function StudentForm() {
   return (
     <DashboardForm
+      name='students'
       actions={
         <button
           className={css({

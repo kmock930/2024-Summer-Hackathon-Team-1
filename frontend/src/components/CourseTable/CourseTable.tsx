@@ -6,20 +6,9 @@ import useSWR from 'swr';
 import { fetcher } from '@/utils';
 import { Course } from '@/types';
 
-const data = [
-  {
-    name: 'Kids Can Cook',
-    survey: 'Summer 2024 S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: 'July 2 to 5 (Tue- Fri) 9am-3pm',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-];
-
 function CourseTable() {
-  const { data } = useSWR<{ courses: Course[] }>('courses', fetcher);
-  const columns = React.useMemo<MRT_ColumnDef[]>(
+  const { data } = useSWR<Course[]>('courses', fetcher);
+  const columns = React.useMemo<MRT_ColumnDef<Course>[]>(
     () => [
       {
         accessorKey: 'course_name.en-us',
@@ -40,7 +29,7 @@ function CourseTable() {
         header: 'Owner',
       },
       {
-        accessorFn: (row) => (new Date(row.modified_dt)).toLocaleString(),
+        accessorFn: (row) => new Date(row.modified_dt || 0).toLocaleString(),
         header: 'Last Edit',
       },
     ],

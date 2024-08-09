@@ -8,6 +8,7 @@ interface BaseModel {
   creeated_at: string | null;
   created_by: string | null;
   modified_at: string | null;
+  modified_dt: string | null;
   modified_by: string | null;
   deleted_at: string | null;
   deleted_by: string | null;
@@ -20,7 +21,7 @@ export interface ThreeLangString {
   'zh-cn': string;
 }
 
-export interface Student extends BaseModel{
+export interface Student extends BaseModel {
   // TODO: student_id change to id on BE
   name: string;
   gender: string;
@@ -33,12 +34,12 @@ export interface Student extends BaseModel{
     address: string;
     city: string;
     postcode: string;
-  },
+  };
   parent: any[]; // TODO
   registered_courses: any[]; // TODO
 }
 
-export interface Course extends BaseModel{
+export interface Course extends BaseModel {
   course_name: ThreeLangString;
   quota: number;
   age_group: string;
@@ -47,12 +48,12 @@ export interface Course extends BaseModel{
   admin_in_charge: string[];
 }
 
-export interface Survey extends BaseModel{
+export interface Survey extends BaseModel {
   survey_name: ThreeLangString;
   survey_link: string;
   course_question: ThreeLangString;
-  be_camp_question: ThreeLangString;
-  be_camp_answers: ThreeLangString[];
+  ba_camp_question: ThreeLangString;
+  ba_camp_answers: ThreeLangString[];
   age_group: string;
   course_ids: number[];
   courses: {
@@ -76,7 +77,7 @@ export type TableProps<TData extends Record<string, any> = any> = {
 
 export type DashboardFormProps = {
   actions?: React.ReactNode;
-  name?: string;
+  name: string;
   children?: React.ReactNode;
 };
 

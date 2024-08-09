@@ -1,7 +1,6 @@
 'use client';
 import { css, styled } from '@pigment-css/react';
 import * as React from 'react';
-import { useList } from '@refinedev/core';
 import Checkbox from '../Checkbox';
 import Input from '../Input';
 import { CheckboxGroup, Label } from 'react-aria-components';
@@ -67,7 +66,7 @@ const TabsContent = styled(Tabs.Content)({
 
 function SurveyForm({ survey }: SurveyFormProps) {
   const [careOptions, setCareOptions] = React.useState(0);
-  const { data: courseData } = useSWR<{ courses: Course[] }>('courses', fetcher);
+  const { data: courseData } = useSWR<Course[]>('courses', fetcher);
 
   const handleAddCareOption = () => {
     setCareOptions(careOptions + 1);
@@ -79,6 +78,7 @@ function SurveyForm({ survey }: SurveyFormProps) {
 
   return (
     <DashboardForm
+      name='surveys'
       actions={
         <button
           className={css({

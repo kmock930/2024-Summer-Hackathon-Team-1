@@ -3,17 +3,19 @@ import * as React from 'react';
 import { Formiz, FormizStep, useForm, useFormFields } from '@formiz/core';
 import { css, styled } from '@pigment-css/react';
 import FormStepper from '../FormStepper';
-import { range } from '@/utils';
+import { fetcher, getParentByEmail, range } from '@/utils';
 import Checkbox from '../Checkbox';
 import Select from '../Select';
 import Input from '../Input';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Icon } from '@iconify/react';
-import { useList } from '@refinedev/core';
 import { CheckboxGroup } from 'react-aria-components';
 import FormContent from '../FormContent';
 import dynamic from 'next/dynamic';
 import FormizSelect from '../FormizSelect';
+import useSWR from 'swr';
+import { Course, Survey } from '@/types';
+import useSWRMutation from 'swr/mutation';
 
 const OTPForm = dynamic(() => import('../OTPForm'), { ssr: false });
 
@@ -44,41 +46,44 @@ const Button = styled.button`
   }
 `;
 
-function CourseRegistrationForm() {
+function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
   const form = useForm({
     onSubmit: (values) => {
       console.log(values);
       setIsSubmited(true);
     },
   });
-  const newChildrenForm = useForm();
+  const newChildrenForm = useForm({
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
   const [isDisplayNewChildrenForm, setIsDisplayNewChildrenForm] =
     React.useState(false);
   const [isSubmited, setIsSubmited] = React.useState(false);
+  const { data: courseData, isLoading: isCourseDataLoading } = useSWR<Course[]>(
+    'courses',
+    fetcher
+  );
+  const { data: surveyData, isLoading: isSurveyDataLoading } = useSWR<Survey[]>(
+    `surveys?id=${surveyId}`,
+    fetcher
+  );
+  const { data: parentData, trigger } = useSWRMutation(
+    `parents`,
+    getParentByEmail
+  );
+
+  const fields = useFormFields({
+    connect: form,
+  });
 
   const toggleNewChildrenForm = () =>
     setIsDisplayNewChildrenForm(!isDisplayNewChildrenForm);
 
-  const { data: courseData } = useList({ resource: 'courses' });
-
-  const { data: formTitle } = useList({ resource: 'title' });
-
-  const courseFields = useFormFields({
-    connect: form,
-    fields: ['course'],
-    selector: (field) => field.value,
-  }) as { [key: string]: boolean };
-
-  const isCourseFieldsChecked = React.useMemo(() => {
-    if (courseFields && courseFields.course) {
-      return Object.values(courseFields.course).some((value) => value === true);
-    }
-    return false;
-  }, [courseFields]);
-
   return (
     <FormWrapper>
-      <Formiz connect={form} autoForm='step'>
+      <Formiz connect={form}>
         <FormStepper />
         <FormContent
           className={css({
@@ -98,22 +103,18 @@ function CourseRegistrationForm() {
                     gap: '16px',
                   })}
                 >
-                  {courseData?.data.map((course) => {
+                  {courseData?.map((course) => {
                     return (
                       <React.Fragment key={course.id}>
                         <Checkbox
                           name={`courses.${course.id}`}
-                          label={course.name}
-                          value={`${course.id}`}
+                          label={
+                            course.course_name && course.course_name['en-us']
+                          }
+                          value={course.id}
                           key={course.id}
                         >
-                          <div>
-                            {course.startDate} to {course.endDate} (
-                            {course.daysOfWeek})
-                          </div>
-                          <div>
-                            {course.startTime} - {course.endTime}
-                          </div>
+                          <div>{course.time}</div>
                         </Checkbox>
                       </React.Fragment>
                     );
@@ -123,13 +124,14 @@ function CourseRegistrationForm() {
                   label='Before and/or After Care Option'
                   placeholder='Select a Before and/or After Care Option'
                   name='careOptions'
-                  options={[
-                    {
-                      value: 'dummy1',
-                      text: 'Before Care (7:30am to 9:00am)',
-                    },
-                    { value: 'dummy2', text: 'After Care' },
-                  ]}
+                  options={
+                    surveyData?.[0].ba_camp_answers.map((option) => {
+                      return {
+                        value: option['en-us'],
+                        text: option['en-us'],
+                      };
+                    }) || []
+                  }
                 />
               </FormizStep>
               <FormizStep
@@ -339,7 +341,21 @@ function CourseRegistrationForm() {
                 </div>
               </FormizStep>
               <div className={css({ display: 'flex', gap: '8px' })}>
-                <Button type='submit'>
+                <Button
+                  type='submit'
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (form.currentStep?.index === 1) {
+                      console.log(fields.email.value);
+                      trigger(fields.email.value);
+                    }
+                    if (form.currentStep?.index !== form.steps?.length) {
+                      form.goToNextStep();
+                    } else {
+                      form.submit();
+                    }
+                  }}
+                >
                   {form.steps &&
                   form.currentStep?.index === form.steps?.length - 1
                     ? 'Submit'

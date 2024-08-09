@@ -60,6 +60,7 @@ const TabsContent = styled(Tabs.Content)({
 function CourseForm() {
   return (
     <DashboardForm
+      name='courses'
       actions={
         <button
           className={css({
@@ -105,21 +106,21 @@ function CourseForm() {
               </legend>
               <Input
                 type='text'
-                name='course-name-en'
+                name='course_name.en-us'
                 label='Course Name'
                 placeholder='Course Name'
                 isHideLabel={true}
               />
               <Input
                 type='text'
-                name='course-name-zh-Hant'
+                name='course_name.zh-cn'
                 label='课程名称'
                 placeholder='课程名称'
                 isHideLabel={true}
               />
               <Input
                 type='text'
-                name='course-name-zh-Hans'
+                name='course_name.zh-hk'
                 label='課程名稱'
                 placeholder='課程名稱'
                 isHideLabel={true}
@@ -127,29 +128,35 @@ function CourseForm() {
             </fieldset>
             <Input
               type='number'
-              name='vacancy'
+              name='quota'
               label='Vacancy'
               placeholder='Please enter your answer'
             />
             <Input
               type='text'
-              name='courseLang'
+              name='course_language'
               label='Course Language'
               placeholder='Please enter your answer'
             />
             <Input
               type='text'
-              name='ageGroup'
+              name='age_group'
               label='Age Group'
               placeholder='Please enter your answer'
             />
             <Input
-              type='time'
+              type='text'
               name='time'
               label='Time'
               placeholder='Please enter your answer'
             />
-            <h2>Survey Linked</h2>
+            <Input
+              type='text'
+              name='admin_in_charge'
+              label='Admin In Charge'
+              placeholder='Please enter your answer'
+            />
+            {/* <h2>Survey Linked</h2>
             <Label>
               Select course(s) for this survey
               <CheckboxGroup
@@ -169,7 +176,7 @@ function CourseForm() {
                   Summer 2024 S.T.E.A.M. Camp
                 </Checkbox>
               </CheckboxGroup>
-            </Label>
+            </Label> */}
           </div>
         </TabsContent>
         <TabsContent value='response'>

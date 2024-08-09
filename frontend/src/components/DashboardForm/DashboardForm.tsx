@@ -6,6 +6,8 @@ import Link from '../Link';
 import { usePathname } from 'next/navigation';
 import { DashboardFormProps } from '@/types';
 import { Formiz, useForm } from '@formiz/core';
+import { sendRequest } from '@/utils';
+import { useRouter } from 'next/navigation';
 
 const Wrapper = styled.div`
   background-color: hsla(210deg, 100%, 95%, 1);
@@ -33,8 +35,15 @@ const FormWrapper = styled.div`
 `;
 
 function DashboardForm({ actions, name, children }: DashboardFormProps) {
+  const router = useRouter();
   const pathname = usePathname();
-  const form = useForm({ onSubmit: (values) => console.log({ values }) });
+  const form = useForm({
+    onSubmit: (values) => {
+      console.log(JSON.stringify(values));
+      sendRequest(name, values);
+      router.push(`/admin/${name}`);
+    },
+  });
 
   return (
     <Formiz connect={form} autoForm='form'>

@@ -12,7 +12,7 @@ const FormContentWrapper = styled.div`
   margin: calc((var(--padding) * -1) + 4px);
   margin-top: var(--padding);
   padding: var(--padding);
-  height: 660px;
+  min-height: 660px;
 `;
 
 function FormContent({

@@ -9,6 +9,7 @@ function FormizSelect<FormattedValue = SelectOptionProps['value']>(
   const { value, setValue } = useField(props);
   return (
     <Select
+      label={props.label}
       options={props.options}
       value={value ?? ''}
       setValue={setValue}

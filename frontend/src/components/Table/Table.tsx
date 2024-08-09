@@ -4,6 +4,7 @@ import TopBar from '../TopBar';
 import {
   MRT_GlobalFilterTextInput,
   MRT_TableContainer,
+  MRT_TablePagination,
   MRT_ToggleFiltersButton,
   MRT_ToggleGlobalFilterButton,
 } from 'mantine-react-table';
@@ -70,6 +71,7 @@ function Table<TData extends Record<string, any>>({
       )}
 
       <MRT_TableContainer table={table} />
+      <MRT_TablePagination table={table} />
     </div>
   );
 }

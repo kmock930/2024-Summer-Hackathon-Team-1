@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             })}
           />
         </HeadingWrapper>
-        <CourseRegistrationForm />
+        <CourseRegistrationForm surveyId={params.slug} />
       </Wrapper>
     </CenterWrapper>
   );
