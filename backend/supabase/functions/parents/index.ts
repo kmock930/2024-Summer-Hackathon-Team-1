@@ -18,7 +18,7 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET':
-      data = await adaptor.getParents();
+      data = await adaptor.getParentsWithStudents();
       // Error handling
       if (data?.type === 'ERROR') {
         const errorResponse = data;
