@@ -26,7 +26,7 @@ export class ParentAdaptor {
             // for parent-student relationship
             param_student_id: url.searchParams.get('student_id'),
             param_parent_rel: url.searchParams.get('parent_rel'),
-            paran_student_rel: url.searchParams.get('student_rel')
+            param_student_rel: url.searchParams.get('student_rel')
         }
     }
 
@@ -148,7 +148,7 @@ export class ParentAdaptor {
         return res;
     };
 
-    public getParents = async (): object => {
+    public getParents = async (): object | Array<object> => {
         let errorResponse: object;
         // Construct the query first
         let query = this.supabase
@@ -156,44 +156,54 @@ export class ParentAdaptor {
             .select()
             .is('deleted_dt', null);
         // Conditional chaining (for filtering)
+        var hasFilter: boolean = false;
         if (this.queryParams.param_parent_id) {
             query.eq('id', this.queryParams.param_parent_id);
+            hasFilter = true;
         }
         if (this.queryParams.param_parent_name) {
             query.eq('name', this.queryParams.param_parent_name);
+            hasFilter = true;
         }
         if (this.queryParams.param_parent_email) {
             query.eq('email', this.queryParams.param_parent_email);
+            hasFilter = true;
         }
         if (this.queryParams.param_parent_tel) {
             query.eq('tel', this.queryParams.param_parent_tel);
+            hasFilter = true;
         }
-        if (this.queryParams.param_parent_address) {
-            query.eq('address', this.queryParams.param_parent_address);
-        }
-        if (this.queryParams.param_parent_city) {
-            query.eq('city', this.queryParams.param_parent_city);
-        }
-        if (this.queryParams.param_parent_postcode) {
-            query.eq('postcode', this.queryParams.param_parent_postcode);
+
+        if (hasFilter) {
+            query.limit(1);
         }
 
         // Execute the query
         const { data, error } = await query;
         // Error handling
         if (error) {
-            console.error(error);
+            console.error(`${error} - Failed to fetch parents records.`);
             errorResponse = {
                 type: 'ERROR',
                 message: errorMessages.dbError,
-                reason: error
+                reason: `${error} - Failed to fetch parents records.`
             };
             return errorResponse;
         }
         // fields to display
-        const fieldDisp = ['id', 'name', 'created_dt', 'created_by'];
+        const fieldDisp = ['id', 'name', , 'email', 'tel', 'created_dt', 'created_by'];
         data.map((record) => {
+            var fullname: string = '';
             for (var key in record) {
+                switch (key) {
+                    case 'firstname':
+                        fullname = record[key];
+                        break;
+                    case 'lastname':
+                        fullname += ` ${record[key]}`;
+                        record['name'] = fullname;
+                        break;
+                }
                 if (fieldDisp.indexOf(key) < 0) {
                     delete record[key];
                 }
@@ -201,6 +211,92 @@ export class ParentAdaptor {
         });
         return data;
     };
+
+    public getStudentsByParentID = async (parentID: string | bigint): object => {
+        const { data: relData, error: relError } = await this.supabase
+            .from('rel_parent_student')
+            .select(`
+                parent_id,
+                student_id,
+                student_rel
+            `)
+            .eq('parent_id', parentID);
+        if (relError) {
+            console.error('Failed to fetch relationships record.');
+            errorResponse = {
+                type: 'ERROR',
+                message: `${errorMessages.dbError} - Failed to fetch relationships record.`,
+                reason: relError
+            };
+            return errorResponse;
+        }
+        // successfully fetched the relationships records
+        const studentIDs: Array<string | bigint> = [];
+        if (Array.isArray(relData)) {
+            relData.map((relRecord) => {
+                for (var key in relRecord) {
+                    switch (key) {
+                        case 'student_id':
+                            studentIDs.push(relRecord[key]);
+                            break;
+                    }
+                }
+            });
+        }
+
+        // successfully fetched student IDs based on parent ID
+        var res: Array<object> | object = [];
+        if (studentIDs?.length > 0) {
+            for (var studentID of studentIDs) {
+                const { data: studentData, error: studentError } = await this.supabase
+                    .from('students')
+                    .select()
+                    .eq('id', studentID);
+                if (studentError) {
+                    console.error(`${studentError} - Failed to fetch students records.`);
+                    errorResponse = {
+                        type: 'ERROR',
+                        message: errorMessages.dbError,
+                        reason: `${studentError} - Failed to fetch students records.`
+                    };
+                    return errorResponse;
+                }
+                res.push(studentData[0]); //assume there's only 1 student record per stuodent id
+            }
+        }
+        return res;
+    };
+
+    public getParentsWithStudents = async (): Array<object> | object => {
+        const parents = await this.getParents();
+        // Error handling
+        if (parents?.type === 'ERROR') {
+            return parents;
+        }
+        // successfully fetched parents records
+        var res: Array<object> | object = [];
+        if (Array.isArray(parents)) {
+            for (var parent of parents) {
+                var currParentID: string | bigint;
+                for (var key in parent) {
+                    switch (key) {
+                        case 'id':
+                            currParentID = parent[key];
+                            break;
+                    }
+                }
+                if (currParentID) {
+                    const studentData = await this.getStudentsByParentID(currParentID);
+                    if (studentData?.type != 'ERROR') {
+                        res.push({...parent, student: studentData});
+                    } else {
+                        return studentData;
+                    }
+                }
+            }
+        }
+        return res;
+    }
 
     public updateParents = async (): object => {
         let errorResponse: object;
