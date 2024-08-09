@@ -19,9 +19,6 @@ export class ParentAdaptor {
             param_parent_id: url.searchParams.get('id'),
             param_parent_email: url.searchParams.get('email'),
             param_parent_tel: url.searchParams.get('tel'),
-            param_parent_address: url.searchParams.get('address'),
-            param_parent_city: url.searchParams.get('city'),
-            param_parent_postcode: url.searchParams.get('postcode'),
             param_parent_name: url.searchParams.get('name'),
             // for parent-student relationship
             param_student_id: url.searchParams.get('student_id'),
@@ -161,10 +158,6 @@ export class ParentAdaptor {
             query.eq('id', this.queryParams.param_parent_id);
             hasFilter = true;
         }
-        if (this.queryParams.param_parent_name) {
-            query.eq('name', this.queryParams.param_parent_name);
-            hasFilter = true;
-        }
         if (this.queryParams.param_parent_email) {
             query.eq('email', this.queryParams.param_parent_email);
             hasFilter = true;
@@ -172,10 +165,6 @@ export class ParentAdaptor {
         if (this.queryParams.param_parent_tel) {
             query.eq('tel', this.queryParams.param_parent_tel);
             hasFilter = true;
-        }
-
-        if (hasFilter) {
-            query.limit(1);
         }
 
         // Execute the query
@@ -192,24 +181,40 @@ export class ParentAdaptor {
         }
         // fields to display
         const fieldDisp = ['id', 'name', , 'email', 'tel', 'created_dt', 'created_by'];
-        data.map((record) => {
-            var fullname: string = '';
-            for (var key in record) {
-                switch (key) {
-                    case 'firstname':
-                        fullname = record[key];
-                        break;
-                    case 'lastname':
-                        fullname += ` ${record[key]}`;
-                        record['name'] = fullname;
-                        break;
-                }
-                if (fieldDisp.indexOf(key) < 0) {
-                    delete record[key];
-                }
+        var parentres: Array<object> | object = data;
+        if (hasFilter) {
+            parentres = data[0]; // if filter has been applied, only return 1 record
+        } else {
+            parentres = data;
+        }
+        if (Array.isArray(data)) {
+            if (this.queryParams.param_parent_name) {
+                parentres = [];
             }
-        });
-        return data;
+            data.map((parentRecord) => {
+                var fullname: string = '';
+                for (var key in parentRecord) {
+                    switch (key) {
+                        case 'firstname':
+                            fullname = parentRecord[key];
+                            break;
+                        case 'lastname':
+                            fullname += ` ${parentRecord[key]}`;
+                            parentRecord['name'] = fullname;
+                            break;
+                    }
+                    if (fieldDisp.indexOf(key) < 0) {
+                        delete parentRecord[key];
+                    }
+                }
+                if (this.queryParams.param_parent_name) {
+                    // filter by parent's fullname
+                    parentres.push(parentRecord)
+                }
+            });
+        }
+
+        return parentres;
     };
 
     public getStudentsByParentID = async (parentID: string | bigint): object => {
@@ -232,12 +237,16 @@ export class ParentAdaptor {
         }
         // successfully fetched the relationships records
         const studentIDs: Array<string | bigint> = [];
+        const studentRels: Array<string> = [];
         if (Array.isArray(relData)) {
             relData.map((relRecord) => {
                 for (var key in relRecord) {
                     switch (key) {
                         case 'student_id':
                             studentIDs.push(relRecord[key]);
+                            break;
+                        case 'student_rel':
+                            studentRels.push(relRecord[key]);
                             break;
                     }
                 }
@@ -246,7 +255,7 @@ export class ParentAdaptor {
 
         // successfully fetched student IDs based on parent ID
         var res: Array<object> | object = [];
-        if (studentIDs?.length > 0) {
+        if (studentIDs?.length > 0 && studentRels?.length > 0) {
             for (var studentID of studentIDs) {
                 const { data: studentData, error: studentError } = await this.supabase
                     .from('students')
@@ -261,7 +270,8 @@ export class ParentAdaptor {
                     };
                     return errorResponse;
                 }
-                res.push(studentData[0]); //assume there's only 1 student record per stuodent id
+                //assume there's only 1 student record per stuodent id
+                res.push({...studentData[0], student_rel: studentIDs.indexOf(studentID) > 0 ? studentRels[studentIDs.indexOf(studentID)] : null});
             }
         }
         return res;
@@ -292,6 +302,24 @@ export class ParentAdaptor {
                     } else {
                         return studentData;
                     }
+                }
+            }
+        } else if (typeof(parents) === 'object') {
+            var parent = parents;
+            var currParentID: string | bigint;
+            for (var key in parent) {
+                switch (key) {
+                    case 'id':
+                        currParentID = parent[key];
+                        break;
+                }
+            }
+            if (currParentID) {
+                const studentData = await this.getStudentsByParentID(currParentID);
+                if (studentData?.type != 'ERROR') {
+                    res.push({...parent, student: studentData});
+                } else {
+                    return studentData;
                 }
             }
         }
