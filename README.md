@@ -1,4 +1,4 @@
-# CICS-Hackathon-Team-1
+# Hackathon-Team-1
 
 ## Backend Development
 
