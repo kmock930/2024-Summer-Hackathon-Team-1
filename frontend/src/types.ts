@@ -57,6 +57,8 @@ export interface Survey extends BaseModel {
   age_group: string;
   course_ids: number[];
   courses: any[];
+  period?: string;
+  responses?: [];
 }
 
 export interface Parent extends BaseModel {
@@ -65,7 +67,7 @@ export interface Parent extends BaseModel {
 }
 
 export type SurveyFormProps = {
-  survey?: Survey;
+  id?: string;
 };
 
 export type TableProps<TData extends Record<string, any> = any> = {

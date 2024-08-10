@@ -5,9 +5,12 @@ import Table from '../Table';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
 import { Course } from '@/types';
+import { useRouter } from 'next/navigation';
 
 function CourseTable() {
+  const router = useRouter();
   const { data } = useSWR<Course[]>('courses', fetcher);
+
   const columns = React.useMemo<MRT_ColumnDef<Course>[]>(
     () => [
       {
@@ -40,6 +43,12 @@ function CourseTable() {
     columns,
     data: data ?? [],
     enableRowSelection: true,
+    mantineTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        router.push(`/admin/courses/${row.original.id}`);
+      },
+      sx: { cursor: 'pointer' },
+    }),
   });
 
   return (

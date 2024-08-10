@@ -5,90 +5,21 @@ import {
 } from 'mantine-react-table';
 import * as React from 'react';
 import Table from '../Table';
+import { fetcher } from '@/utils';
+import useSWR from 'swr';
+import { Survey } from '@/types';
 
-const data = [
-  {
-    name: 'Chan Siu Man(He/Him)',
-    age: '6',
-    specialNeeds: 'No Mango, No Peanut Butter',
-    courseEnrolled: `Kids Can Cook,
-Nature Seekers Adventure,
-Lego Lab,
-Chaotic Concert Carnival,
-Little Edison’s Laboratory,
-My Camp’s Got Talent,
-NASA Space Station,
-The Sustainable You`,
-    careService: 'Before Care (7:30am to 9:00am)',
-    timeApplied: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Chan Siu Man(He/Him)',
-    age: '6',
-    specialNeeds: 'No Mango, No Peanut Butter',
-    courseEnrolled: `Kids Can Cook,
-Nature Seekers Adventure,
-Lego Lab,
-Chaotic Concert Carnival,
-Little Edison’s Laboratory,
-My Camp’s Got Talent,
-NASA Space Station,
-The Sustainable You`,
-    careService: 'Before Care (7:30am to 9:00am)',
-    timeApplied: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Chan Siu Man(He/Him)',
-    age: '6',
-    specialNeeds: 'No Mango, No Peanut Butter',
-    courseEnrolled: `Kids Can Cook,
-Nature Seekers Adventure,
-Lego Lab,
-Chaotic Concert Carnival,
-Little Edison’s Laboratory,
-My Camp’s Got Talent,
-NASA Space Station,
-The Sustainable You`,
-    careService: 'Before Care (7:30am to 9:00am)',
-    timeApplied: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Chan Siu Man(He/Him)',
-    age: '6',
-    specialNeeds: 'No Mango, No Peanut Butter',
-    courseEnrolled: `Kids Can Cook,
-Nature Seekers Adventure,
-Lego Lab,
-Chaotic Concert Carnival,
-Little Edison’s Laboratory,
-My Camp’s Got Talent,
-NASA Space Station,
-The Sustainable You`,
-    careService: 'Before Care (7:30am to 9:00am)',
-    timeApplied: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Chan Siu Man(He/Him)',
-    age: '6',
-    specialNeeds: 'No Mango, No Peanut Butter',
-    courseEnrolled: `Kids Can Cook,
-Nature Seekers Adventure,
-Lego Lab,
-Chaotic Concert Carnival,
-Little Edison’s Laboratory,
-My Camp’s Got Talent,
-NASA Space Station,
-The Sustainable You`,
-    careService: 'Before Care (7:30am to 9:00am)',
-    timeApplied: '12 Jun 2024 10:32:78',
-  },
-];
-
-function SurveyResponseTable() {
+function SurveyResponseTable({ id }: { id: string }) {
+  const { data: surveyData, isLoading: isSurveyDataLoading } = useSWR<Survey>(
+    `course-registration?survey_id=${id}`,
+    fetcher
+  );
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorFn: (row: any) => {
+          return `${row.student.firstname}${row.student.lastname} (${row.student.pronounce})`;
+        },
         header: 'Name (Pronounce)',
       },
       {
@@ -96,12 +27,21 @@ function SurveyResponseTable() {
         header: 'Age',
       },
       {
-        accessorKey: 'specialNeeds',
+        accessorKey: 'student.special_need',
         header: 'Special Need',
       },
       {
-        accessorKey: 'courseEnrolled',
         header: 'Course Enrolled',
+        accessorFn: (row: any) => {
+          // return `${row.courses.course_name['en-us']}`;
+          return row.courses.map((course: any, index: number) => {
+            if (!(index === row.courses.length - 1)) {
+              return `${course.course_name['en-us']}, `;
+            } else {
+              return `${course.course_name['en-us']}`;
+            }
+          });
+        },
       },
       {
         accessorKey: 'careService',
@@ -117,7 +57,7 @@ function SurveyResponseTable() {
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: surveyData?.responses || [],
     enableRowSelection: true,
   });
 
