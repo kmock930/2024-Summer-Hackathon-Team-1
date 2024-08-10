@@ -83,7 +83,7 @@ function CourseForm({ id }: { id?: string }) {
                 borderRadius: '4px',
               })}
             >
-              Create Course
+              {id ? 'Edit Course' : 'Create Course'}
             </button>
           }
         >
