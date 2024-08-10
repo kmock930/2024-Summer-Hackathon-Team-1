@@ -186,11 +186,15 @@ function SurveyForm({ id }: SurveyFormProps) {
                     })}
                   >
                     {courseData?.map((course) => {
+                      console.log(surveyData?.course_ids);
+                      console.log(course.id);
+                      console.log(surveyData?.course_ids?.includes(course.id));
                       return (
                         <Checkbox
                           name={`courses.${course.id}`}
                           key={course.id}
                           value={`${course.id}`}
+                          defaultValue={surveyData?.course_ids?.includes(course.id)}
                         >
                           {course.course_name['en-us']} | {course.time}
                         </Checkbox>

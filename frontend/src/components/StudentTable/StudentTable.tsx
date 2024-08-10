@@ -5,9 +5,11 @@ import Table from '../Table';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
 import { Student } from '@/types';
+import { useRouter } from 'next/navigation';
 
 function StudentTable() {
   const { data, isLoading } = useSWR<Student[]>('students', fetcher);
+  const router = useRouter();
 
   const columns = React.useMemo<MRT_ColumnDef<Student>[]>(
     () => [
@@ -40,7 +42,7 @@ function StudentTable() {
         header: 'Courses',
       },
       {
-        accessorKey: 'account_credit',
+        accessorKey: 'payment_credit',
         header: 'Account Credit',
       },
       // {
@@ -56,6 +58,12 @@ function StudentTable() {
     data: data ?? [],
     enableRowSelection: true,
     state: { isLoading: isLoading },
+    mantineTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        router.push(`/admin/students/${row.original.student_id}`);
+      },
+      sx: { cursor: 'pointer' },
+    }),
   });
 
   return <Table name='student' table={table} />;

@@ -6,6 +6,9 @@ import * as Tabs from '@radix-ui/react-tabs';
 import SurveyResponseTable from '../SurveyResponseTable';
 import Select from '../Select';
 import DashboardForm from '../DashboardForm';
+import StudentDetails from '../StudentDetails';
+import useSWR from 'swr';
+import { fetcher } from '@/utils';
 
 const TabsRoot = styled(Tabs.Root)({
   display: 'flex',
@@ -57,193 +60,206 @@ const TabsContent = styled(Tabs.Content)({
   '&:focus': { boxShadow: `0 0 0 2px black` },
 });
 
-function StudentForm() {
+function StudentForm({ id }: { id?: string }) {
+  const { data: studentData, isLoading: isStudentDataLoading } =
+    useSWR<any>(`students?student_id=${id}`, fetcher);
+
   return (
-    <DashboardForm
-      name='students'
-      actions={
-        <button
-          className={css({
-            background: ' var(--color-blue-1)',
-            border: '2px solid  var(--color-blue-1)',
-            color: 'white',
-            borderRadius: '4px',
-          })}
+    <>
+      {!isStudentDataLoading && (
+        <DashboardForm
+          name='students'
+          actions={
+            <button
+              className={css({
+                background: ' var(--color-blue-1)',
+                border: '2px solid  var(--color-blue-1)',
+                color: 'white',
+                borderRadius: '4px',
+              })}
+            >
+              Create Student
+            </button>
+          }
         >
-          Create Student
-        </button>
-      }
-    >
-      <TabsRoot defaultValue='student-information'>
-        <TabsList aria-label='Manage your student'>
-          <TabsTrigger value='student-information'>
-            Student Information
-          </TabsTrigger>
-          <TabsTrigger value='course-history' disabled={true}>
-            Course History
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value='student-information'>
-          <div
-            className={css({
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            })}
-          >
-            <h2>Student Profile</h2>
-            <fieldset
-              className={css({
-                border: 0,
-                padding: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              })}
-            >
-              <legend className={css({ padding: 0 })}>
-                {`student's Legal Name`}
-              </legend>
-              <Input
-                type='text'
-                name='firstName'
-                label='First Name'
-                placeholder='Legal First Name (E.g. Tai Man)'
-                isHideLabel={true}
-              />
-              <Input
-                type='text'
-                name='lastName'
-                label='Last Name'
-                placeholder='Legal Last Name (E.g. Chan)'
-                isHideLabel={true}
-              />
-            </fieldset>
-            <Select
-              label='Gender'
-              placeholder='Select a Gender'
-              options={[
-                {
-                  value: 'm',
-                  text: 'Male',
-                },
-                { value: 'f', text: 'Female' },
-                { value: 'other', text: 'Other' },
-              ]}
-            />
-            <Input
-              type='date'
-              name='dob'
-              label="Student's Date of Birth"
-              placeholder='MM/DD/YYYY'
-            />
-            <fieldset
-              className={css({
-                border: 0,
-                padding: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              })}
-            >
-              <legend className={css({ padding: 0 })}>{`Home Address`}</legend>
-              <Input
-                type='text'
-                name='street'
-                label='Street'
-                placeholder='Street Address & Unit Number (if applicable)'
-                isHideLabel={true}
-              />
-              <Input
-                type='text'
-                name='city'
-                label='City'
-                placeholder='City'
-                isHideLabel={true}
-              />
-              <Input
-                type='text'
-                name='postalCode'
-                label='Postal Code'
-                placeholder='Postal Code'
-                isHideLabel={true}
-              />
-            </fieldset>
-            <Input
-              type='text'
-              name='specialNeeds'
-              label='Special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other? '
-              placeholder='Please enter your answer'
-            />
-            <h2>Parent Information</h2>
-            <fieldset
-              className={css({
-                border: 0,
-                padding: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              })}
-            >
-              <legend className={css({ padding: 0 })}>
-                {`student's Legal Name`}
-              </legend>
-              <Input
-                type='text'
-                name='firstName'
-                label='First Name'
-                placeholder='Legal First Name (E.g. Tai Man)'
-                isHideLabel={true}
-              />
-              <Input
-                type='text'
-                name='PlastName'
-                label='Last Name'
-                placeholder='Legal Last Name (E.g. Chan)'
-                isHideLabel={true}
-              />
-            </fieldset>
-            <Select
-              label='Gender'
-              placeholder='Select a Gender'
-              options={[
-                {
-                  value: 'm',
-                  text: 'Male',
-                },
-                { value: 'f', text: 'Female' },
-                { value: 'other', text: 'Other' },
-              ]}
-            />
-            <Select
-              label='Relationship to Student'
-              placeholder='Relationship to Student'
-              options={[
-                {
-                  value: 'mother',
-                  text: 'Mother',
-                },
-                { value: 'father', text: 'Father' },
-                { value: 'other', text: 'Other' },
-              ]}
-            />
-            <h2>Emergency Contact</h2>
-            <Input
-              type='text'
-              name='em-phone'
-              label='Emergency Contact Phone'
-              placeholder='Please enter your answer'
-            />
-            <Input
-              type='email'
-              name='email'
-              label='Email'
-              placeholder='Please enter your answer'
-            />
-          </div>
-        </TabsContent>
-      </TabsRoot>
-    </DashboardForm>
+          <TabsRoot defaultValue='student-information'>
+            <TabsList aria-label='Manage your student'>
+              <TabsTrigger value='student-information'>
+                Student Information
+              </TabsTrigger>
+              <TabsTrigger value='course-history' disabled={!id}>
+                Course History
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value='student-information'>
+              <div
+                className={css({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                })}
+              >
+                <h2>Student Profile</h2>
+                <fieldset
+                  className={css({
+                    border: 0,
+                    padding: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  })}
+                >
+                  <legend className={css({ padding: 0 })}>
+                    {`student's Legal Name`}
+                  </legend>
+                  <Input
+                    type='text'
+                    name='firstName'
+                    label='First Name'
+                    placeholder='Legal First Name (E.g. Tai Man)'
+                    isHideLabel={true}
+                    defaultValue={studentData?.[0]?.name}
+                  />
+                  <Input
+                    type='text'
+                    name='lastName'
+                    label='Last Name'
+                    placeholder='Legal Last Name (E.g. Chan)'
+                    isHideLabel={true}
+                    defaultValue={studentData?.[0]?.name}
+                  />
+                </fieldset>
+                <Select
+                  label='Gender'
+                  placeholder='Select a Gender'
+                  options={[
+                    {
+                      value: 'm',
+                      text: 'Male',
+                    },
+                    { value: 'f', text: 'Female' },
+                    { value: 'other', text: 'Other' },
+                  ]}
+                />
+                <Input
+                  type='date'
+                  name='dob'
+                  label="Student's Date of Birth"
+                  placeholder='MM/DD/YYYY'
+                />
+                <fieldset
+                  className={css({
+                    border: 0,
+                    padding: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  })}
+                >
+                  <legend className={css({ padding: 0 })}>{`Home Address`}</legend>
+                  <Input
+                    type='text'
+                    name='street'
+                    label='Street'
+                    placeholder='Street Address & Unit Number (if applicable)'
+                    isHideLabel={true}
+                  />
+                  <Input
+                    type='text'
+                    name='city'
+                    label='City'
+                    placeholder='City'
+                    isHideLabel={true}
+                  />
+                  <Input
+                    type='text'
+                    name='postalCode'
+                    label='Postal Code'
+                    placeholder='Postal Code'
+                    isHideLabel={true}
+                  />
+                </fieldset>
+                <Input
+                  type='text'
+                  name='specialNeeds'
+                  label='Special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other? '
+                  placeholder='Please enter your answer'
+                />
+                <h2>Parent Information</h2>
+                <fieldset
+                  className={css({
+                    border: 0,
+                    padding: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  })}
+                >
+                  <legend className={css({ padding: 0 })}>
+                    {`student's Legal Name`}
+                  </legend>
+                  <Input
+                    type='text'
+                    name='firstName'
+                    label='First Name'
+                    placeholder='Legal First Name (E.g. Tai Man)'
+                    isHideLabel={true}
+                  />
+                  <Input
+                    type='text'
+                    name='PlastName'
+                    label='Last Name'
+                    placeholder='Legal Last Name (E.g. Chan)'
+                    isHideLabel={true}
+                  />
+                </fieldset>
+                <Select
+                  label='Gender'
+                  placeholder='Select a Gender'
+                  options={[
+                    {
+                      value: 'm',
+                      text: 'Male',
+                    },
+                    { value: 'f', text: 'Female' },
+                    { value: 'other', text: 'Other' },
+                  ]}
+                />
+                <Select
+                  label='Relationship to Student'
+                  placeholder='Relationship to Student'
+                  options={[
+                    {
+                      value: 'mother',
+                      text: 'Mother',
+                    },
+                    { value: 'father', text: 'Father' },
+                    { value: 'other', text: 'Other' },
+                  ]}
+                />
+                <h2>Emergency Contact</h2>
+                <Input
+                  type='text'
+                  name='em-phone'
+                  label='Emergency Contact Phone'
+                  placeholder='Please enter your answer'
+                />
+                <Input
+                  type='email'
+                  name='email'
+                  label='Email'
+                  placeholder='Please enter your answer'
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value='course-history'>
+              <StudentDetails id={id || ''} />
+            </TabsContent>
+          </TabsRoot>
+        </DashboardForm>
+            
+      )}
+    </>
   );
 }
 

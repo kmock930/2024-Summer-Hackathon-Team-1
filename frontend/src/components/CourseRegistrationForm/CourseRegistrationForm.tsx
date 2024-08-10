@@ -59,9 +59,9 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
       };
 
       // Student ID / New Student
-      values.student_id = Object.keys(values.childrens).filter(
+      values.student_id = Number(Object.keys(values.childrens).filter(
         (c) => values.childrens[c] === true
-      );
+      )[0]);
       delete values.childrens;
       // Parent ID / New Parent
 
@@ -92,7 +92,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
       // Pickup Arrangements
       values.pickup_arrangement = values.pickUpArragements;
       delete values.pickUpArragements;
-      // sendRequest('course-registration', values);
+      sendRequest('course-registration', values);
     },
   });
   const newChildrenForm = useForm({

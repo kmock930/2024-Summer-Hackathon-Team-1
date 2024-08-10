@@ -23,6 +23,7 @@ export interface ThreeLangString {
 
 export interface Student extends BaseModel {
   // TODO: student_id change to id on BE
+  student_id: number;
   name: string;
   gender: string;
   dob: string;
