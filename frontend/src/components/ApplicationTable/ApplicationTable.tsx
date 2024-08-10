@@ -8,7 +8,7 @@ import { Survey } from '@/types';
 import { useRouter } from 'next/navigation';
 
 function ApplicationTable() {
-  const { data } = useSWR<Survey[]>('surveys', fetcher);
+  const { data, isLoading } = useSWR<Survey[]>('surveys', fetcher);
   const router = useRouter();
 
   const columns = React.useMemo<MRT_ColumnDef<Survey>[]>(
@@ -31,6 +31,7 @@ function ApplicationTable() {
       },
       {
         accessorFn: (row) =>
+          row.courses &&
           row.courses
             .map((course: any) => course.course_name['en-us'])
             .join(', '),
@@ -50,6 +51,7 @@ function ApplicationTable() {
       },
       sx: { cursor: 'pointer' },
     }),
+    state: { isLoading: isLoading },
   });
 
   return <Table name='application' table={table} />;

@@ -48,6 +48,9 @@ const TabsTrigger = styled(Tabs.Trigger)({
     boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
     background: 'white',
   },
+  '&[data-disabled]': {
+    opacity: 0.8,
+  },
   '&:focus': { position: 'relative', boxShadow: `0 0 0 2px black` },
 });
 

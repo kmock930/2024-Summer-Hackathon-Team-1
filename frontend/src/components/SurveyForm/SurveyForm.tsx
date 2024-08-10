@@ -13,6 +13,7 @@ import DashboardForm from '../DashboardForm';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
 import { Course } from '@/types';
+import { NodeNextRequest } from 'next/dist/server/base-http/node';
 
 const TabsRoot = styled(Tabs.Root)({
   display: 'flex',
@@ -50,6 +51,9 @@ const TabsTrigger = styled(Tabs.Trigger)({
     color: ' var(--color-blue-1)',
     boxShadow: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
     background: 'white',
+  },
+  '&[data-disabled]': {
+    opacity: 0.8,
   },
   '&:focus': { position: 'relative', boxShadow: `0 0 0 2px black` },
 });
@@ -300,7 +304,22 @@ function SurveyForm({ id }: SurveyFormProps) {
                   );
                 })}
                 {enableCare && (
-                  <button type='button' onClick={handleAddCareOption}>
+                  <button
+                    className={css({
+                      background: 'none',
+                      border: 0,
+                      textDecoration: 'underline',
+
+                      '&::before': {
+                        content: "'+ '",
+                      },
+                      '&:hover': {
+                        cursor: 'pointer',
+                      },
+                    })}
+                    type='button'
+                    onClick={handleAddCareOption}
+                  >
                     Add New Care Option
                   </button>
                 )}

@@ -7,7 +7,7 @@ import Link from '../Link';
 
 const Wrapper = styled.div`
   width: 320px;
-  height: 100%;
+  min-height: 100%;
   background: linear-gradient(354.42deg, #135395 0%, #688db4 42%, #2b72bc 100%);
   padding: 24px;
   display: flex;

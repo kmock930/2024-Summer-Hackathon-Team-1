@@ -16,7 +16,11 @@ function Input<FormattedValue = string>(props: InputProps<FormattedValue>) {
   const { isHideLabel, ...delegated } = otherProps;
   const { visuallyHiddenProps } = useVisuallyHidden();
   return (
-    <div>
+    <div
+      className={css({
+        margin: '4px 0',
+      })}
+    >
       <Field>
         {isHideLabel ? (
           <Label {...visuallyHiddenProps}>{props.label}</Label>
