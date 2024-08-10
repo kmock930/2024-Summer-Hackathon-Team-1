@@ -10,6 +10,7 @@ function OTPInput({ length }: { length: number }) {
         display: 'flex',
         justifyContent: 'space-between',
         gap: '8px',
+        margin: '8px 0',
       })}
       maxLength={length}
       render={({ slots }) => {

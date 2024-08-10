@@ -4,12 +4,13 @@ import Sidebar from '../Sidebar';
 
 const Wrapper = styled.div`
   display: flex;
-  height: 100%;
+  min-height: 100%;
 `;
 
 const ContentWrapper = styled.div`
   padding: 36px;
-  width: 100%;
+  flex: 1;
+  width: 0;
   background-color: hsla(210, 100%, 95%, 1);
 `;
 

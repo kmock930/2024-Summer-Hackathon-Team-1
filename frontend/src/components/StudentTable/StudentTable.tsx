@@ -7,7 +7,7 @@ import { fetcher } from '@/utils';
 import { Student } from '@/types';
 
 function StudentTable() {
-  const { data } = useSWR<Student[]>('students', fetcher);
+  const { data, isLoading } = useSWR<Student[]>('students', fetcher);
 
   const columns = React.useMemo<MRT_ColumnDef<Student>[]>(
     () => [
@@ -23,16 +23,18 @@ function StudentTable() {
       {
         id: 'paraent',
         // accessorKey: 'parent.parent_name',
-        accessorFn: (row) => row.parent.map((p) => p.parent_name).join(', '),
+        accessorFn: (row) =>
+          row.parent && row.parent.map((p) => p.parent_name).join(', '),
         header: 'Parent',
       },
       {
-        accessorFn: (row) => row.parent.map((p) => p.parent_rel).join(', '),
+        accessorFn: (row) =>
+          row.parent && row.parent.map((p) => p.parent_rel).join(', '),
         header: 'Relationship',
       },
       {
         accessorFn: (row) =>
-          row.registered_courses.length !== 0
+          row.registered_courses && row.registered_courses.length !== 0
             ? row.registered_courses.map((c) => c.course.course_name).join(', ')
             : 'N/A',
         header: 'Courses',
@@ -53,6 +55,7 @@ function StudentTable() {
     columns,
     data: data ?? [],
     enableRowSelection: true,
+    state: { isLoading: isLoading },
   });
 
   return <Table name='student' table={table} />;

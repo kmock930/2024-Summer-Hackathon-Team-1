@@ -59,6 +59,7 @@ function SurveyResponseTable({ id }: { id: string }) {
     columns,
     data: surveyData?.responses || [],
     enableRowSelection: true,
+    state: { isLoading: isSurveyDataLoading },
   });
 
   return (

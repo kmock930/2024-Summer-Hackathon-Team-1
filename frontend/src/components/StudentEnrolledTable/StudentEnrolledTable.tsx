@@ -5,8 +5,10 @@ import useSWR from 'swr';
 import Table from '../Table';
 
 function StudentEnrolledTable({ id }: { id: string }) {
-  const { data: studentEnrolledData, isLoading: isSurveyDataLoading } =
-    useSWR<any>(`course-registration?course_id=${id}`, fetcher);
+  const { data: studentEnrolledData, isLoading } = useSWR<any>(
+    `course-registration?course_id=${id}`,
+    fetcher
+  );
 
   const columns = React.useMemo<MRT_ColumnDef[]>(
     () => [
@@ -32,6 +34,7 @@ function StudentEnrolledTable({ id }: { id: string }) {
     columns,
     data: studentEnrolledData?.student,
     enableRowSelection: true,
+    state: { isLoading },
   });
 
   return (

@@ -17,8 +17,8 @@ const AriaCheckbox = styled(ReactAriaCheckbox)({
 } as React.CSSProperties);
 
 const CheckboxIndicator = styled('div')({
-  width: '1.143rem',
-  height: '1.143rem',
+  minWidth: '1.143rem',
+  minHeight: '1.143rem',
   border: '2px solid var(--border-color)',
   borderRadius: '4px',
   transition: 'all 200ms',

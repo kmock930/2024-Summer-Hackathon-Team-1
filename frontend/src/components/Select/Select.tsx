@@ -122,6 +122,7 @@ const SelectItem = React.forwardRef<
 SelectItem.displayName = 'SelectItem';
 
 const Wrapper = styled.div`
+  margin: 4px 0;
   & *:hover {
     cursor: pointer;
   }

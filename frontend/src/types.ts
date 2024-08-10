@@ -87,7 +87,7 @@ export type DashboardFormProps = {
 
 export type InputProps<FormattedValue> = FieldProps<string, FormattedValue> & {
   label: string;
-  description?: string;
+  description?: React.ReactNode;
   isHideLabel?: boolean;
   type?: string;
   name: string;

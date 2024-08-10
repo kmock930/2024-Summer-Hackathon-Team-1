@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 function CourseTable() {
   const router = useRouter();
-  const { data } = useSWR<Course[]>('courses', fetcher);
+  const { data, isLoading } = useSWR<Course[]>('courses', fetcher);
 
   const columns = React.useMemo<MRT_ColumnDef<Course>[]>(
     () => [
@@ -17,12 +17,6 @@ function CourseTable() {
         accessorKey: 'course_name.en-us',
         header: 'Name',
       },
-      // {
-      //   accessorFn: (row) => (
-      //     row.surveys.map((survey: any) => survey.survey_name['en-us']).join(', ')
-      //   ),
-      //   header: 'Survey',
-      // },
       {
         accessorKey: 'age_group',
         header: 'Age Group',
@@ -49,6 +43,7 @@ function CourseTable() {
       },
       sx: { cursor: 'pointer' },
     }),
+    state: { isLoading: isLoading },
   });
 
   return (
