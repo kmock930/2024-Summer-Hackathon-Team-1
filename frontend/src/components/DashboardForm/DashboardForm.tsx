@@ -41,13 +41,15 @@ function DashboardForm({ actions, name, children }: DashboardFormProps) {
     onSubmit: (values) => {
       if (name === 'applications') {
         // Work around course_ids
-        values.course_ids = Object.keys(values.courses).filter(
-          (key) => values.courses[key] === true,
-        ).map(courseId => Number(courseId));
+        values.course_ids = Object.keys(values.courses)
+          .filter((key) => values.courses[key] === true)
+          .map((courseId) => Number(courseId));
         delete values.courses;
         // Work around ba_camp_options
-        const optionArr = Object.keys(values).filter(key => key.startsWith('option'));
-        values.ba_camp_answers = optionArr.map(key => values[key]);
+        const optionArr = Object.keys(values).filter((key) =>
+          key.startsWith('option')
+        );
+        values.ba_camp_answers = optionArr.map((key) => values[key]);
         for (const key of optionArr) delete values[key];
         sendRequest('surveys', values);
       } else {

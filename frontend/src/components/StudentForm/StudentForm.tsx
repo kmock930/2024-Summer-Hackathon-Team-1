@@ -242,9 +242,6 @@ function StudentForm() {
             />
           </div>
         </TabsContent>
-        <TabsContent value='response'>
-          <SurveyResponseTable />
-        </TabsContent>
       </TabsRoot>
     </DashboardForm>
   );

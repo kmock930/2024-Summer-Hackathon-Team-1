@@ -5,40 +5,12 @@ import Table from '../Table';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
 import { Survey } from '@/types';
-
-const data = [
-  {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2025 S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-  {
-    name: 'Summer 2024  S.T.E.A.M. Camp',
-    ageGroup: '3-6',
-    time: '2 Jul to 23 Aug',
-    owner: 'User 103594923',
-    lastEdit: '12 Jun 2024 10:32:78',
-  },
-];
+import { useRouter } from 'next/navigation';
 
 function ApplicationTable() {
   const { data } = useSWR<Survey[]>('surveys', fetcher);
+  const router = useRouter();
+
   const columns = React.useMemo<MRT_ColumnDef<Survey>[]>(
     () => [
       {
@@ -72,6 +44,12 @@ function ApplicationTable() {
     columns,
     data: data ?? [],
     enableRowSelection: true,
+    mantineTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        router.push(`/admin/applications/${row.original.id}`);
+      },
+      sx: { cursor: 'pointer' },
+    }),
   });
 
   return <Table name='application' table={table} />;

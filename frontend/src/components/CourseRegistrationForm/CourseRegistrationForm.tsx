@@ -59,28 +59,40 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
       }
 
       // Student ID / New Student
-      if (values.childrens) {
-        values.student_id = Number(Object.keys(values.childrens).filter(
-          c => values.childrens[c] === true
-        )?.[0]);
-        delete values.childrens;  
-      }
-  
+      values.student_id = Object.keys(values.childrens).filter(
+        (c) => values.childrens[c] === true
+      );
+      delete values.childrens;
+      // Parent ID / New Parent
+
       // Survey ID
       values.survey_id = Number(surveyId);
 
       // Course IDs
       values.course_ids = Object.keys(values.courses).filter(
-        c => values.courses[c] === true
+        (c) => values.courses[c] === true
       );
       values.course_ids = values.course_ids.map(Number);
       delete values.courses;
-
-      values.created_by = 'RegistrationForm';
-
-      console.log(values);
-      setIsSubmited(true);
-      sendRequest('course-registration', values);
+      // Email
+      // Tel
+      values.tel = values.phoneNo;
+      delete values.phoneNo;
+      // Special Needs
+      if (values.specialNeeds) {
+        values.special_needs = values.specialNeeds;
+        delete values.specialNeeds;
+      }
+      // Emergency Contact (JSON)
+      values.emergency_contact = {
+        name: values.emergencyContactName,
+        phone: values.emergencyContactPhone,
+      };
+      delete values.emergencyContactName;
+      // Pickup Arrangements
+      values.pickup_arrangement = values.pickUpArragements;
+      delete values.pickUpArragements;
+      // sendRequest('course-registration', values);
     },
   });
   const newChildrenForm = useForm({
@@ -99,7 +111,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
     `surveys?id=${surveyId}`,
     fetcher
   );
-  const { data: parentData, trigger } = useSWRMutation<Parent []>(
+  const { data: parentData, trigger } = useSWRMutation<Parent[]>(
     `parents`,
     getParentByEmail
   );
@@ -149,7 +161,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                           </Checkbox>
                         </React.Fragment>
                       );
-                    })
+                    });
                   })}
                 </CheckboxGroup>
                 <FormizSelect
@@ -204,7 +216,9 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                             value={student.id}
                             key={student.id}
                           >
-                            <div>{student.firstname} {student.lastname}</div>
+                            <div>
+                              {student.firstname} {student.lastname}
+                            </div>
                             <div>Birth date: {student.dob}</div>
                             <div>{student.student_rel}</div>
                           </Checkbox>
@@ -346,19 +360,7 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                   placeholder='Please enter your answer'
                 />
                 <Input
-                  label='Relationship of Emergency Contact to Student'
-                  type='text'
-                  name='emergency_contact.relationship'
-                  placeholder='Please enter your answer'
-                />
-                <Input
-                  label='Does the participant have any special needs, allergies, food restriction, or requires an Epi-Pen, asthma inhaler, or other?'
-                  name='special_needs'
-                  placeholder='Please select your answer'
-                  type='text'
-                />
-                <Input
-                  label={'Pick Up Arrangements'}
+                  label='Pick Up Arrangements'
                   description='In order to ensure participants’ safety, parents or authorized adults must pick-up their child(ren) in the designated area. If the participant is 14 years of age or older, please sign the following if you (parent/guardian) authorize the participant to leave the program by himself/herself. CICS will not be responsible for the participant’s safety, once he/she leaves the centre.'
                   type='text'
                   name='pickup_arrangements'
@@ -411,7 +413,8 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                       console.log(fields.email.value);
                       trigger(fields.email.value);
                     }
-                    if (form.currentStep?.index !== 6) { // Harded 6 as last step
+                    if (form.currentStep?.index !== 6) {
+                      // Harded 6 as last step
                       form.goToNextStep();
                     } else {
                       form.submit();
