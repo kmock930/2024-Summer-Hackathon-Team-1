@@ -78,6 +78,7 @@ function Checkbox<FormattedValue = boolean>(
     <AriaCheckbox
       value={props.value}
       isSelected={isSelected ?? false}
+      defaultSelected={true}
       onChange={setIsSelected}
       {...props}
     >
