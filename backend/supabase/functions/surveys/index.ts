@@ -79,7 +79,7 @@ Deno.serve(async (req: Request) => {
       const { data, error } = await supabase
         .from('surveys')
         .update({
-          survey_link: `https://ibhwsqyqdziekcjyakog.supabase.co/functions/v1/surveys?id=${createData[0].id}`
+          survey_link: `http://localhost:3000/course-registration/${createData[0].id}`
         })
         .eq('id', createData[0].id)
         .select();

@@ -12,7 +12,9 @@ export const errorMessages = {
     noCourseIds: 'Invalid course IDs. (Null or empty)',
     noParentIds: 'Invalid parent IDs. (Null or empty)',
     invalidRegistrationQuery: 'Either course_id or survey_id must be provided, but not both.',
-    noRecordsToDelete_reason: 'Please specify at least 1 record to delete the corresponding record from the database. The API will not bulk delete all records from the database due to security and management reasons.'
+    // noRecordsToDelete_reason: 'Please specify at least 1 record to delete the corresponding record from the database. The API will not bulk delete all records from the database due to security and management reasons.'
+    noStudentInfo: 'No existing or new student information provided.',
+    noParentInfo: 'No existing or new parent information provided.',
 };
 
 export const warningMessages = {

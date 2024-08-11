@@ -41,6 +41,48 @@ Deno.serve(async (req: Request) => {
 
   switch (req.method) {
     case 'GET': {
+      // const url = new URL(req.url);
+      // const id = url.searchParams.get('id');
+
+      // if (id) { // get course details by ID
+      //   const { data: courseData, error: courseError } = await supabase
+      //     .from('courses')
+      //     .select()
+      //     .eq('id', id)
+      //     .is('deleted_dt', null);
+      //   if (courseError) return generateResponse(courseError, responseHeader, 400);
+
+      //   // Courses Registration Status
+      //   const { data: registrationData, error: registrationError } = await supabase
+      //     .from('registered_courses')
+      //     .select('student_id')
+      //     .eq('course_id', id);
+      //   if (registrationError) return generateResponse(registrationError, responseHeader, 400);
+
+      //   // Populate students
+      //   const { data: studentData, error: studentError } = await supabase
+      //     .from('students')
+      //     .select()
+      //     .in('id', registrationData.map((reg: any) => reg.student_id));
+      //   if (studentError) return generateResponse(studentError, responseHeader, 400);
+
+      //   const data = {
+      //     ...courseData[0],
+      //     'students': studentData
+      //   }
+
+      //   return generateResponse(data, responseHeader, 200);
+      // }
+      // else { // get all courses
+      //   const { data, error } = await supabase
+      //     .from('courses')
+      //     .select()
+      //     .is('deleted_dt', null);
+      //   if (error) return generateResponse(error, responseHeader, 400);
+      //   return generateResponse(data, responseHeader, 200);
+      // }
+
+      // Original
       let query = supabase
         .from('courses')
         .select()

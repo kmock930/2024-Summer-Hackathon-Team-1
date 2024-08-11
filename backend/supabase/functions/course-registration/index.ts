@@ -91,6 +91,15 @@ Deno.serve(async (req: Request) => {
         if (responseError)
           return generateResponse(responseError, responseHeader, 400);
 
+        // Populate courses
+        const { data: courseData, error: courseError } = await supabase
+          .from('courses')
+          .select()
+          .in('id', responseData.map((i: any) => i.course_ids));
+        if (courseError)
+          return generateResponse(courseError, responseHeader, 400);
+        surveyData[0].courses = courseData;
+
         // Populate student, courses
         await Promise.all(responseData.map(async (response: any) => {
           // Student
@@ -123,37 +132,66 @@ Deno.serve(async (req: Request) => {
     case 'POST': {
       const reqBody = await req.json();
 
-      if (!reqBody.student_id)
-        return generateResponse(errorMessages.noStudentId, responseHeader, 400);
+      if (!reqBody.student_id && !reqBody.student)
+        return generateResponse(errorMessages.noStudentInfo, responseHeader, 400);
 
-      if (!reqBody.course_ids || reqBody.course_ids.length === 0)
-        return generateResponse(errorMessages.noCourseIds, responseHeader, 400);
+      if (!reqBody.parent_id && !reqBody.parent)
+        return generateResponse(errorMessages.noParentInfo, responseHeader, 400);
 
-      if (!reqBody.parent_id)
-        return generateResponse(errorMessages.noParentIds, responseHeader, 400);
+      // Create new parent if needed
+
+      // Validate student if needed
+      // TODO: Create new student if needed + Link up student with parent
+      // if (!reqBody.student_id) {
+      //   const newStudent = {
+      //     firstname: reqBody.student.firstname,
+      //     lastname: reqBody.student.lastname,
+      //     dob: reqBody.student.dob,
+      //     pronounce: reqBody.student.pronounce,
+      //     gender: reqBody.gender,
+      //   };
+      //   const { data: studentData, error: studentError } = await supabase
+      //     .from('students')
+      //     .insert(newStudent)
+      //     .select();
+      // }
+
 
       // Save survey response
+      const newSurveyResponse = {
+        student_id: reqBody.student_id,
+        survey_id: reqBody.survey_id,
+        course_ids: reqBody.course_ids,
+        emergency_contact: reqBody.emergency_contact,
+        special_needs: reqBody.special_needs,
+        pickup_arrangement: reqBody.pickup_arrangement,
+        ba_camp_options: reqBody.ba_camp_options,
+        created_by: reqBody.created_by,
+        status: 'pending',
+      }
       const { data, error } = await supabase
         .from('survey_responses')
-        .insert({
-          student_id: reqBody.student_id,
-          survey_id: reqBody.survey_id,
-          parent_ids: reqBody.parent_ids,
-          course_ids: reqBody.course_ids,
-        });
+        .insert(newSurveyResponse);
       if (error) return generateResponse(error, responseHeader, 400);
 
       // Register student for courses
       const registered_courses = [];
 
       for (const course_id of reqBody.course_ids) {
+        const newRegisteredCourse = {
+          student_id: reqBody.student_id,
+          course_id: course_id,
+          special_needs: reqBody.special_needs,
+          emergency_contact: reqBody.emergency_contact,
+          pickup_arrangement: reqBody.pickup_arrangement,
+          ba_camp_options: reqBody.ba_camp_options,
+          created_by: reqBody.created_by,
+          course_attendance: '0/10',
+          status: 'pending',
+        };
         const { data, error } = await supabase
           .from('registered_courses')
-          .insert({
-            student_id: reqBody.student_id,
-            course_id: course_id,
-            created_by: reqBody.created_by
-          });
+          .insert(newRegisteredCourse);
         
         if (error) {
           console.log(`Error occurred: ${error}`);

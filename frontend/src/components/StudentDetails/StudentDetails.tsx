@@ -1,3 +1,4 @@
+'use client';
 import { FormizSelectProps, SelectOptionProps } from '@/types';
 import { useField } from '@formiz/core';
 import * as React from 'react';

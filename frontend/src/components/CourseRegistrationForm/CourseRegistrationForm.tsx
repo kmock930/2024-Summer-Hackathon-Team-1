@@ -377,6 +377,12 @@ function CourseRegistrationForm({ surveyId }: { surveyId: string }) {
                     placeholder='Please enter your answer'
                   />
                   <Input
+                    label="Student Special Needs"
+                    type="text"
+                    name="special_needs"
+                    placeholder="Please enter your answer"
+                  />
+                  <Input
                     label='Emergency Contact Name'
                     type='text'
                     name='emergency_contact.name'
